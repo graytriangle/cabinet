@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+	{% for record in data %}
+  		<p>{{ record[1] }} <a href="/delete?rowid={{record[0]}}">[x]</a></p>
+  	{% endfor %}
+    <p><b>input</b><p>
+    <form action="." method="POST">
+        <input type="text" name="add">
+        <input type="submit" name="my-form" value="Send">
+    </form>
+</body>
+</html>
