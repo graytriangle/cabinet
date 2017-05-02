@@ -312,6 +312,11 @@ p {
                     if (httpRequest.status === 200) {
                         var el = document.getElementById(httpRequest.responseText);
                         el.getElementsByClassName("star")[0].classList.toggle('staron');
+                        if (el.getElementsByClassName("star")[0].classList.contains('staron')) {
+                            el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
+                        } else {
+                            el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
+                        }
                     } else {
                         alert("Error while deleting a record: " + httpRequest.status);
                     }
@@ -410,8 +415,10 @@ p {
                 var attr = el.getElementsByClassName("star_field")[0].getAttribute("value");
                 if (attr == "false") {
                     el.getElementsByClassName("star_field")[0].setAttribute("value", "true");
+                    el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
                 } else {
                     el.getElementsByClassName("star_field")[0].setAttribute("value", "false");
+                    el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
                 }
             }
         </script>
@@ -456,7 +463,7 @@ p {
             <div class="post" id="{{record['uid']}}">
                 <div 
                     class="star {% if record['important'] %} staron {% endif %}" 
-                    title="Отметить запись как важную" 
+                    title="{% if record['important'] %} Убрать отметку важности {% else %} Отметить запись как важную {% endif %}" 
                     onclick="markPost('{{record['uid']}}')">
                 </div>
                 <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>

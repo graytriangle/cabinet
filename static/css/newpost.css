@@ -59,14 +59,9 @@
 } 
 
 #np_maintext { 
-    width: 100%;
-    height: 50px;
     transition: height 0.5s;
     margin-left: auto;
     margin-right: auto;
-    border: 0;
-	font-family: "Trebuchet MS", Helvetica, sans-serif;
-	font-size: 10pt;
 } 
 
 #np_maintext::-moz-placeholder {
