@@ -31,13 +31,17 @@ def test():
 
 @app.route('/', methods=['POST'])
 def my_form_post():
+    postuid = request.form['uid']
+    importance = request.form['importance']
     maintext = request.form['maintext']
     topic = request.form['topic']
     source = request.form['source']
-    postuid = str(uuid.uuid4())
+    if postuid == '00000000-0000-0000-0000-000000000000':
+        postuid = str(uuid.uuid4())
     cur = get_db().cursor()
     try:
-        cur.execute("INSERT INTO notes (uid, maintext, url) VALUES (%s, %s, %s);", (postuid, maintext, source))
+        cur.execute("INSERT INTO notes (uid, maintext, important, url) VALUES (%s, %s, %s, %s) "
+            "ON CONFLICT (uid) DO UPDATE SET maintext=excluded.maintext, important=excluded.important, url=excluded.url;", (postuid, maintext, importance, source))
         get_db().commit()
         if topic:
             topicsarray = topic.split(',')
@@ -46,6 +50,8 @@ def my_form_post():
             try:
                 for t in topicsarray:
                     cur.execute("INSERT INTO topics (name) VALUES (%s) ON CONFLICT DO NOTHING;", (t,))
+                get_db().commit()
+                cur.execute("DELETE FROM notes_topics WHERE note = %s;", (postuid,))
                 get_db().commit()
                 for t in topicsarray:
                     cur.execute("SELECT uid FROM topics WHERE name = %s;", (t,))

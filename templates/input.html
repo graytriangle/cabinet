@@ -167,6 +167,11 @@ p {
 .maininputfield {
     margin-top: 0px;
     margin-bottom: 0px;
+    width: 100%;
+    height: 50px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 10pt;
+    border: 0;
 }
 
 
@@ -174,7 +179,7 @@ p {
         </style>
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/newpost.css')}}>
     </head>
-    <body onclick="hideForm()">
+    <body onclick="hideForm(event)">
         <script>
             function showForm() {
                 for (var i = document.getElementsByClassName("np").length - 1; i >= 0; i--) {
@@ -207,10 +212,13 @@ p {
 
             }
 
-            function hideForm() {
-                var formelements = ["np_maintext", "np_source", "np_topic"];
-                var selected = document.activeElement;
-                if (formelements.indexOf(selected.id) == -1) { /* проверка на вхождение в массив */
+            function hideForm(event) {
+                // alert(event.target.getAttribute("id"));
+                if (!((event.target.getAttribute("id") == "00000000-0000-0000-0000-000000000000") || 
+                    (document.getElementById("00000000-0000-0000-0000-000000000000").contains(event.target)))) {
+                // var formelements = ["np_maintext", "np_source", "np_topic"];
+                // var selected = document.activeElement;
+                // if (formelements.indexOf(selected.id) == -1) { /* проверка на вхождение в массив */
                     if ((document.getElementById("np_maintext").value == "") &&
                         (document.getElementById("np_source").value == "") &&
                         (document.getElementById("np_topic").value == "")) {
@@ -338,61 +346,84 @@ p {
             }
 
             function editPost(uid) {
+                // hiding the original post
                 var tmppost = document.getElementById(uid);
+                tmppost.setAttribute("id", uid + '_tmp');
+                tmppost.style["display"] = "none";
+
+                // copying the template and filling it with post content
+                var template = document.getElementById("00000000-0000-0000-0000-000000000001").cloneNode(true);
+                template.setAttribute("id", uid);
+                template.getElementsByClassName("uid_field")[0].setAttribute("value", uid);
                 var tmpimportance = tmppost.getElementsByClassName("star")[0].cloneNode(true);
+                var newimportance = template.getElementsByClassName("star")[0];
+                template.getElementsByTagName("form")[0].setAttribute("name", uid);
+                template.getElementsByTagName("form")[0].replaceChild(tmpimportance, newimportance);
+                template.getElementsByClassName("star")[0].setAttribute("onclick", "np_toggleImportant('" + uid + "')");
+                if (template.getElementsByClassName("star")[0].classList.contains('staron')) {
+                    template.getElementsByClassName("star_field")[0].setAttribute("value", "true");
+                } else {
+                    template.getElementsByClassName("star_field")[0].setAttribute("value", "false");
+                }
+                template.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
+                template.getElementsByClassName("savepost")[0].setAttribute("onclick", "document.forms['" + uid + "'].submit(); return false;");
                 var tmptitle = tmppost.getElementsByTagName("h3")[0].cloneNode(true);
-                var tmpsrc = tmppost.getElementsByClassName("source")[0].getElementsByTagName("a")[0].innerHTML;
-                var tmptags = '';
-                var tmptagsarray = tmppost.getElementsByClassName("tags")[0].getElementsByTagName("a");
-                for (var i = 0; i < tmptagsarray.length; i++) {
-                    tmptags += tmptagsarray[i].innerHTML;
-                    if (i < (tmptagsarray.length - 1)) {
-                        tmptags += ', ';
+                var newtitle = template.getElementsByTagName("h3")[0];
+                template.getElementsByTagName("form")[0].replaceChild(tmptitle, newtitle);
+                if (tmppost.getElementsByClassName("source").length > 0) {
+                    var tmpsrc = tmppost.getElementsByClassName("source")[0].getElementsByTagName("a")[0].innerHTML;
+                    template.getElementsByClassName("inputsrc")[0].setAttribute("value", tmpsrc);
+                }
+                if (tmppost.getElementsByClassName("tags").length > 0) {
+                    var tmptags = '';
+                    var tmptagsarray = tmppost.getElementsByClassName("tags")[0].getElementsByTagName("a");
+                    for (var i = 0; i < tmptagsarray.length; i++) {
+                        tmptags += tmptagsarray[i].innerHTML;
+                        if (i < (tmptagsarray.length - 1)) {
+                            tmptags += ', ';
+                        }
                     }
+                    template.getElementsByClassName("inputtopic")[0].setAttribute("value", tmptags);
                 }
                 var tmpposttext = tmppost.getElementsByClassName("posttext")[0].getElementsByTagName("p")[0].innerHTML;
+                template.getElementsByClassName("maininputfield")[0].value = tmpposttext;
 
-                var editablepost = document.getElementById("00000000-0000-0000-0000-000000000001").cloneNode(true);
-                editablepost.style["display"] = "block";
-                tmppost.style["display"] = "none";
-                insertAfter(editablepost, tmppost);
-
-                var newimportance = editablepost.getElementsByClassName("star")[0];
-                var newtitle = editablepost.getElementsByTagName("h3")[0];
-
-                editablepost.classList.add('editable');
-                editablepost.setAttribute("id", uid);
-                editablepost.getElementsByTagName("form")[0].replaceChild(tmpimportance, newimportance);
-                editablepost.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
-                editablepost.getElementsByTagName("form")[0].replaceChild(tmptitle, newtitle);
-                editablepost.getElementsByClassName("inputsrc")[0].setAttribute("value", tmpsrc);
-                editablepost.getElementsByClassName("inputtopic")[0].setAttribute("value", tmptags);
-                editablepost.getElementsByClassName("maininputfield")[0].value = tmpposttext;
-
+                // displaying the template in place of post
+                template.style["display"] = "block";
+                insertAfter(template, tmppost);
             }
 
             function cancelEdit(uid) {
-                var todelete;
-                var tmpeditarray = document.getElementsByClassName("editable");
-                for (var i = 0; i < tmpeditarray.length; i++) {
-                    if (tmpeditarray[i].getAttribute("id") == uid) {
-                        todelete = tmpeditarray[i];
-                    }
-                }
+                var todelete = document.getElementById(uid);
                 todelete.parentNode.removeChild(todelete);
-                document.getElementById(uid).style["display"] = "block";
+                document.getElementById(uid + '_tmp').style["display"] = "block";
+                document.getElementById(uid + '_tmp').setAttribute("id", uid);
             }
 
             function insertAfter(newNode, referenceNode) {
                 referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
             }
+
+            function np_toggleImportant(uid) {
+                var el = document.getElementById(uid);
+                el.getElementsByClassName("star")[0].classList.toggle('staron');
+                var attr = el.getElementsByClassName("star_field")[0].getAttribute("value");
+                if (attr == "false") {
+                    el.getElementsByClassName("star_field")[0].setAttribute("value", "true");
+                } else {
+                    el.getElementsByClassName("star_field")[0].setAttribute("value", "false");
+                }
+            }
         </script>
 
+        <!-- "new post" window -->
         <div class="post" id="00000000-0000-0000-0000-000000000000">
             <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
-                <div class="star staron np" title="Запись отмечена как важная" id="np_star"></div>
+                <input class="uid_field" type="hidden" name="uid" value="00000000-0000-0000-0000-000000000000">
+                <div class="star np" title="Отметить запись как важную" id="np_star" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
+                <input class="star_field" type="hidden" name="importance" value="false">
                 <div class="posticon deletepost np" title="Удалить запись" id="np_delete"></div>
-                <a href="javascript:{}" onclick="document.getElementById('post_form').submit(); return false;"><div class="posticon savepost np" title="Сохранить запись" id="np_save"></div></a>
+                <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="document.getElementById('post_form').submit(); return false;"></div>
                 <h3 class="np" title="14.11.2016 17:13" id="np_title">26.04.2017</h3>
                 <div class="smallicon extlink np" title="Основной источник" id="np_source_icon"></div>
                 <input class="inputfield np_input np" name="source" type="text" id="np_source" onfocus="showForm()">
@@ -402,20 +433,24 @@ p {
             </form>
         </div>
 
+        <!-- template for "edit post" mode -->
         <div class="post" id="00000000-0000-0000-0000-000000000001" style="display: none;">
-            <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
-                <div class="star staron " title="Запись отмечена как важная"></div>
-                <div class="posticon canceledit " title="Отменить редактирование"></div>
-                <a href="javascript:{}" onclick="document.getElementById('post_form').submit(); return false;"><div class="posticon savepost " title="Сохранить запись" ></div></a>
-                <h3 class="" title="14.11.2016 17:13" >26.04.2017</h3>
-                <div class="smallicon extlink " title="Основной источник"></div>
-                <input class="inputfield inputsrc" type="text">
-                <div class="smallicon topic " title="Темы" ></div>
-                <input class="inputfield inputtopic" type="text">
-                <textarea class="maininputfield" id="np_maintext" placeholder="Место для новой записи"></textarea>
+            <form action="." method="POST" style="margin-bottom: 0px;">
+                <input class="uid_field" type="hidden" name="uid">
+                <div class="star"></div>
+                <input class="star_field" type="hidden" name="importance">
+                <div class="posticon canceledit" title="Отменить редактирование"></div>
+                <div class="posticon savepost" title="Сохранить запись"></div>
+                <h3></h3>
+                <div class="smallicon extlink" title="Основной источник"></div>
+                <input class="inputfield inputsrc" name="source" type="text">
+                <div class="smallicon topic" title="Темы" ></div>
+                <input class="inputfield inputtopic" name="topic" type="text">
+                <textarea class="maininputfield" name="maintext" placeholder="Место для новой записи"></textarea>
             </form>
         </div>
 
+        <!-- actual posts -->
         {% for record in data %}
 
             <div class="post" id="{{record['uid']}}">
