@@ -2,185 +2,15 @@
     <head>
      <meta charset="UTF-8"> 
         <style>
-.newpost {
-    margin-left: auto;
-    margin-right: auto;
-    width: 40%;
-}
-.post {
-    border-radius: 20px;
-    border: 2px solid #a6caf0;
-    padding: 20px; 
-    width: 40%;
-    min-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 8px;
-    background-color: #f7fbff;
-}
-.source {
-    font-size: 10pt;
-    color: #808080;
-    margin-top: 0;
-    margin-bottom: 0
-}
-.source a {
-    color: #808080;
-    text-decoration: none;
-}
-.source a:hover {
-    color: #606060;
-    text-decoration: none;
-}
-.tags {
-    font-size: 10pt;
-    color: #808080;
-    margin-top: 0;
-    margin-bottom: 0
-}
-.tags a {
-    color: #808080;
-    text-decoration: none;
-}
-.tags a:hover {
-    color: #606060;
-    text-decoration: none;
-}
-.edits {
-    font-size: 13pt;
-    color: #9090c4;
-    margin-top: 0;
-    margin-bottom: 0
-}
-/*strong {
-    font-weight: normal;
-    color: #606060;
-}*/
-div {
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-}
-h3 {
-    font-size: 13pt;
-    color: #606080;
-    margin-top: 0;
-    margin-bottom: 5;
-}
-p {
-    font-size: 10pt;
-    margin-top: 5;
-    margin-bottom: 5;
-}
-.star {
-    float: left; /* Обтекание по правому краю */
-    width: 14px;
-    height: 14px;
-    margin-top: 4;
-    margin-bottom: 0;
-    margin-left: 0;
-    margin-right: 8;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    padding-right: 0;
-    background-image: url({{url_for('static', filename='img/star.png')}});
-    background-position: 0px 14px;
-    background-size: 14px;
-    cursor: pointer;
-}
-.staron { 
-    background-position: 0px 0px;
-} 
-
-.posticon {
-    float: right; /* Обтекание по правому краю */
-    width: 14px;
-    height: 14px;
-    margin-top: 4;
-    margin-bottom: 0;
-    margin-left: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    padding-right: 0;
-    background-position: 0px 0px;
-    background-size: 14px;
-    background-repeat: no-repeat;
-    cursor: pointer;
-}
-.editpost { 
-    margin-right: 12;
-    background-image: url({{url_for('static', filename='img/edit.png')}});
-} 
-.deletepost { 
-    margin-right: 8;
-    background-image: url({{url_for('static', filename='img/delete.png')}});
-} 
-.savepost { 
-    margin-right: 12;
-    background-image: url({{url_for('static', filename='img/save.png')}});
-} 
-.canceledit { 
-    margin-right: 8;
-    padding-top: 1;
-    background-image: url({{url_for('static', filename='img/cancel.png')}});
-    width: 15px;
-    height: 15px;
-    background-size: 15px;
-} 
-
-.smallicon { 
-    float: left; /* Обтекание по правому краю */
-    clear: both;
-    width: 12px;
-    margin-bottom: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    padding-right: 0;
-    background-repeat: no-repeat;
-} 
-.extlink { 
-    height: 9px;
-    margin-top: 6;
-    margin-left: 0;
-    margin-right: 7;
-    background-image: url({{url_for('static', filename='img/extlink.png')}});
-    background-size: 12px;
-} 
-.topic { 
-    height: 12px;
-    margin-top: 3;
-    margin-left: 2;
-    margin-right: 5;
-    background-image: url({{url_for('static', filename='img/topic.png')}});
-    background-size: 10px;
-} 
-.inputfield {
-    width: calc(100% - 19px);
-    color: #808080;
-    border-color: #a6caf0;
-    height: 18px;
-    font-size: 10pt;
-    border-width: 0 1px 1px 0;
-    margin-bottom: 2px;
-}
-.maininputfield {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    width: 100%;
-    height: 50px;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 10pt;
-    border: 0;
-}
-
-
-
         </style>
+        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/post.css')}}>
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/newpost.css')}}>
     </head>
     <body onclick="hideForm(event)">
         <script>
+
+        const NEW_POST = "00000000-0000-0000-0000-000000000000";
+
             function showForm() {
                 for (var i = document.getElementsByClassName("np").length - 1; i >= 0; i--) {
                     document.getElementsByClassName("np")[i].style.visibility = "visible";
@@ -214,8 +44,8 @@ p {
 
             function hideForm(event) {
                 // alert(event.target.getAttribute("id"));
-                if (!((event.target.getAttribute("id") == "00000000-0000-0000-0000-000000000000") || 
-                    (document.getElementById("00000000-0000-0000-0000-000000000000").contains(event.target)))) {
+                if (!((event.target.getAttribute("id") == NEW_POST) || 
+                    (document.getElementById(NEW_POST).contains(event.target)))) {
                 // var formelements = ["np_maintext", "np_source", "np_topic"];
                 // var selected = document.activeElement;
                 // if (formelements.indexOf(selected.id) == -1) { /* проверка на вхождение в массив */
@@ -256,7 +86,7 @@ p {
                     return false;
                 }
                 httpRequest.onreadystatechange = removePost;
-                httpRequest.open('GET', 'delete?uid=' + uid);
+                httpRequest.open('GET', '/delete?uid=' + uid);
                 httpRequest.send();
             }
 
@@ -303,7 +133,7 @@ p {
                     return false;
                 }
                 httpRequest.onreadystatechange = markPostOnPage;
-                httpRequest.open('GET', 'mark?uid=' + uid + '&status=' + status);
+                httpRequest.open('GET', '/mark?uid=' + uid + '&status=' + status);
                 httpRequest.send();
             }
 
@@ -323,31 +153,56 @@ p {
                 }
             }
 
-            function editPost(uid) {
+            function updatePost(uid) {
                 httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(uid);
-                var status = 'true';
-                if (el.getElementsByClassName("star")[0].classList.contains('staron')) {
-                    status = 'false';
-                }
+                var formData = new FormData(el.getElementsByTagName("form")[0]);
                 if (!httpRequest) {
                     alert('Giving up :( Cannot create an XMLHTTP instance');
                     return false;
                 }
-                httpRequest.onreadystatechange = markPostOnPage;
-                httpRequest.open('GET', 'mark?uid=' + uid + '&status=' + status);
-                httpRequest.send();
+                httpRequest.onreadystatechange = function() {
+                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                        if (httpRequest.status === 200) {
+                            cancelEdit(uid);
+                            var oldel = document.getElementById(uid);
+                            var wrapper= document.createElement('div');
+                            wrapper.innerHTML= httpRequest.responseText;
+                            var newel = wrapper.firstChild;
+                            oldel.parentNode.replaceChild(newel, oldel);
+                        } else {
+                            alert("Error while updating a post: " + httpRequest.status);
+                        }
+                    }
+                };
+                httpRequest.open('POST', '/');
+                httpRequest.send(formData);
             }
 
-            function editPostOnPage() {
-                if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                    if (httpRequest.status === 200) {
-                        var el = document.getElementById(httpRequest.responseText);
-                        el.getElementsByClassName("star")[0].classList.toggle('staron');
-                    } else {
-                        alert("Error while deleting a record: " + httpRequest.status);
-                    }
+            function addPost() {
+                httpRequest = new XMLHttpRequest();
+                var el = document.getElementById(NEW_POST);
+                var formData = new FormData(el.getElementsByTagName("form")[0]);
+                if (!httpRequest) {
+                    alert('Giving up :( Cannot create an XMLHTTP instance');
+                    return false;
                 }
+                httpRequest.onreadystatechange = function() {
+                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                        if (httpRequest.status === 200) {
+                            if (window.location.pathname === "/") {
+                                window.location.reload(true); 
+                            } else {
+                                clearNewPost();
+                                alert("Запись сохранена!");
+                            }
+                        } else {
+                            alert("Error while updating a post: " + httpRequest.status);
+                        }
+                    }
+                };
+                httpRequest.open('POST', '/');
+                httpRequest.send(formData);
             }
 
             function editPost(uid) {
@@ -371,7 +226,7 @@ p {
                     template.getElementsByClassName("star_field")[0].setAttribute("value", "false");
                 }
                 template.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
-                template.getElementsByClassName("savepost")[0].setAttribute("onclick", "document.forms['" + uid + "'].submit(); return false;");
+                template.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
                 var tmptitle = tmppost.getElementsByTagName("h3")[0].cloneNode(true);
                 var newtitle = template.getElementsByTagName("h3")[0];
                 template.getElementsByTagName("form")[0].replaceChild(tmptitle, newtitle);
@@ -405,6 +260,17 @@ p {
                 document.getElementById(uid + '_tmp').setAttribute("id", uid);
             }
 
+            function clearNewPost() {
+                var el = document.getElementById(NEW_POST);
+                if (el.getElementsByClassName("star_field")[0].getAttribute("value") === "true") {
+                    np_toggleImportant(NEW_POST);
+                }
+                document.getElementById("np_source").value = "";
+                document.getElementById("np_topic").value = "";
+                document.getElementById("np_maintext").value = "";
+            }
+
+
             function insertAfter(newNode, referenceNode) {
                 referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
             }
@@ -429,8 +295,8 @@ p {
                 <input class="uid_field" type="hidden" name="uid" value="00000000-0000-0000-0000-000000000000">
                 <div class="star np" title="Отметить запись как важную" id="np_star" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
                 <input class="star_field" type="hidden" name="importance" value="false">
-                <div class="posticon deletepost np" title="Удалить запись" id="np_delete"></div>
-                <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="document.getElementById('post_form').submit(); return false;"></div>
+                <div class="posticon deletepost np" title="Удалить запись" id="np_delete" onclick="clearNewPost()"></div>
+                <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="addPost()"></div>
                 <h3 class="np" title="14.11.2016 17:13" id="np_title">26.04.2017</h3>
                 <div class="smallicon extlink np" title="Основной источник" id="np_source_icon"></div>
                 <input class="inputfield np_input np" name="source" type="text" id="np_source" onfocus="showForm()">
@@ -459,34 +325,7 @@ p {
 
         <!-- actual posts -->
         {% for record in data %}
-
-            <div class="post" id="{{record['uid']}}">
-                <div 
-                    class="star {% if record['important'] %} staron {% endif %}" 
-                    title="{% if record['important'] %} Убрать отметку важности {% else %} Отметить запись как важную {% endif %}" 
-                    onclick="markPost('{{record['uid']}}')">
-                </div>
-                <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>
-                <div class="posticon editpost" title="Редактировать запись" onclick="editPost('{{record['uid']}}')"></div>
-                <h3 title="{{record['created'].strftime("%d.%m.%Y %H:%M")}}">{{record['created'].strftime("%d.%m.%Y")}}
-                    {% if record['changed'] %} <span class="edits" title="Последнее изменение: {{record['changed'].strftime("%d.%m.%Y %H:%M")}}"> *</span> {% endif %}
-                </h3>
-                {% if record['url'] %}
-                    <div class="smallicon extlink" title="Основной источник"></div>
-                    <div class="source"><a href="{{record['url']}}">{{record['url']}}</a></div>
-                {% endif %}
-                {% if record['topics'] %}
-                    <div class="smallicon topic" title="Темы"></div>
-                    <div class="tags">
-                    {% for topic in record['topics'].split(',') %}
-                        <a href="/{{topic}}">{{topic}}</a>{% if not loop.last %},{% endif %}
-                    {% endfor %}
-                    </div>
-                {% endif %}
-                <div class="posttext">
-                    <p>{{ record['maintext'] }}</p>
-                </div>
-            </div>
+            {% include "post.html" %}
         {% endfor %}
 
     </body>

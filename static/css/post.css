@@ -1,0 +1,171 @@
+.newpost {
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+}
+.post {
+    border-radius: 20px;
+    border: 2px solid #a6caf0;
+    padding: 20px; 
+    width: 40%;
+    min-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 8px;
+    background-color: #f7fbff;
+}
+.source {
+    font-size: 10pt;
+    color: #808080;
+    margin-top: 0;
+    margin-bottom: 0
+}
+.source a {
+    color: #808080;
+    text-decoration: none;
+}
+.source a:hover {
+    color: #606060;
+    text-decoration: none;
+}
+.tags {
+    font-size: 10pt;
+    color: #808080;
+    margin-top: 0;
+    margin-bottom: 0
+}
+.tags a {
+    color: #808080;
+    text-decoration: none;
+}
+.tags a:hover {
+    color: #606060;
+    text-decoration: none;
+}
+.edits {
+    font-size: 13pt;
+    color: #9090c4;
+    margin-top: 0;
+    margin-bottom: 0
+}
+/*strong {
+    font-weight: normal;
+    color: #606060;
+}*/
+div {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+h3 {
+    font-size: 13pt;
+    color: #606080;
+    margin-top: 0;
+    margin-bottom: 5;
+}
+p {
+    font-size: 10pt;
+    margin-top: 5;
+    margin-bottom: 5;
+}
+.star {
+    float: left; /* Обтекание по правому краю */
+    width: 14px;
+    height: 14px;
+    margin-top: 4;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 8;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-image: url('../img/star.png');
+    background-position: 0px 14px;
+    background-size: 14px;
+    cursor: pointer;
+}
+.staron { 
+    background-position: 0px 0px;
+} 
+
+.posticon {
+    float: right; /* Обтекание по правому краю */
+    width: 14px;
+    height: 14px;
+    margin-top: 4;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-position: 0px 0px;
+    background-size: 14px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.editpost { 
+    margin-right: 12;
+    background-image: url('../img/edit.png');
+} 
+.deletepost { 
+    margin-right: 8;
+    background-image: url('../img/delete.png');
+} 
+.savepost { 
+    margin-right: 12;
+    background-image: url('../img/save.png');
+} 
+.canceledit { 
+    margin-right: 8;
+    padding-top: 1;
+    background-image: url('../img/cancel.png');
+    width: 15px;
+    height: 15px;
+    background-size: 15px;
+} 
+
+.smallicon { 
+    float: left; /* Обтекание по правому краю */
+    clear: both;
+    width: 12px;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-repeat: no-repeat;
+} 
+.extlink { 
+    height: 9px;
+    margin-top: 6;
+    margin-left: 0;
+    margin-right: 7;
+    background-image: url('../img/extlink.png');
+    background-size: 12px;
+} 
+.topic { 
+    height: 12px;
+    margin-top: 3;
+    margin-left: 2;
+    margin-right: 5;
+    background-image: url('../img/topic.png');
+    background-size: 10px;
+} 
+.inputfield {
+    width: calc(100% - 19px);
+    color: #808080;
+    border-color: #a6caf0;
+    height: 18px;
+    font-size: 10pt;
+    border-width: 0 1px 1px 0;
+    margin-bottom: 2px;
+}
+.maininputfield {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 100%;
+    height: 50px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 10pt;
+    border: 0;
+}

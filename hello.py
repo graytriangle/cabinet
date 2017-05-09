@@ -27,7 +27,7 @@ def test():
         result = dictfetchall(cur)
     finally:
         cur.close()
-    return render_template('input.html', data=result)
+    return render_template('master.html', data=result)
 
 @app.route('/', methods=['POST'])
 def my_form_post():
@@ -61,8 +61,8 @@ def my_form_post():
             finally:
                 pass
     finally:
-        cur.close() 
-    return test()
+        cur.close()
+    return getpost(postuid)
 
 @app.route('/delete', methods=['GET'])
 def delete():
@@ -87,15 +87,45 @@ def mark():
         cur.close()
     return uid 
 
-# @app.route('/user/<username>')
-# def show_user_profile(username):
-#     # show the user profile for that user
-#     return 'User %s' % username
-
-@app.route('/post/<int:post_id>')
+@app.route('/post/<string:post_id>') # TODO: switch to uuids; it fails for some reason
+# TODO: make title hyperlink here
 def show_post(post_id):
-    # show the post with the given id, the id is an integer
-    return 'Post %d' % post_id
+    # show the post with the given id, the id is an uuid
+    cur = get_db().cursor()
+    try:
+        cur.execute("select n.*, "
+            "(select string_agg(name, ',') from topics t "
+            "left join notes_topics nt on nt.topic = t.uid "
+            "where nt.note = n.uid) topics "
+            "from notes n "
+            "where n.uid = %s;", (post_id,))
+        result = dictfetchall(cur)
+    except:
+        return render_template('master.html') # TODO: make 404 page
+    finally:
+        cur.close()
+    return render_template('master.html', data=result)
+
+@app.route('/getpost', methods=['GET']) # TODO: switch to uuids; it fails for some reason
+def getpost(post_id=None):
+    # get the post with the given id, the id is an uuid
+    uid = request.args.get('uid')
+    if not uid:
+        uid = post_id
+    cur = get_db().cursor()
+    try:
+        cur.execute("select n.*, "
+            "(select string_agg(name, ',') from topics t "
+            "left join notes_topics nt on nt.topic = t.uid "
+            "where nt.note = n.uid) topics "
+            "from notes n "
+            "where n.uid = %s;", (uid,))
+        result = dictfetchall(cur)
+    except:
+        return render_template('master.html') # TODO: make 404 page
+    finally:
+        cur.close()
+    return render_template('post.html', record=result[0])
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -104,7 +134,7 @@ def close_connection(exception):
         db.close()
 
 def dictfetchall(cursor):
-    "Returns all rows from a cursor as a dict"
+    "Returns all rows from a cursor as a list of dicts"
     desc = cursor.description
     return [
         dict(zip([col[0] for col in desc], decodesql(row)))

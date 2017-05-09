@@ -1,0 +1,27 @@
+<div class="post" id="{{record['uid']}}">
+    <div 
+        class="star {% if record['important'] %} staron {% endif %}" 
+        title="{% if record['important'] %} Убрать отметку важности {% else %} Отметить запись как важную {% endif %}" 
+        onclick="markPost('{{record['uid']}}')">
+    </div>
+    <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>
+    <div class="posticon editpost" title="Редактировать запись" onclick="editPost('{{record['uid']}}')"></div>
+    <h3 title="{{record['created'].strftime("%d.%m.%Y %H:%M")}}">{{record['created'].strftime("%d.%m.%Y")}}
+        {% if record['changed'] %} <span class="edits" title="Последнее изменение: {{record['changed'].strftime("%d.%m.%Y %H:%M")}}"> *</span> {% endif %}
+    </h3>
+    {% if record['url'] %}
+        <div class="smallicon extlink" title="Основной источник"></div>
+        <div class="source"><a href="{{record['url']}}">{{record['url']}}</a></div>
+    {% endif %}
+    {% if record['topics'] %}
+        <div class="smallicon topic" title="Темы"></div>
+        <div class="tags">
+        {% for topic in record['topics'].split(',') %}
+            <a href="/{{topic}}">{{topic}}</a>{% if not loop.last %},{% endif %}
+        {% endfor %}
+        </div>
+    {% endif %}
+    <div class="posttext">
+        <p>{{ record['maintext'] }}</p>
+    </div>
+</div>
