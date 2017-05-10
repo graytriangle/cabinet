@@ -12,6 +12,7 @@
         const NEW_POST = "00000000-0000-0000-0000-000000000000";
 
             function showForm() {
+                // maximizing the "new post" form
                 for (var i = document.getElementsByClassName("np").length - 1; i >= 0; i--) {
                     document.getElementsByClassName("np")[i].style.visibility = "visible";
                     document.getElementsByClassName("np")[i].style.opacity = "1";
@@ -43,6 +44,8 @@
             }
 
             function hideForm(event) {
+                // minimizing the "new post" form
+
                 // alert(event.target.getAttribute("id"));
                 if (!((event.target.getAttribute("id") == NEW_POST) || 
                     (document.getElementById(NEW_POST).contains(event.target)))) {
@@ -76,89 +79,74 @@
                 }
             }
 
+            /******************/
+            /* AJAX functions */
+            /******************/
+
             var httpRequest;
 
             function deletePost(uid) {
-                httpRequest = new XMLHttpRequest();
+                // AJAX deleting the existing post
+                var result = confirm("Подтвердите удаление записи!");
+                if (result) {
+                    httpRequest = new XMLHttpRequest();
 
-                if (!httpRequest) {
-                    alert('Giving up :( Cannot create an XMLHTTP instance');
-                    return false;
-                }
-                httpRequest.onreadystatechange = removePost;
-                httpRequest.open('GET', '/delete?uid=' + uid);
-                httpRequest.send();
-            }
-
-            function removePost() {
-                if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                    if (httpRequest.status === 200) {
-                        var el = document.getElementById(httpRequest.responseText);
-                        el.parentNode.removeChild(el);
-                    } else {
-                        alert("Error while deleting a record: " + httpRequest.status);
+                    if (!httpRequest) {
+                        alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                        return false;
                     }
+                    httpRequest.onreadystatechange = function() {
+                        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                            if (httpRequest.status === 200) {
+                                var el = document.getElementById(uid);
+                                el.parentNode.removeChild(el);
+                            } else {
+                                alert("Ошибка сервера при удалении записи: " + httpRequest.status);
+                            }
+                        }
+                    };
+                    httpRequest.open('GET', '/delete?uid=' + uid);
+                    httpRequest.send();
                 }
             }
-
-            // function deletePost(uid) {
-            //     httpRequest = new XMLHttpRequest();
-
-            //     if (!httpRequest) {
-            //         alert('Giving up :( Cannot create an XMLHTTP instance');
-            //         return false;
-            //     }
-            //     httpRequest.onreadystatechange = removePost;
-            //     httpRequest.onreadystatechange = function() {
-            //         if (this.readyState == 4 && this.status == 200) {
-            //             var el = document.getElementById(this.responseText);
-            //             el.parentNode.removeChild(el);
-            //         } else {
-            //             alert("Error while deleting a record: " + this.status);
-            //         }
-            //     };
-            //     httpRequest.open('GET', 'delete?uid=' + uid);
-            //     httpRequest.send();
-            // }
 
             function markPost(uid) {
+                // AJAX toggling the "important" star in posts
                 httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(uid);
-                var status = 'true';
+                var status = "true";
                 if (el.getElementsByClassName("star")[0].classList.contains('staron')) {
-                    status = 'false';
+                    status = "false";
                 }
                 if (!httpRequest) {
-                    alert('Giving up :( Cannot create an XMLHTTP instance');
+                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
                     return false;
                 }
-                httpRequest.onreadystatechange = markPostOnPage;
+                httpRequest.onreadystatechange = function() {
+                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                        if (httpRequest.status === 200) {
+                            el.getElementsByClassName("star")[0].classList.toggle('staron');
+                            if (status == "false") {
+                                el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
+                            } else {
+                                el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
+                            }
+                        } else {
+                            alert("Ошибка сервера при установке отметки: " + httpRequest.status);
+                        }
+                    }
+                };
                 httpRequest.open('GET', '/mark?uid=' + uid + '&status=' + status);
                 httpRequest.send();
             }
 
-            function markPostOnPage() {
-                if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                    if (httpRequest.status === 200) {
-                        var el = document.getElementById(httpRequest.responseText);
-                        el.getElementsByClassName("star")[0].classList.toggle('staron');
-                        if (el.getElementsByClassName("star")[0].classList.contains('staron')) {
-                            el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
-                        } else {
-                            el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
-                        }
-                    } else {
-                        alert("Error while deleting a record: " + httpRequest.status);
-                    }
-                }
-            }
-
             function updatePost(uid) {
+                // AJAX updating of an existing post
                 httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(uid);
                 var formData = new FormData(el.getElementsByTagName("form")[0]);
                 if (!httpRequest) {
-                    alert('Giving up :( Cannot create an XMLHTTP instance');
+                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
                     return false;
                 }
                 httpRequest.onreadystatechange = function() {
@@ -171,7 +159,7 @@
                             var newel = wrapper.firstChild;
                             oldel.parentNode.replaceChild(newel, oldel);
                         } else {
-                            alert("Error while updating a post: " + httpRequest.status);
+                            alert("Ошибка сервера при обновлении записи: " + httpRequest.status);
                         }
                     }
                 };
@@ -180,11 +168,12 @@
             }
 
             function addPost() {
+                // AJAX adding of a new post
                 httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(NEW_POST);
                 var formData = new FormData(el.getElementsByTagName("form")[0]);
                 if (!httpRequest) {
-                    alert('Giving up :( Cannot create an XMLHTTP instance');
+                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
                     return false;
                 }
                 httpRequest.onreadystatechange = function() {
@@ -197,7 +186,7 @@
                                 alert("Запись сохранена!");
                             }
                         } else {
-                            alert("Error while updating a post: " + httpRequest.status);
+                            alert("Ошибка сервера при добавлении записи: " + httpRequest.status);
                         }
                     }
                 };
@@ -205,7 +194,13 @@
                 httpRequest.send(formData);
             }
 
+            /*************************/
+            /* End of AJAX functions */
+            /*************************/
+
             function editPost(uid) {
+                // turning the "edit post" mode on
+
                 // hiding the original post
                 var tmppost = document.getElementById(uid);
                 tmppost.setAttribute("id", uid + '_tmp');
@@ -248,12 +243,13 @@
                 var tmpposttext = tmppost.getElementsByClassName("posttext")[0].getElementsByTagName("p")[0].innerHTML;
                 template.getElementsByClassName("maininputfield")[0].value = tmpposttext;
 
-                // displaying the template in place of post
+                // displaying the template in place of a post
                 template.style["display"] = "block";
                 insertAfter(template, tmppost);
             }
 
             function cancelEdit(uid) {
+                // removes an "edit post" form and retrieves the original post
                 var todelete = document.getElementById(uid);
                 todelete.parentNode.removeChild(todelete);
                 document.getElementById(uid + '_tmp').style["display"] = "block";
@@ -261,6 +257,7 @@
             }
 
             function clearNewPost() {
+                // clears all fields of the "new post" form
                 var el = document.getElementById(NEW_POST);
                 if (el.getElementsByClassName("star_field")[0].getAttribute("value") === "true") {
                     np_toggleImportant(NEW_POST);
@@ -272,10 +269,12 @@
 
 
             function insertAfter(newNode, referenceNode) {
+                // inserts new node after a referenceNode
                 referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
             }
 
             function np_toggleImportant(uid) {
+                // toggles "important" star in "new post" and "edit post" forms
                 var el = document.getElementById(uid);
                 el.getElementsByClassName("star")[0].classList.toggle('staron');
                 var attr = el.getElementsByClassName("star_field")[0].getAttribute("value");
@@ -287,6 +286,7 @@
                     el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
                 }
             }
+
         </script>
 
         <!-- "new post" window -->
