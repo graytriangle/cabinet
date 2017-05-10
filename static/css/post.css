@@ -44,7 +44,6 @@
 }
 .edits {
     font-size: 13pt;
-    color: #9090c4;
     margin-top: 0;
     margin-bottom: 0
 }
@@ -61,10 +60,16 @@ h3 {
     margin-top: 0;
     margin-bottom: 5;
 }
+h3:hover {
+    color: #404050;
+}
 p {
     font-size: 10pt;
     margin-top: 5;
     margin-bottom: 5;
+}
+a {
+    text-decoration: none;
 }
 .star {
     float: left; /* Обтекание по правому краю */
