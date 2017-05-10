@@ -101,12 +101,15 @@ def show_post(post_id):
             "where n.uid = %s;", (post_id,))
         result = dictfetchall(cur)
     except:
-        return render_template('master.html') # TODO: make 404 page
+        return render_template('404.html')
     finally:
         cur.close()
-    return render_template('master.html', data=result)
+    if result:
+        return render_template('master.html', data=result)
+    else:
+        return render_template('404.html')
 
-@app.route('/getpost', methods=['GET']) # TODO: switch to uuids; it fails for some reason
+@app.route('/getpost', methods=['GET'])
 def getpost(post_id=None):
     # get the post with the given id, the id is an uuid
     uid = request.args.get('uid')
