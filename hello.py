@@ -7,6 +7,10 @@ from flask import request
 import psycopg2
 import uuid
 
+QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
+NO_NOTE = u'Запись не существует!'
+EMPTY_TOPIC = u'Записей на данную тему не найдено!'
+
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -88,7 +92,6 @@ def mark():
     return uid 
 
 @app.route('/post/<string:post_id>') # TODO: switch to uuids; it fails for some reason
-# TODO: make title hyperlink here
 def show_post(post_id):
     # show the post with the given id, the id is an uuid
     cur = get_db().cursor()
@@ -101,13 +104,13 @@ def show_post(post_id):
             "where n.uid = %s;", (post_id,))
         result = dictfetchall(cur)
     except:
-        return render_template('404.html')
+        return render_template('404.html', message=QUERY_ERR)
     finally:
         cur.close()
     if result:
         return render_template('master.html', data=result)
     else:
-        return render_template('404.html')
+        return render_template('404.html', message=NO_NOTE)
 
 @app.route('/getpost', methods=['GET'])
 def getpost(post_id=None):
@@ -125,10 +128,33 @@ def getpost(post_id=None):
             "where n.uid = %s;", (uid,))
         result = dictfetchall(cur)
     except:
-        return render_template('master.html') # TODO: make 404 page
+        return render_template('404.html', message=QUERY_ERR)
     finally:
         cur.close()
     return render_template('post.html', record=result[0])
+
+@app.route('/topic/<string:topic>')
+def gettopic(topic):
+    # show notes on given topic
+    cur = get_db().cursor()
+    try:
+        cur.execute("select n.*, "
+            "(select string_agg(name, ',') from topics t "
+            "left join notes_topics nt on nt.topic = t.uid "
+            "where nt.note = n.uid) topics "
+            "from notes n "
+            "left join notes_topics nt on nt.note = n.uid "
+            "left join topics t on nt.topic = t.uid "
+            "where t.name = %s;", (topic.lower(),))
+        result = dictfetchall(cur)
+    except:
+        return render_template('404.html', message=QUERY_ERR)
+    finally:
+        cur.close()
+    if result:
+        return render_template('master.html', data=result)
+    else:
+        return render_template('404.html', message=EMPTY_TOPIC)
 
 @app.teardown_appcontext
 def close_connection(exception):
