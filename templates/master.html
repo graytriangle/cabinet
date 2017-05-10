@@ -222,8 +222,8 @@
                 }
                 template.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
                 template.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
-                var tmptitle = tmppost.getElementsByTagName("h3")[0].cloneNode(true);
-                var newtitle = template.getElementsByTagName("h3")[0];
+                var tmptitle = tmppost.getElementsByClassName("title")[0].cloneNode(true);
+                var newtitle = template.getElementsByClassName("title")[0];
                 template.getElementsByTagName("form")[0].replaceChild(tmptitle, newtitle);
                 if (tmppost.getElementsByClassName("source").length > 0) {
                     var tmpsrc = tmppost.getElementsByClassName("source")[0].getElementsByTagName("a")[0].innerHTML;
@@ -297,7 +297,7 @@
                 <input class="star_field" type="hidden" name="importance" value="false">
                 <div class="posticon deletepost np" title="Удалить запись" id="np_delete" onclick="clearNewPost()"></div>
                 <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="addPost()"></div>
-                <h3 class="np" title="14.11.2016 17:13" id="np_title">26.04.2017</h3>
+                <div class="np title" title="14.11.2016 17:13" id="np_title">26.04.2017</div>
                 <div class="smallicon extlink np" title="Основной источник" id="np_source_icon"></div>
                 <input class="inputfield np_input np" name="source" type="text" id="np_source" onfocus="showForm()">
                 <div class="smallicon topic np" title="Темы" id="np_topic_icon"></div>
@@ -314,7 +314,7 @@
                 <input class="star_field" type="hidden" name="importance">
                 <div class="posticon canceledit" title="Отменить редактирование"></div>
                 <div class="posticon savepost" title="Сохранить запись"></div>
-                <h3></h3>
+                <div class="title"></div>
                 <div class="smallicon extlink" title="Основной источник"></div>
                 <input class="inputfield inputsrc" name="source" type="text">
                 <div class="smallicon topic" title="Темы" ></div>

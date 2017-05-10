@@ -6,9 +6,9 @@
     </div>
     <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>
     <div class="posticon editpost" title="Редактировать запись" onclick="editPost('{{record['uid']}}')"></div>
-    <a href="/post/{{record['uid']}}"><h3 title="{{record['created'].strftime("%d.%m.%Y %H:%M")}}">{{record['created'].strftime("%d.%m.%Y")}}
+    <div class="title" title="{{record['created'].strftime("%d.%m.%Y %H:%M")}}"><a href="/post/{{record['uid']}}">{{record['created'].strftime("%d.%m.%Y")}}
         {% if record['changed'] %} <span class="edits" title="Последнее изменение: {{record['changed'].strftime("%d.%m.%Y %H:%M")}}"> *</span> {% endif %}
-    </h3></a>
+    </a></div>
     {% if record['url'] %}
         <div class="smallicon extlink" title="Основной источник"></div>
         <div class="source"><a href="{{record['url']}}">{{record['url']}}</a></div>
