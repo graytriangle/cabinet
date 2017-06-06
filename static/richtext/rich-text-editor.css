@@ -1,0 +1,46 @@
+img.rte-button {
+	cursor: pointer;
+	border: 0;
+}
+
+div.rich-text-editor {
+	display: inline-block;
+	width: 100%;
+}
+
+div.rte-editbox {
+	background-color: white;
+	min-height: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+div.rte-editbox[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #555; 
+}
+
+div.rte-editbox p {
+	margin: 0;
+}
+
+div.rte-editbox > pre.rte-sourcetext {
+	padding: 0;
+	margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+div.rte-switchmode {
+	font-size: 12px;
+	text-align: right;
+	padding: 2px 0 0 2px;
+}
+
+div.rte-switchmode > label {
+	cursor: pointer;
+}

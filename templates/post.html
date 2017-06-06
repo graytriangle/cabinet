@@ -22,6 +22,6 @@
         </div>
     {% endif %}
     <div class="posttext">
-        <p>{{ record['maintext'] }}</p>
+        <p>{{ record['maintext']|safe }}</p>
     </div>
 </div>

@@ -5,8 +5,10 @@
         </style>
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/post.css')}}>
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/newpost.css')}}>
+        <script type="text/javascript" src={{url_for('static', filename='richtext/rich-text-editor.js')}}></script>
+        <link rel="stylesheet" type="text/css" href={{url_for('static', filename='richtext/rich-text-editor.css')}}>
     </head>
-    <body onclick="hideForm(event)">
+    <body onload="showForm()">
         <script>
 
         const NEW_POST = "00000000-0000-0000-0000-000000000000";
@@ -38,7 +40,7 @@
                 document.getElementById("np_topic").style["font-size"] = "10pt";
                 document.getElementById("np_topic").style["border-width"] = "0 1px 1px 0";
                 document.getElementById("np_topic").style["margin-bottom"] = "2px";
-                document.getElementById("np_maintext").style.height = "200px";
+                // document.getElementById("np_maintext").style.height = "200px";
 
 
             }
@@ -240,8 +242,8 @@
                     }
                     template.getElementsByClassName("inputtopic")[0].setAttribute("value", tmptags);
                 }
-                var tmpposttext = tmppost.getElementsByClassName("posttext")[0].getElementsByTagName("p")[0].innerHTML;
-                template.getElementsByClassName("maininputfield")[0].value = tmpposttext;
+                var tmpposttext = tmppost.getElementsByClassName("posttext")[0].innerHTML;
+                template.getElementsByClassName("rich-text-editor")[0].getElementsByClassName("rte-editbox")[0].innerHTML = tmpposttext;
 
                 // displaying the template in place of a post
                 template.style["display"] = "block";
@@ -302,7 +304,7 @@
                 <input class="inputfield np_input np" name="source" type="text" id="np_source" onfocus="showForm()">
                 <div class="smallicon topic np" title="Темы" id="np_topic_icon"></div>
                 <input class="inputfield np_input np" name="topic" type="text" id="np_topic" onfocus="showForm()">
-                <textarea class="maininputfield" id="np_maintext" style="margin-bottom: 0px; margin-top: 0px;" name="maintext" placeholder="Место для новой записи" onfocus="showForm()"></textarea>
+                <textarea class="rich-text-editor" id="np_maintext" style="margin-bottom: 0px; margin-top: 0px;" name="maintext" onfocus="showForm()"></textarea>
             </form>
         </div>
 
@@ -319,7 +321,7 @@
                 <input class="inputfield inputsrc" name="source" type="text">
                 <div class="smallicon topic" title="Темы" ></div>
                 <input class="inputfield inputtopic" name="topic" type="text">
-                <textarea class="maininputfield" name="maintext" placeholder="Место для новой записи"></textarea>
+                <textarea class="rich-text-editor" name="maintext" placeholder="Место для новой записи"></textarea>
             </form>
         </div>
 
