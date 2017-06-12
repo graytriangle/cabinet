@@ -3,23 +3,23 @@
 		{
 			"text": "Clean",
 			"command": "cleanDoc",
-			"image": "static\/richtext\/icons\/clean.gif"
+			"image": "\/static\/richtext\/icons\/clean.gif"
 		}, {
 			"text": "Remove formatting",
 			"command": "removeFormat",
-			"image": "static\/richtext\/icons\/format.png"
+			"image": "\/static\/richtext\/icons\/format.png"
 		}, {
 			"text": "Bold",
 			"command": "bold",
-			"image": "static\/richtext\/icons\/bold.gif"
+			"image": "\/static\/richtext\/icons\/bold.gif"
 		}, {
 			"text": "Italic",
 			"command": "italic",
-			"image": "static\/richtext\/icons\/italic.gif"
+			"image": "\/static\/richtext\/icons\/italic.gif"
 		}, {
 			"text": "Underline",
 			"command": "underline",
-			"image": "static\/richtext\/icons\/underline.gif"
+			"image": "\/static\/richtext\/icons\/underline.gif"
 		}
 	]
 }

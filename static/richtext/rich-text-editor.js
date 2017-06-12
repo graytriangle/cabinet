@@ -1,26 +1,26 @@
-(function () {
+var richtext = {
 
-	function formatDoc (oDoc, sCmd, sValue) {
-		if (!validateMode(oDoc)) { return; }
+	formatDoc: function(oDoc, sCmd, sValue) {
+		if (!richtext.validateMode(oDoc)) { return; }
 		document.execCommand(sCmd, false, sValue);
 		oDoc.focus();
-	}
+	},
 
-	function validateMode (oDoc) {
-		if (!document.getElementById("rte-mode-" + rId.exec(oDoc.id)[0]).checked) { return true; }
-		alert("Uncheck \u00AB" + sModeLabel + "\u00BB.");
+	validateMode: function(oDoc) {
+		if (!document.getElementById("rte-mode-" + richtext.rId.exec(oDoc.id)[0]).checked) { return true; }
+		alert("Uncheck \u00AB" + this.sModeLabel + "\u00BB.");
 		oDoc.focus();
 		return false;
-	}
+	},
 
-	function extractText (oDoc) {
+	extractText: function(oDoc) {
 		if (oDoc.innerText) { return oDoc.innerText; }
 		var oContent = document.createRange();
 		oContent.selectNodeContents(oDoc.firstChild);
 		return oContent.toString();
-	}
+	},
 
-	function setDocMode (oDoc, bToSource) {
+	setDocMode: function(oDoc, bToSource) {
 		if (bToSource) {
 			var oContent = document.createTextNode(oDoc.innerHTML), oPre = document.createElement("pre");
 			oDoc.innerHTML = "";
@@ -32,30 +32,30 @@
 			oPre.appendChild(oContent);
 			oDoc.appendChild(oPre);
 		} else {
-			oDoc.innerHTML = extractText(oDoc);
+			oDoc.innerHTML = richtext.extractText(oDoc);
 			oDoc.contentEditable = true;
 		}
 		oDoc.focus();
-	}
+	},
 	
-	function buttonClick () {
-		var sBtnGroup = rId.exec(this.id)[0], sCmd = this.id.slice(0, - sBtnGroup.length);
-		customCommands.hasOwnProperty(sCmd) ? customCommands[sCmd](aEditors[sBtnGroup]) : formatDoc(aEditors[sBtnGroup], sCmd, this.alt || false);
-	}
+	buttonClick: function() {
+		var sBtnGroup = richtext.rId.exec(this.id)[0], sCmd = this.id.slice(0, - sBtnGroup.length);
+		this.customCommands.hasOwnProperty(sCmd) ? this.customCommands[sCmd](this.aEditors[sBtnGroup]) : richtext.formatDoc(this.aEditors[sBtnGroup], sCmd, this.alt || false);
+	},
 
-	function changeMode () {
-		setDocMode(aEditors[rId.exec(this.id)[0]], this.checked);
-	}
+	changeMode: function() {
+		richtext.setDocMode(richtext.aEditors[richtext.rId.exec(this.id)[0]], this.checked);
+	},
 
-	function updateField () {
+	updateField: function() {
 		console.log("update 1");
-		var sFieldNum = rId.exec(this.id)[0];
-		document.getElementById("rte-field-" + sFieldNum).value = document.getElementById("rte-mode-" + sFieldNum).checked ? extractText(this) : this.innerHTML;
-	}
+		var sFieldNum = richtext.rId.exec(this.id)[0];
+		document.getElementById("rte-field-" + sFieldNum).value = document.getElementById("rte-mode-" + sFieldNum).checked ? richtext.extractText(this) : this.innerHTML;
+	},
 
-	function createEditor (oTxtArea) {
+	createEditor: function(oTxtArea) {
 		console.log("create 0");
-		var		nEditorId = aEditors.length, oParent = document.createElement("div"),
+		var		nEditorId = this.aEditors.length, oParent = document.createElement("div"),
 				oToolsBar = document.createElement("div"), oEditBox = document.createElement("div"),
 				oModeBox = document.createElement("div"), oModeChB = document.createElement("input"),
 				oModeLbl = document.createElement("label");
@@ -102,7 +102,7 @@
 					
 				}
 			};
-		aEditors.push(oEditBox);
+		this.aEditors.push(oEditBox);
 
 		if (oTxtArea.form) {
 			console.log("update 0");
@@ -112,27 +112,27 @@
 			oHiddField.value = oEditBox.innerHTML;
 			oHiddField.id = "rte-field-" + nEditorId;
 			oTxtArea.form.appendChild(oHiddField);
-			oEditBox.onblur = updateField;
+			oEditBox.onblur = this.updateField;
 		}
 
-		for (var oBtnDef, oButton, nBtn = 0; nBtn < oTools.buttons.length; nBtn++) {
-			oBtnDef = oTools.buttons[nBtn];
+		for (var oBtnDef, oButton, nBtn = 0; nBtn < this.oTools.buttons.length; nBtn++) {
+			oBtnDef = this.oTools.buttons[nBtn];
 			oButton = document.createElement("img");
 			oButton.className = "rte-button";
 			oButton.id = oBtnDef.command + nEditorId;
 			oButton.src = oBtnDef.image;
 			if (oBtnDef.hasOwnProperty("value")) { oButton.alt = oBtnDef.value; }
 			oButton.title = oBtnDef.text;
-			oButton.onclick = buttonClick;
+			oButton.onclick = this.buttonClick;
 			oToolsBar.appendChild(oButton);
 		}
 
 		oModeBox.className = "rte-switchmode";
 		oModeChB.type = "checkbox";
 		oModeChB.id = "rte-mode-" + nEditorId;
-		oModeChB.onchange = changeMode;
+		oModeChB.onchange = this.changeMode;
 		oModeLbl.setAttribute("for", oModeChB.id);
-		oModeLbl.innerHTML = sModeLabel;
+		oModeLbl.innerHTML = this.sModeLabel;
 		oModeBox.appendChild(oModeChB);
 		oModeBox.appendChild(document.createTextNode(" "));
 		oModeBox.appendChild(oModeLbl);
@@ -140,38 +140,47 @@
 		oParent.appendChild(oEditBox);
 		oParent.appendChild(oModeBox);
 		oTxtArea.parentNode.replaceChild(oParent, oTxtArea);
-	}
+	},
 
-	function replaceFields (nFlag) {
-		nReady |= nFlag;
-		if (nReady !== 3) { return; }
+	replaceFields: function(nFlag) {
+		this.nReady |= nFlag;
+		if (this.nReady !== 3) { return; }
 		for (
 			var oField, nItem = 0, aTextareas = Array.prototype.slice.call(document.getElementsByTagName("textarea"), 0);
 			nItem < aTextareas.length;
-			oField = aTextareas[nItem++], oField.className !== "rich-text-editor" || createEditor(oField)
+			oField = aTextareas[nItem++], oField.className !== "rich-text-editor" || richtext.createEditor(oField)
 		);
+	},
+
+	toolsReady: function() {
+		richtext.oTools = JSON.parse(this.responseText);
+		console.log(richtext.oTools);
+		console.log("otools!");
+		richtext.replaceFields(2);
+	},
+
+	documentReady: function() { richtext.replaceFields(1); },
+
+	oTools: undefined,
+	nReady: 0,
+	sModeLabel: "Show HTML",
+	aEditors: [],
+	rId: /\d+$/,
+	oToolsReq: new XMLHttpRequest(),
+	customCommands: {
+		"cleanDoc": function (oDoc) {
+			if (richtext.validateMode(oDoc) && confirm("Are you sure?")) { oDoc.innerHTML = ""; };
+		},
+		"createLink": function (oDoc) {
+			var sLnk = prompt("Write the URL here", "http:\/\/");
+			if (sLnk && sLnk !== "http://"){ richtext.formatDoc(oDoc, "createlink", sLnk); }
+		}
+	},
+
+	richTextStart: function() {
+		this.oToolsReq.onload = this.toolsReady;
+		this.oToolsReq.open("GET", "/static/richtext/rich-text-tools.json", true);
+		this.oToolsReq.send(null);
+		window.addEventListener ? addEventListener("load", this.documentReady, false) : window.attachEvent ? attachEvent("onload", this.documentReady) : window.onload = this.documentReady;
 	}
-
-	function toolsReady () {
-		oTools = JSON.parse(this.responseText);
-		replaceFields(2);
-	}
-
-	function documentReady () { replaceFields(1); }
-
-	var		oTools, nReady = 0, sModeLabel = "Show HTML", aEditors = [], rId = /\d+$/, oToolsReq = new XMLHttpRequest(),
-			customCommands = {
-				"cleanDoc": function (oDoc) {
-					if (validateMode(oDoc) && confirm("Are you sure?")) { oDoc.innerHTML = ""; };
-				},
-				"createLink": function (oDoc) {
-					var sLnk = prompt("Write the URL here", "http:\/\/");
-					if (sLnk && sLnk !== "http://"){ formatDoc(oDoc, "createlink", sLnk); }
-				}
-			};
-
-	oToolsReq.onload = toolsReady;
-	oToolsReq.open("GET", "static/richtext/rich-text-tools.json", true);
-	oToolsReq.send(null);
-	window.addEventListener ? addEventListener("load", documentReady, false) : window.attachEvent ? attachEvent("onload", documentReady) : window.onload = documentReady;
-})();
+}

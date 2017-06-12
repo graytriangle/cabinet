@@ -13,6 +13,12 @@
 
         const NEW_POST = "00000000-0000-0000-0000-000000000000";
 
+            (function () {
+                console.log("anon");
+            })();
+
+            richtext.richTextStart();
+
             function showForm() {
                 // maximizing the "new post" form
                 for (var i = document.getElementsByClassName("np").length - 1; i >= 0; i--) {
@@ -243,7 +249,8 @@
                     template.getElementsByClassName("inputtopic")[0].setAttribute("value", tmptags);
                 }
                 var tmpposttext = tmppost.getElementsByClassName("posttext")[0].innerHTML;
-                template.getElementsByClassName("rich-text-editor")[0].getElementsByClassName("rte-editbox")[0].innerHTML = tmpposttext;
+                richtext.createEditor(template.getElementsByTagName("textarea")[0]);
+                template.getElementsByClassName("rte-editbox")[0].innerHTML = tmpposttext;
 
                 // displaying the template in place of a post
                 template.style["display"] = "block";
@@ -321,7 +328,7 @@
                 <input class="inputfield inputsrc" name="source" type="text">
                 <div class="smallicon topic" title="Темы" ></div>
                 <input class="inputfield inputtopic" name="topic" type="text">
-                <textarea class="rich-text-editor" name="maintext" placeholder="Место для новой записи"></textarea>
+                <textarea name="maintext" placeholder="Место для новой записи"></textarea>
             </form>
         </div>
 
