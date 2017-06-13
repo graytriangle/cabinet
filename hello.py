@@ -14,20 +14,21 @@ EMPTY_TOPIC = u'Записей на данную тему не найдено!'
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = psycopg2.connect("dbname=note user=postgres")
+        db = g._database = psycopg2.connect("dbname=main user=postgres")
     return db
 
 app = Flask(__name__)
 
 @app.route('/')
-def test():
+def main_page():
     cur = get_db().cursor()
     try:
         cur.execute("select n.*, "
             "(select string_agg(name, ',') from topics t "
             "left join notes_topics nt on nt.topic = t.uid "
             "where nt.note = n.uid) topics "
-            "from notes n;")
+            "from notes n "
+            "order by created desc;")
         result = dictfetchall(cur)
     finally:
         cur.close()

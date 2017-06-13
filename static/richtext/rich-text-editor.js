@@ -40,7 +40,7 @@ var richtext = {
 	
 	buttonClick: function() {
 		var sBtnGroup = richtext.rId.exec(this.id)[0], sCmd = this.id.slice(0, - sBtnGroup.length);
-		this.customCommands.hasOwnProperty(sCmd) ? this.customCommands[sCmd](this.aEditors[sBtnGroup]) : richtext.formatDoc(this.aEditors[sBtnGroup], sCmd, this.alt || false);
+		richtext.customCommands.hasOwnProperty(sCmd) ? richtext.customCommands[sCmd](richtext.aEditors[sBtnGroup]) : richtext.formatDoc(richtext.aEditors[sBtnGroup], sCmd, this.alt || false);
 	},
 
 	changeMode: function() {
@@ -48,13 +48,11 @@ var richtext = {
 	},
 
 	updateField: function() {
-		console.log("update 1");
 		var sFieldNum = richtext.rId.exec(this.id)[0];
 		document.getElementById("rte-field-" + sFieldNum).value = document.getElementById("rte-mode-" + sFieldNum).checked ? richtext.extractText(this) : this.innerHTML;
 	},
 
 	createEditor: function(oTxtArea) {
-		console.log("create 0");
 		var		nEditorId = this.aEditors.length, oParent = document.createElement("div"),
 				oToolsBar = document.createElement("div"), oEditBox = document.createElement("div"),
 				oModeBox = document.createElement("div"), oModeChB = document.createElement("input"),
@@ -105,7 +103,6 @@ var richtext = {
 		this.aEditors.push(oEditBox);
 
 		if (oTxtArea.form) {
-			console.log("update 0");
 			var oHiddField = document.createElement("input");
 			oHiddField.type = "hidden";
 			oHiddField.name = oTxtArea.name;
@@ -154,8 +151,6 @@ var richtext = {
 
 	toolsReady: function() {
 		richtext.oTools = JSON.parse(this.responseText);
-		console.log(richtext.oTools);
-		console.log("otools!");
 		richtext.replaceFields(2);
 	},
 
