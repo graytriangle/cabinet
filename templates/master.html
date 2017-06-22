@@ -269,7 +269,8 @@
                 }
                 document.getElementById("np_source").value = "";
                 document.getElementById("np_topic").value = "";
-                document.getElementById("np_maintext").value = "";
+                richtext.customCommands['cleanDoc'](el.getElementsByClassName("rte-editbox")[0]);
+                //document.getElementById("np_maintext").value = "";
             }
 
 

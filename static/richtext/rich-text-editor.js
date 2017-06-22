@@ -164,7 +164,7 @@ var richtext = {
 	oToolsReq: new XMLHttpRequest(),
 	customCommands: {
 		"cleanDoc": function (oDoc) {
-			if (richtext.validateMode(oDoc) && confirm("Are you sure?")) { oDoc.innerHTML = ""; };
+			if (richtext.validateMode(oDoc) && confirm("Подтвердите удаление записи!")) { oDoc.innerHTML = "<p><br></p>"; };
 		},
 		"createLink": function (oDoc) {
 			var sLnk = prompt("Write the URL here", "http:\/\/");

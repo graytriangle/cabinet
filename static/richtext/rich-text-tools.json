@@ -1,29 +1,29 @@
 {
 	"buttons" : [
 		{
-			"text": "Clean",
-			"command": "cleanDoc",
-			"image": "\/static\/richtext\/icons\/clean.gif"
-		}, {
 			"text": "Remove formatting",
 			"command": "removeFormat",
-			"image": "\/static\/richtext\/icons\/format.png"
+			"image": "\/static\/img\/richtext\/regular.png"
 		}, {
 			"text": "Bold",
 			"command": "bold",
-			"image": "\/static\/richtext\/icons\/bold.png"
+			"image": "\/static\/img\/richtext\/bold.png"
 		}, {
 			"text": "Italic",
 			"command": "italic",
-			"image": "\/static\/richtext\/icons\/italic.png"
+			"image": "\/static\/img\/richtext\/italic.png"
 		}, {
 			"text": "Underline",
 			"command": "underline",
-			"image": "\/static\/richtext\/icons\/underline.png"
+			"image": "\/static\/img\/richtext\/underline.png"
 		}, {
 			"text": "Blockquote",
 			"command": "blockquote",
-			"image": "\/static\/richtext\/icons\/blockquote.png"
+			"image": "\/static\/img\/richtext\/blockquote.png"
+		}, {
+			"text": "Note",
+			"command": "note",
+			"image": "\/static\/img\/richtext\/note.png"
 		}
 	]
 }
