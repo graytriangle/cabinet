@@ -23,10 +23,6 @@ div.rte-editbox[placeholder]:empty:before {
     color: #555; 
 }
 
-div.rte-editbox p {
-	margin: 0;
-}
-
 div.rte-editbox > pre.rte-sourcetext {
 	padding: 0;
 	margin: 0;
