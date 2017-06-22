@@ -11,15 +11,19 @@
 		}, {
 			"text": "Bold",
 			"command": "bold",
-			"image": "\/static\/richtext\/icons\/bold.gif"
+			"image": "\/static\/richtext\/icons\/bold.png"
 		}, {
 			"text": "Italic",
 			"command": "italic",
-			"image": "\/static\/richtext\/icons\/italic.gif"
+			"image": "\/static\/richtext\/icons\/italic.png"
 		}, {
 			"text": "Underline",
 			"command": "underline",
-			"image": "\/static\/richtext\/icons\/underline.gif"
+			"image": "\/static\/richtext\/icons\/underline.png"
+		}, {
+			"text": "Blockquote",
+			"command": "blockquote",
+			"image": "\/static\/richtext\/icons\/blockquote.png"
 		}
 	]
 }

@@ -169,6 +169,9 @@ var richtext = {
 		"createLink": function (oDoc) {
 			var sLnk = prompt("Write the URL here", "http:\/\/");
 			if (sLnk && sLnk !== "http://"){ richtext.formatDoc(oDoc, "createlink", sLnk); }
+		},
+		"blockquote": function (oDoc) {
+			richtext.formatDoc(oDoc, "insertHTML", '<blockquote>' + richtext.getSelectionHtml() + '</blockquote>');
 		}
 	},
 
@@ -177,5 +180,24 @@ var richtext = {
 		this.oToolsReq.open("GET", "/static/richtext/rich-text-tools.json", true);
 		this.oToolsReq.send(null);
 		window.addEventListener ? addEventListener("load", this.documentReady, false) : window.attachEvent ? attachEvent("onload", this.documentReady) : window.onload = this.documentReady;
+	},
+
+	getSelectionHtml: function() {
+	    var html = "";
+	    if (typeof window.getSelection != "undefined") {
+	        var sel = window.getSelection();
+	        if (sel.rangeCount) {
+	            var container = document.createElement("div");
+	            for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+	                container.appendChild(sel.getRangeAt(i).cloneContents());
+	            }
+	            html = container.innerHTML;
+	        }
+	    } else if (typeof document.selection != "undefined") {
+	        if (document.selection.type == "Text") {
+	            html = document.selection.createRange().htmlText;
+	        }
+	    }
+	    return html;
 	}
 }
