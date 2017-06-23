@@ -8,7 +8,7 @@ var richtext = {
 
 	validateMode: function(oDoc) {
 		if (!document.getElementById("rte-mode-" + richtext.rId.exec(oDoc.id)[0]).checked) { return true; }
-		alert("Uncheck \u00AB" + this.sModeLabel + "\u00BB.");
+		alert("Выключите режим \u00AB" + this.sModeLabel + "\u00BB.");
 		oDoc.focus();
 		return false;
 	},
@@ -140,8 +140,8 @@ var richtext = {
 		oModeBox.appendChild(document.createTextNode(" "));
 		oModeBox.appendChild(oModeLbl);
 		oParent.appendChild(oToolsBar);
-		oParent.appendChild(oEditBox);
 		oParent.appendChild(oModeBox);
+		oParent.appendChild(oEditBox);
 		oTxtArea.parentNode.replaceChild(oParent, oTxtArea);
 	},
 
@@ -164,7 +164,7 @@ var richtext = {
 
 	oTools: undefined,
 	nReady: 0,
-	sModeLabel: "Show HTML",
+	sModeLabel: "Показать HTML-разметку",
 	aEditors: [],
 	rId: /\d+$/,
 	oToolsReq: new XMLHttpRequest(),
