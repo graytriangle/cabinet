@@ -70,9 +70,10 @@ var richtext = {
 		}
 		oEditBox.onkeydown = 
 			function(event) {
-				if (event.keyCode === 13) 
+				if (event.keyCode === 13) {
 					// on enter wrap new paragraph in "p"
 					document.execCommand('formatBlock', false, 'p');
+				}
 				if ((event.keyCode === 8 || event.keyCode === 46) && (oEditBox.innerHTML === "" || oEditBox.innerHTML === "<br>")) {
 					// add empty "p" on backspace or delete when the field is empty
 					oEditBox.innerHTML = "<p><br></p>";
@@ -100,6 +101,11 @@ var richtext = {
 					
 				}
 			};
+		oEditBox.onkeyup = 
+			function(event) {
+				richtext.removeTag(oEditBox, 'span');
+			}
+
 		this.aEditors.push(oEditBox);
 
 		if (oTxtArea.form) {
@@ -202,5 +208,15 @@ var richtext = {
 	        }
 	    }
 	    return html;
+	},
+
+	removeTag: function(root,tagname) {
+	    var elms = root.getElementsByTagName(tagname), l = elms.length, i;
+	    for( i=l-1; i>=0; i--) {
+	        // work backwards to avoid possible complications with nested spans
+	        while(elms[i].firstChild)
+	            elms[i].parentNode.insertBefore(elms[i].firstChild,elms[i]);
+	        elms[i].parentNode.removeChild(elms[i]);
+	    }
 	}
 }

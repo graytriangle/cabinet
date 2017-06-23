@@ -1,31 +1,31 @@
 {
 	"buttons" : [
 		{
-			"text": "Remove formatting",
+			"text": "Очистить форматирование",
 			"command": "removeFormat",
 			"image": "\/static\/img\/richtext\/regular.png"
 		}, {
-			"text": "Bold",
+			"text": "Выделить жирным",
 			"command": "bold",
 			"image": "\/static\/img\/richtext\/bold.png"
 		}, {
-			"text": "Italic",
+			"text": "Выделить курсивом",
 			"command": "italic",
 			"image": "\/static\/img\/richtext\/italic.png"
 		}, {
-			"text": "Underline",
+			"text": "Подчеркнуть",
 			"command": "underline",
 			"image": "\/static\/img\/richtext\/underline.png"
 		}, {
-			"text": "Blockquote",
+			"text": "Выделить как цитату",
 			"command": "blockquote",
 			"image": "\/static\/img\/richtext\/blockquote.png"
 		}, {
-			"text": "Note",
+			"text": "Выделить как комментарий (к крупному фрагменту текста)",
 			"command": "note",
 			"image": "\/static\/img\/richtext\/note.png"
 		}, {
-			"text": "Note",
+			"text": "Выделить моноширинным шрифтом",
 			"command": "preformat",
 			"image": "\/static\/img\/richtext\/pre.png"
 		}
