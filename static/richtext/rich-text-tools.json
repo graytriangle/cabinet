@@ -24,6 +24,10 @@
 			"text": "Note",
 			"command": "note",
 			"image": "\/static\/img\/richtext\/note.png"
+		}, {
+			"text": "Note",
+			"command": "preformat",
+			"image": "\/static\/img\/richtext\/pre.png"
 		}
 	]
 }

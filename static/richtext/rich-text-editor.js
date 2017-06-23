@@ -172,6 +172,9 @@ var richtext = {
 		},
 		"blockquote": function (oDoc) {
 			richtext.formatDoc(oDoc, "insertHTML", '<blockquote>' + richtext.getSelectionHtml() + '</blockquote>');
+		},
+		"preformat": function (oDoc) {
+			richtext.formatDoc(oDoc, "insertHTML", '<pre>' + richtext.getSelectionHtml() + '</pre>');
 		}
 	},
 
