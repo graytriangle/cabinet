@@ -1,2 +1,2 @@
 venv/
-hello.pyc
+*.pyc

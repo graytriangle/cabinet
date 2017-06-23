@@ -6,6 +6,7 @@ from flask import render_template
 from flask import request
 import psycopg2
 import uuid
+import dbsettings
 
 QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
 NO_NOTE = u'Запись не существует!'
@@ -14,7 +15,7 @@ EMPTY_TOPIC = u'Записей на данную тему не найдено!'
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = psycopg2.connect("dbname=note user=postgres")
+        db = g._database = psycopg2.connect("host=%s dbname=%s user=%s password=%s" % (dbsettings.host, dbsettings.dbname, dbsettings.user, dbsettings.password))
     return db
 
 app = Flask(__name__)
