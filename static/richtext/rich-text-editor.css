@@ -1,6 +1,7 @@
 img.rte-button {
 	cursor: pointer;
 	border: 0;
+	float: left;
 }
 
 div.rich-text-editor {
@@ -16,15 +17,12 @@ div.rte-editbox {
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
+    clear: both;
 }
 
 div.rte-editbox[placeholder]:empty:before {
     content: attr(placeholder);
     color: #555; 
-}
-
-div.rte-editbox p {
-	margin: 0;
 }
 
 div.rte-editbox > pre.rte-sourcetext {
@@ -38,9 +36,18 @@ div.rte-editbox > pre.rte-sourcetext {
 div.rte-switchmode {
 	font-size: 12px;
 	text-align: right;
-	padding: 2px 0 0 2px;
+	padding: 5px 0 0 2px;
+	display: flex;
+	align-items: center;
+	float: right;
 }
 
 div.rte-switchmode > label {
 	cursor: pointer;
+	padding: 2px 0 0 0;
+}
+
+div.rte-switchmode > input {
+	margin-top: 0px;
+	margin-bottom: 0px;
 }

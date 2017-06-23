@@ -13,10 +13,6 @@
 
         const NEW_POST = "00000000-0000-0000-0000-000000000000";
 
-            (function () {
-                console.log("anon");
-            })();
-
             richtext.richTextStart();
 
             function showForm() {
@@ -249,8 +245,8 @@
                     template.getElementsByClassName("inputtopic")[0].setAttribute("value", tmptags);
                 }
                 var tmpposttext = tmppost.getElementsByClassName("posttext")[0].innerHTML;
+                template.getElementsByTagName("textarea")[0].innerHTML = tmpposttext;
                 richtext.createEditor(template.getElementsByTagName("textarea")[0]);
-                template.getElementsByClassName("rte-editbox")[0].innerHTML = tmpposttext;
 
                 // displaying the template in place of a post
                 template.style["display"] = "block";
@@ -273,7 +269,8 @@
                 }
                 document.getElementById("np_source").value = "";
                 document.getElementById("np_topic").value = "";
-                document.getElementById("np_maintext").value = "";
+                richtext.customCommands['cleanDoc'](el.getElementsByClassName("rte-editbox")[0]);
+                //document.getElementById("np_maintext").value = "";
             }
 
 

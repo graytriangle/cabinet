@@ -1,25 +1,33 @@
 {
 	"buttons" : [
 		{
-			"text": "Clean",
-			"command": "cleanDoc",
-			"image": "\/static\/richtext\/icons\/clean.gif"
-		}, {
-			"text": "Remove formatting",
+			"text": "Очистить форматирование",
 			"command": "removeFormat",
-			"image": "\/static\/richtext\/icons\/format.png"
+			"image": "\/static\/img\/richtext\/regular.png"
 		}, {
-			"text": "Bold",
+			"text": "Выделить жирным",
 			"command": "bold",
-			"image": "\/static\/richtext\/icons\/bold.gif"
+			"image": "\/static\/img\/richtext\/bold.png"
 		}, {
-			"text": "Italic",
+			"text": "Выделить курсивом",
 			"command": "italic",
-			"image": "\/static\/richtext\/icons\/italic.gif"
+			"image": "\/static\/img\/richtext\/italic.png"
 		}, {
-			"text": "Underline",
+			"text": "Подчеркнуть",
 			"command": "underline",
-			"image": "\/static\/richtext\/icons\/underline.gif"
+			"image": "\/static\/img\/richtext\/underline.png"
+		}, {
+			"text": "Выделить как цитату",
+			"command": "blockquote",
+			"image": "\/static\/img\/richtext\/blockquote.png"
+		}, {
+			"text": "Выделить как комментарий (к крупному фрагменту текста)",
+			"command": "note",
+			"image": "\/static\/img\/richtext\/note.png"
+		}, {
+			"text": "Выделить моноширинным шрифтом",
+			"command": "preformat",
+			"image": "\/static\/img\/richtext\/pre.png"
 		}
 	]
 }

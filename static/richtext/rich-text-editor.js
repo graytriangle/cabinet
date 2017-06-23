@@ -8,7 +8,7 @@ var richtext = {
 
 	validateMode: function(oDoc) {
 		if (!document.getElementById("rte-mode-" + richtext.rId.exec(oDoc.id)[0]).checked) { return true; }
-		alert("Uncheck \u00AB" + this.sModeLabel + "\u00BB.");
+		alert("Выключите режим \u00AB" + this.sModeLabel + "\u00BB.");
 		oDoc.focus();
 		return false;
 	},
@@ -40,7 +40,7 @@ var richtext = {
 	
 	buttonClick: function() {
 		var sBtnGroup = richtext.rId.exec(this.id)[0], sCmd = this.id.slice(0, - sBtnGroup.length);
-		this.customCommands.hasOwnProperty(sCmd) ? this.customCommands[sCmd](this.aEditors[sBtnGroup]) : richtext.formatDoc(this.aEditors[sBtnGroup], sCmd, this.alt || false);
+		richtext.customCommands.hasOwnProperty(sCmd) ? richtext.customCommands[sCmd](richtext.aEditors[sBtnGroup]) : richtext.formatDoc(richtext.aEditors[sBtnGroup], sCmd, this.alt || false);
 	},
 
 	changeMode: function() {
@@ -48,13 +48,11 @@ var richtext = {
 	},
 
 	updateField: function() {
-		console.log("update 1");
 		var sFieldNum = richtext.rId.exec(this.id)[0];
 		document.getElementById("rte-field-" + sFieldNum).value = document.getElementById("rte-mode-" + sFieldNum).checked ? richtext.extractText(this) : this.innerHTML;
 	},
 
 	createEditor: function(oTxtArea) {
-		console.log("create 0");
 		var		nEditorId = this.aEditors.length, oParent = document.createElement("div"),
 				oToolsBar = document.createElement("div"), oEditBox = document.createElement("div"),
 				oModeBox = document.createElement("div"), oModeChB = document.createElement("input"),
@@ -72,9 +70,10 @@ var richtext = {
 		}
 		oEditBox.onkeydown = 
 			function(event) {
-				if (event.keyCode === 13) 
+				if (event.keyCode === 13) {
 					// on enter wrap new paragraph in "p"
 					document.execCommand('formatBlock', false, 'p');
+				}
 				if ((event.keyCode === 8 || event.keyCode === 46) && (oEditBox.innerHTML === "" || oEditBox.innerHTML === "<br>")) {
 					// add empty "p" on backspace or delete when the field is empty
 					oEditBox.innerHTML = "<p><br></p>";
@@ -102,10 +101,14 @@ var richtext = {
 					
 				}
 			};
+		oEditBox.onkeyup = 
+			function(event) {
+				richtext.removeTag(oEditBox, 'span');
+			}
+
 		this.aEditors.push(oEditBox);
 
 		if (oTxtArea.form) {
-			console.log("update 0");
 			var oHiddField = document.createElement("input");
 			oHiddField.type = "hidden";
 			oHiddField.name = oTxtArea.name;
@@ -137,8 +140,8 @@ var richtext = {
 		oModeBox.appendChild(document.createTextNode(" "));
 		oModeBox.appendChild(oModeLbl);
 		oParent.appendChild(oToolsBar);
-		oParent.appendChild(oEditBox);
 		oParent.appendChild(oModeBox);
+		oParent.appendChild(oEditBox);
 		oTxtArea.parentNode.replaceChild(oParent, oTxtArea);
 	},
 
@@ -154,8 +157,6 @@ var richtext = {
 
 	toolsReady: function() {
 		richtext.oTools = JSON.parse(this.responseText);
-		console.log(richtext.oTools);
-		console.log("otools!");
 		richtext.replaceFields(2);
 	},
 
@@ -163,17 +164,23 @@ var richtext = {
 
 	oTools: undefined,
 	nReady: 0,
-	sModeLabel: "Show HTML",
+	sModeLabel: "Показать HTML-разметку",
 	aEditors: [],
 	rId: /\d+$/,
 	oToolsReq: new XMLHttpRequest(),
 	customCommands: {
 		"cleanDoc": function (oDoc) {
-			if (richtext.validateMode(oDoc) && confirm("Are you sure?")) { oDoc.innerHTML = ""; };
+			if (richtext.validateMode(oDoc) && confirm("Подтвердите удаление записи!")) { oDoc.innerHTML = "<p><br></p>"; };
 		},
 		"createLink": function (oDoc) {
 			var sLnk = prompt("Write the URL here", "http:\/\/");
 			if (sLnk && sLnk !== "http://"){ richtext.formatDoc(oDoc, "createlink", sLnk); }
+		},
+		"blockquote": function (oDoc) {
+			richtext.formatDoc(oDoc, "insertHTML", '<blockquote>' + richtext.getSelectionHtml() + '</blockquote>');
+		},
+		"preformat": function (oDoc) {
+			richtext.formatDoc(oDoc, "insertHTML", '<pre>' + richtext.getSelectionHtml() + '</pre>');
 		}
 	},
 
@@ -182,5 +189,34 @@ var richtext = {
 		this.oToolsReq.open("GET", "/static/richtext/rich-text-tools.json", true);
 		this.oToolsReq.send(null);
 		window.addEventListener ? addEventListener("load", this.documentReady, false) : window.attachEvent ? attachEvent("onload", this.documentReady) : window.onload = this.documentReady;
+	},
+
+	getSelectionHtml: function() {
+	    var html = "";
+	    if (typeof window.getSelection != "undefined") {
+	        var sel = window.getSelection();
+	        if (sel.rangeCount) {
+	            var container = document.createElement("div");
+	            for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+	                container.appendChild(sel.getRangeAt(i).cloneContents());
+	            }
+	            html = container.innerHTML;
+	        }
+	    } else if (typeof document.selection != "undefined") {
+	        if (document.selection.type == "Text") {
+	            html = document.selection.createRange().htmlText;
+	        }
+	    }
+	    return html;
+	},
+
+	removeTag: function(root,tagname) {
+	    var elms = root.getElementsByTagName(tagname), l = elms.length, i;
+	    for( i=l-1; i>=0; i--) {
+	        // work backwards to avoid possible complications with nested spans
+	        while(elms[i].firstChild)
+	            elms[i].parentNode.insertBefore(elms[i].firstChild,elms[i]);
+	        elms[i].parentNode.removeChild(elms[i]);
+	    }
 	}
 }

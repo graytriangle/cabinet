@@ -21,14 +21,15 @@ def get_db():
 app = Flask(__name__)
 
 @app.route('/')
-def test():
+def main_page():
     cur = get_db().cursor()
     try:
         cur.execute("select n.*, "
             "(select string_agg(name, ',') from topics t "
             "left join notes_topics nt on nt.topic = t.uid "
             "where nt.note = n.uid) topics "
-            "from notes n;")
+            "from notes n "
+            "order by created desc;")
         result = dictfetchall(cur)
     finally:
         cur.close()
