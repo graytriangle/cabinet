@@ -144,7 +144,6 @@ var richtext = {
 		oParent.appendChild(oModeBox);
 		oParent.appendChild(oEditBox);
 		oTxtArea.parentNode.replaceChild(oParent, oTxtArea);
-		console.log("done!");
 	},
 
 	replaceFields: function(nFlag) {
@@ -155,6 +154,8 @@ var richtext = {
 			nItem < aTextareas.length;
 			oField = aTextareas[nItem++], oField.className !== "rich-text-editor" || richtext.createEditor(oField)
 		);
+		var event = new CustomEvent("rteReadyEvent", { "detail": "Event that fires when richtext module has finished executing" });
+		document.dispatchEvent(event);
 	},
 
 	toolsReady: function() {
@@ -164,8 +165,6 @@ var richtext = {
 
 	documentReady: function() { 
 		richtext.replaceFields(1); 
-		var event = new CustomEvent("rteReadyEvent", { "detail": "Event that fires when richtext module has finished executing" });
-		document.dispatchEvent(event);
 	},
 
 	oTools: undefined,
