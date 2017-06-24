@@ -7,6 +7,7 @@ from flask import request
 import psycopg2
 import uuid
 import dbsettings
+from datetime import datetime
 
 QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
 NO_NOTE = u'Запись не существует!'
@@ -19,6 +20,10 @@ def get_db():
     return db
 
 app = Flask(__name__)
+
+@app.context_processor
+def inject_now():
+    return {'now': datetime.utcnow()}
 
 @app.route('/')
 def main_page():

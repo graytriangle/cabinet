@@ -1,5 +1,6 @@
 <html>
     <head>
+    <title>Cabinet</title>
      <meta charset="UTF-8"> 
         <style>
         </style>
@@ -315,7 +316,7 @@
                 <input class="star_field" type="hidden" name="importance" value="false">
                 <div class="posticon deletepost np" title="Удалить запись" id="np_delete" onclick="clearNewPost()"></div>
                 <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="addPost()"></div>
-                <div class="np title" title="14.11.2016 17:13" id="np_title">26.04.2017</div>
+                <div class="np title" title="14.11.2016 17:13" id="np_title">{{ now.strftime('%d.%m.%Y') }}</div>
                 <div class="smallicon extlink np" title="Основной источник" id="np_source_icon"></div>
                 <input class="inputfield np_input np" name="source" type="text" id="np_source" onfocus="showForm()">
                 <div class="smallicon topic np" title="Темы" id="np_topic_icon"></div>
