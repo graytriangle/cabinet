@@ -18,6 +18,7 @@ div.rte-editbox {
     overflow-wrap: break-word;
     white-space: normal;
     clear: both;
+    transition: height 0.5s, min-height 0.5s;
 }
 
 div.rte-editbox[placeholder]:empty:before {

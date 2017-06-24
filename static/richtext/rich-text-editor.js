@@ -64,6 +64,7 @@ var richtext = {
 		oEditBox.className = "rte-editbox";
 		oEditBox.id = "rte-editbox-" + nEditorId;
 		oEditBox.contentEditable = true;
+		oEditBox.setAttribute("onfocus", "showForm()");
 		oEditBox.innerHTML = oTxtArea.value;
 		if (oEditBox.innerHTML === "") {
 			oEditBox.innerHTML = "<p><br></p>"
@@ -143,6 +144,7 @@ var richtext = {
 		oParent.appendChild(oModeBox);
 		oParent.appendChild(oEditBox);
 		oTxtArea.parentNode.replaceChild(oParent, oTxtArea);
+		console.log("done!");
 	},
 
 	replaceFields: function(nFlag) {
@@ -160,7 +162,11 @@ var richtext = {
 		richtext.replaceFields(2);
 	},
 
-	documentReady: function() { richtext.replaceFields(1); },
+	documentReady: function() { 
+		richtext.replaceFields(1); 
+		var event = new CustomEvent("rteReadyEvent", { "detail": "Event that fires when richtext module has finished executing" });
+		document.dispatchEvent(event);
+	},
 
 	oTools: undefined,
 	nReady: 0,
