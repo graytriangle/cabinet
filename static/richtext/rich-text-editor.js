@@ -64,7 +64,6 @@ var richtext = {
 		oEditBox.className = "rte-editbox";
 		oEditBox.id = "rte-editbox-" + nEditorId;
 		oEditBox.contentEditable = true;
-		oEditBox.setAttribute("onfocus", "showForm()");
 		oEditBox.innerHTML = oTxtArea.value;
 		if (oEditBox.innerHTML === "") {
 			oEditBox.innerHTML = "<p><br></p>"

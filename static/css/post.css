@@ -64,17 +64,35 @@ div {
 }
 
 p {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 10pt;
     margin-top: 7px;
     margin-bottom: 0px;
 }
-blockquote {
-  border-left: 3px solid #a6caf0;
-  padding-left: 20px; 
-    margin-top: 16px;
-    margin-bottom: 16px;
-    margin-left: 30px;
-    margin-right: 30px;
+blockquote { /* стиль цитаты */
+    font-family: Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, serif;
+    font-size: 10.5pt;
+    margin-top: 7px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 15px; 
+}
+
+blockquote:before { /* буквица-кавычка для цитаты */
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    content: "\201C";
+    font-size: 50px;
+    position: relative;
+    padding-right: 10px;
+    color: #7a7a7a;
+    line-height: 20px;
+    top: 12px;
+    float:left;
+}
+
+blockquote[cite]:before { /* стиль цитаты со ссылкой */
+    color: #606080;
 }
 
 .star {

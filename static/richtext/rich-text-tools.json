@@ -21,10 +21,6 @@
 			"command": "blockquote",
 			"image": "\/static\/img\/richtext\/blockquote.png"
 		}, {
-			"text": "Выделить как комментарий (к крупному фрагменту текста)",
-			"command": "note",
-			"image": "\/static\/img\/richtext\/note.png"
-		}, {
 			"text": "Выделить моноширинным шрифтом",
 			"command": "preformat",
 			"image": "\/static\/img\/richtext\/pre.png"
