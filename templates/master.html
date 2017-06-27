@@ -4,8 +4,10 @@
      <meta charset="UTF-8"> 
         <style>
         </style>
+        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/main.css')}}>
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/post.css')}}>
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/newpost.css')}}>
+        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/todo.css')}}>
         <script type="text/javascript" src={{url_for('static', filename='richtext/rich-text-editor.js')}}></script>
         <link rel="stylesheet" type="text/css" href={{url_for('static', filename='richtext/rich-text-editor.css')}}>
     </head>
@@ -311,44 +313,73 @@
 
         </script>
 
-        <!-- "new post" window -->
-        <div class="post" id="00000000-0000-0000-0000-000000000000">
-            <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
-                <input class="uid_field" type="hidden" name="uid" value="00000000-0000-0000-0000-000000000000">
-                <div class="star np" title="Отметить запись как важную" id="np_star" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
-                <input class="star_field" type="hidden" name="importance" value="false">
-                <div class="posticon deletepost np" title="Удалить запись" id="np_delete" onclick="clearNewPost()"></div>
-                <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="addPost()"></div>
-                <div class="np title" title="{{now.strftime("%d.%m.%Y %H:%M")}}" id="np_title">{{ now.strftime('%d.%m.%Y') }}</div>
-                <div class="smallicon extlink np" title="Основной источник" id="np_source_icon"></div>
-                <input class="inputfield np_input np" name="source" type="text" id="np_source" onfocus="showForm()">
-                <div class="smallicon topic np" title="Темы" id="np_topic_icon"></div>
-                <input class="inputfield np_input np" name="topic" type="text" id="np_topic" onfocus="showForm()">
-                <textarea class="rich-text-editor" id="np_maintext" style="margin-bottom: 0px; margin-top: 0px;" name="maintext" onfocus="showForm()"></textarea>
-            </form>
-        </div>
+        <div id="main">
+            <div id="leftcol">
+                <div class="todo">
+                    <p class="todo_title">Задачи</p>
+                    <p class="todo_level0">Внешность</p>
+                        <p class="todo_level1">Купить новые кеды</p>
+                        <p class="todo_level1">Постричься</p>
+                        <p class="todo_level1">Пользоваться одеколоном</p>
+                        <p class="todo_level1">Поработать над интонациями</p>
+                    <p class="todo_level0">Cabinet</p>
+                        <p class="todo_level1">Сделать todo-list</p>
+                            <p class="todo_level2">Разработать стиль</p>
+                            <p class="todo_level2">Сделать js-сворачивание</p>
+                            <p class="todo_level2">Прикрутить бэкенд</p>
+                        <p class="todo_level1">Поправить баги</p>
+                    <p class="todo_level0">Прочитать</p>
+                    <p class="todo_level0">Прочее</p>
+                    </table>
+                </div>
+            </div>
 
-        <!-- template for "edit post" mode -->
-        <div class="post" id="00000000-0000-0000-0000-000000000001" style="display: none;">
-            <form action="." method="POST" style="margin-bottom: 0px;">
-                <input class="uid_field" type="hidden" name="uid">
-                <div class="star"></div>
-                <input class="star_field" type="hidden" name="importance">
-                <div class="posticon canceledit" title="Отменить редактирование"></div>
-                <div class="posticon savepost" title="Сохранить запись"></div>
-                <div class="title"></div>
-                <div class="smallicon extlink" title="Основной источник"></div>
-                <input class="inputfield inputsrc" name="source" type="text">
-                <div class="smallicon topic" title="Темы" ></div>
-                <input class="inputfield inputtopic" name="topic" type="text">
-                <textarea name="maintext" placeholder="Место для новой записи"></textarea>
-            </form>
-        </div>
+            <div id="maincol">
+            <!-- "new post" window -->
+                <div class="post" id="00000000-0000-0000-0000-000000000000">
+                    <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
+                        <input class="uid_field" type="hidden" name="uid" value="00000000-0000-0000-0000-000000000000">
+                        <div class="star np" title="Отметить запись как важную" id="np_star" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
+                        <input class="star_field" type="hidden" name="importance" value="false">
+                        <div class="posticon deletepost np" title="Удалить запись" id="np_delete" onclick="clearNewPost()"></div>
+                        <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="addPost()"></div>
+                        <div class="np title" title="{{now.strftime("%d.%m.%Y %H:%M")}}" id="np_title">{{ now.strftime('%d.%m.%Y') }}</div>
+                        <div class="smallicon extlink np" title="Основной источник" id="np_source_icon"></div>
+                        <input class="inputfield np_input np" name="source" type="text" id="np_source" onfocus="showForm()">
+                        <div class="smallicon topic np" title="Темы" id="np_topic_icon"></div>
+                        <input class="inputfield np_input np" name="topic" type="text" id="np_topic" onfocus="showForm()">
+                        <textarea class="rich-text-editor" id="np_maintext" style="margin-bottom: 0px; margin-top: 0px;" name="maintext" onfocus="showForm()"></textarea>
+                    </form>
+                </div>
 
-        <!-- actual posts -->
-        {% for record in data %}
-            {% include "post.html" %}
-        {% endfor %}
+                <!-- template for "edit post" mode -->
+                <div class="post" id="00000000-0000-0000-0000-000000000001" style="display: none;">
+                    <form action="." method="POST" style="margin-bottom: 0px;">
+                        <input class="uid_field" type="hidden" name="uid">
+                        <div class="star"></div>
+                        <input class="star_field" type="hidden" name="importance">
+                        <div class="posticon canceledit" title="Отменить редактирование"></div>
+                        <div class="posticon savepost" title="Сохранить запись"></div>
+                        <div class="title"></div>
+                        <div class="smallicon extlink" title="Основной источник"></div>
+                        <input class="inputfield inputsrc" name="source" type="text">
+                        <div class="smallicon topic" title="Темы" ></div>
+                        <input class="inputfield inputtopic" name="topic" type="text">
+                        <textarea name="maintext" placeholder="Место для новой записи"></textarea>
+                    </form>
+                </div>
+
+                <!-- actual posts -->
+                {% for record in data %}
+                    {% include "post.html" %}
+                {% endfor %}
+
+            </div>
+
+            <div id="rightcol">
+
+            </div>
+        </div>
 
     </body>
 </html>

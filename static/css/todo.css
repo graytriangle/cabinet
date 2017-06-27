@@ -1,0 +1,43 @@
+.todo {
+    border-radius: 20px;
+    border: 2px solid #a6caf0;
+    padding: 20px; 
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 8px;
+    background-color: #f7fbff;
+}
+
+.todo_title {
+    font-size: 13pt;
+    color: #606080;
+    margin-top: 0;
+    margin-bottom: 5;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+}
+
+.todo_level0 {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 11pt;
+    margin-top: 0px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.todo_level1 {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 10pt;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.todo_level2 {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 10pt;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    margin-left: 40px;
+}
