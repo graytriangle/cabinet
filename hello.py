@@ -38,7 +38,7 @@ def main_page():
         main = dictfetchall(cur)
 
         cur.execute("select * "
-            "from tasks;")
+            "from goals;")
         todo = dictfetchall(cur)
     finally:
         cur.close()
