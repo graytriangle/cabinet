@@ -316,21 +316,31 @@
         <div id="main">
             <div id="leftcol">
                 <div class="todo">
-                    <p class="todo_title">Задачи</p>
-                    <p class="todo_level0">Внешность</p>
-                        <p class="todo_level1">Купить новые кеды</p>
-                        <p class="todo_level1">Постричься</p>
-                        <p class="todo_level1">Пользоваться одеколоном</p>
-                        <p class="todo_level1">Поработать над интонациями</p>
-                    <p class="todo_level0">Cabinet</p>
-                        <p class="todo_level1">Сделать todo-list</p>
-                            <p class="todo_level2">Разработать стиль</p>
-                            <p class="todo_level2">Сделать js-сворачивание</p>
-                            <p class="todo_level2">Прикрутить бэкенд</p>
-                        <p class="todo_level1">Поправить баги</p>
-                    <p class="todo_level0">Прочитать</p>
-                    <p class="todo_level0">Прочее</p>
-                    </table>
+                    <div class="todo_title">Задачи</div>
+                    {% for record in todo recursive %}
+                        <div class="{% if loop.depth == 1 %}todo_toplevel{% else %}todo_task{% endif %}">{{record.name}}
+                        {% if record.children %}
+                            {{ loop(record.children) }}
+                        {% endif %}
+                        </div>
+                    {% endfor %}
+<!--                     <div class="todo_title">Задачи</div>
+                    <div class="todo_toplevel">Внешность
+                        <div class="todo_task">Купить новые кеды</div>
+                        <div class="todo_task">Постричься</div>
+                        <div class="todo_task">Пользоваться одеколоном</div>
+                        <div class="todo_task">Поработать над интонациями</div>
+                    </div>
+                    <div class="todo_toplevel">Cabinet
+                        <div class="todo_task">Сделать todo-list
+                            <div class="todo_task">Разработать стиль</div>
+                            <div class="todo_task">Сделать js-сворачивание</div>
+                            <div class="todo_task">Прикрутить бэкенд</div>
+                        </div>
+                        <div class="todo_task">Поправить баги</div>
+                    </div>
+                    <div class="todo_toplevel">Прочитать</div>
+                    <div class="todo_toplevel">Прочее</div> -->
                 </div>
             </div>
 
@@ -370,7 +380,7 @@
                 </div>
 
                 <!-- actual posts -->
-                {% for record in data %}
+                {% for record in main %}
                     {% include "post.html" %}
                 {% endfor %}
 

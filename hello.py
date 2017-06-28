@@ -35,10 +35,14 @@ def main_page():
             "where nt.note = n.uid) topics "
             "from notes n "
             "order by created desc;")
-        result = dictfetchall(cur)
+        main = dictfetchall(cur)
+
+        cur.execute("select * "
+            "from tasks;")
+        todo = dictfetchall(cur)
     finally:
         cur.close()
-    return render_template('master.html', data=result)
+    return render_template('master.html', main=main, todo=get_nested(todo))
 
 @app.route('/', methods=['POST'])
 def my_form_post():
@@ -182,3 +186,20 @@ def decodesql(record):
     return tuple(
         element.decode('utf-8') if type(element) is str else element for element in record
     )
+
+def get_nested(pool, target = []):
+    "Builds a new list of dicts (target) of arbitrary depth from another flat list of dicts (result of dictfetchall())"
+    "Fields 'parent' and 'uid' are required"
+    if not target:
+        for i in pool:
+            if not i['parent']:
+                target.append(i)
+    for item in target:
+        children = []
+        for old in pool:
+            if old['parent'] == item['uid']:
+                children.append(old)
+        if children:
+            children = get_nested(pool, children)
+        item['children'] = children
+    return target
