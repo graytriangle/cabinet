@@ -85,17 +85,23 @@
     margin-right: 6;
 } 
 
-.editgoal { 
-    background-image: url('../img/todo/edit.png');
-    display: none;
+.goalname_done { 
+	text-decoration: line-through;
+	color: #606060;
 } 
 
-.savegoal { 
+.goalsetting {
+	display: none;
+}
+
+.editgoal { 
+    background-image: url('../img/todo/edit.png');
+} 
+
+.checkgoal { 
     background-image: url('../img/todo/check.png');
-    display: none;
 } 
 
 .addgoal { 
     background-image: url('../img/todo/add.png');
-    display: none;
 } 

@@ -37,8 +37,9 @@ def main_page():
             "order by created desc;")
         main = dictfetchall(cur)
 
-        cur.execute("select * "
-            "from goals;")
+        cur.execute("select * from goals "
+            "where coalesce(finished, timezone('utc'::text, now())) "
+            "> (timezone('utc'::text, now()) - '5 day'::interval);")
         todo = dictfetchall(cur)
     finally:
         cur.close()
@@ -166,6 +167,43 @@ def gettopic(topic):
         return render_template('master.html', data=result)
     else:
         return render_template('404.html', message=EMPTY_TOPIC)
+
+# "goals block" functions
+
+@app.route('/goals/check', methods=['GET'])
+def goal_check():
+    uid = (request.args.get('uid', ''),)
+    cur = get_db().cursor()
+    try:
+        cur.execute("UPDATE goals SET finished=timezone('utc'::text, now()) WHERE uid = %s::uuid;", uid)
+        get_db().commit()
+    finally:
+        cur.close()
+    return uid # getting uid back to delete post from page
+
+@app.route('/goals/uncheck', methods=['GET'])
+def goal_uncheck():
+    uid = (request.args.get('uid', ''),)
+    cur = get_db().cursor()
+    try:
+        cur.execute("UPDATE goals SET finished=NULL WHERE uid = %s::uuid;", uid)
+        get_db().commit()
+    finally:
+        cur.close()
+    return uid # getting uid back to delete post from page
+
+@app.route('/goals/delete', methods=['GET'])
+def goal_delete():
+    uid = (request.args.get('uid', ''),)
+    cur = get_db().cursor()
+    try:
+        cur.execute("DELETE FROM goals WHERE uid = %s::uuid;", uid)
+        get_db().commit()
+    finally:
+        cur.close()
+    return uid # getting uid back to delete post from page
+
+# auxiliary finctions
 
 @app.teardown_appcontext
 def close_connection(exception):

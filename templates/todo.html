@@ -15,14 +15,16 @@ function goal_settings(event, show) {
     } else {
         var el = event.target.parentNode;
     }
-    if (show) {
-        el.getElementsByClassName("editgoal")[0].style["display"] = "block";
-        el.getElementsByClassName("addgoal")[0].style["display"] = "block";
-        el.getElementsByClassName("savegoal")[0].style["display"] = "block";
-    } else {
-        el.getElementsByClassName("editgoal")[0].style["display"] = "none";
-        el.getElementsByClassName("addgoal")[0].style["display"] = "none";
-        el.getElementsByClassName("savegoal")[0].style["display"] = "none";
+    /* hide/show icons that are immediate children of a target div */
+    for (var i = 0; i < el.childNodes.length; i++) {
+        if (typeof el.childNodes[i].classList !== "undefined" 
+            && el.childNodes[i].classList.contains('goalsetting')) {
+            if (show) {
+                el.childNodes[i].style["display"] = "block";
+            } else {
+                el.childNodes[i].style["display"] = "none";
+            }
+        }        
     }
 }
 </script>
@@ -31,17 +33,23 @@ function goal_settings(event, show) {
 <div class="todo">
     <div class="todo_title">Задачи</div>
     {% for record in todo recursive %}
-        
+        {% set active = False %}
+        {% if record.children and not record.finished %}
+            {% set active = True %}
+        {% endif %}
         <div class="{% if loop.depth == 1 %} todo_toplevel {% else %} todo_task {% endif %}" onmouseover="goal_settings(event, true)" onmouseout="goal_settings(event, false)">
             <div 
-                class="todoicon goalgroup {% if not record.children %} graygoal {% endif %} " 
-                {% if record.children %} onclick="goal_toggle(event)" {% endif %}>
+                class="todoicon goalgroup {% if not active %} graygoal {% endif %} " 
+                {% if active %} onclick="goal_toggle(event)" {% endif %}>
             </div>
-            <div class="goalname">{{record.name}}</div>
-            <div class="todoicon editgoal"></div>
-            <div class="todoicon addgoal"></div>
-            <div class="todoicon savegoal"></div>
-            {% if record.children %}
+            <div class="goalname {% if record.finished %} goalname_done {% endif %}">
+            {{record.name}}</div>
+            {% if not record.finished %}
+                <div class="todoicon goalsetting editgoal"></div>
+                <div class="todoicon goalsetting addgoal"></div>
+            {% endif %}
+            <div class="todoicon goalsetting checkgoal"></div>
+            {% if active %}
                 <div class="goal_childgroup">
                 {{ loop(record.children) }}
                 </div>
