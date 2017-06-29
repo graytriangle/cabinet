@@ -1,0 +1,31 @@
+<script>
+function goal_toggle(event) {
+    var children = event.target.parentNode.getElementsByClassName("goal_childgroup")[0];
+    event.target.classList.toggle('hiddengoal');
+    if (children.style["display"] == "none") {
+        children.style["display"] = "block";
+    } else {
+        children.style["display"] = "none";
+    }
+}
+</script>
+
+
+<div class="todo">
+    <div class="todo_title">Задачи</div>
+    {% for record in todo recursive %}
+        
+        <div class="{% if loop.depth == 1 %} todo_toplevel {% else %} todo_task {% endif %}">
+            <div 
+                class="todoicon goalgroup {% if not record.children %} graygoal {% endif %} " 
+                {% if record.children %} onclick="goal_toggle(event)" {% endif %}>
+            </div>
+            {{record.name}}
+            {% if record.children %}
+                <div class="goal_childgroup">
+                {{ loop(record.children) }}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>

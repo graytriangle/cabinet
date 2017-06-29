@@ -34,3 +34,44 @@
     margin-bottom: 0px;
     margin-left: 20px;
 }
+
+.goal_childgroup {
+	display: block;
+	opacity: 1;
+}
+
+.todoicon {
+    float: left; /* Обтекание по правому краю */
+    width: 16px;
+    height: 16px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-position: 0px 0px;
+    background-size: 16px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.goalgroup {
+    margin-right: 6;
+    background-image: url('../img/todo/show.png');
+    background-position: 0px 0px;
+}
+
+.hiddengoal { 
+    background-position: 0px -16px;
+} 
+/*.showgoal_gray { 
+    margin-right: 6;
+    background-image: url('../img/todo/show.png');
+    background-position: 0px -32px;
+} */
+.graygoal { 
+    background-position: 0px -48px;
+    cursor: default;
+} 
