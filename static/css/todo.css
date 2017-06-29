@@ -6,6 +6,9 @@
     margin-right: auto;
     margin-bottom: 8px;
     background-color: #f7fbff;
+    float: left;
+    width: 100%;
+    box-sizing: border-box; /* helps avoid width+padding overflow */
 }
 
 .todo_title {
@@ -24,6 +27,8 @@
     margin-top: 5px;
     font-weight: bold;
     margin-bottom: 0px;
+    float: left;
+    clear: both;
 }
 
 .todo_task {
@@ -33,6 +38,8 @@
     font-weight: normal;
     margin-bottom: 0px;
     margin-left: 20px;
+    float: left;
+    clear: both;
 }
 
 .goal_childgroup {
@@ -47,6 +54,7 @@
     margin-top: 0;
     margin-bottom: 0;
     margin-left: 0;
+    margin-right: 6;
     padding-top: 0;
     padding-bottom: 0;
     padding-left: 0;
@@ -58,7 +66,6 @@
 }
 
 .goalgroup {
-    margin-right: 6;
     background-image: url('../img/todo/show.png');
     background-position: 0px 0px;
 }
@@ -66,12 +73,29 @@
 .hiddengoal { 
     background-position: 0px -16px;
 } 
-/*.showgoal_gray { 
-    margin-right: 6;
-    background-image: url('../img/todo/show.png');
-    background-position: 0px -32px;
-} */
+
 .graygoal { 
     background-position: 0px -48px;
     cursor: default;
+} 
+
+.goalname { 
+	float: left;
+    margin-bottom: 0px;
+    margin-right: 6;
+} 
+
+.editgoal { 
+    background-image: url('../img/todo/edit.png');
+    display: none;
+} 
+
+.savegoal { 
+    background-image: url('../img/todo/check.png');
+    display: none;
+} 
+
+.addgoal { 
+    background-image: url('../img/todo/add.png');
+    display: none;
 } 

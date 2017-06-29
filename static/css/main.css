@@ -13,8 +13,8 @@
 }
 
 #main > #maincol {
-	padding-left: 30px;
-	padding-right: 30px;
+	padding-left: 25px;
+	padding-right: 25px;
     flex: 16;
     order: 2;
 }

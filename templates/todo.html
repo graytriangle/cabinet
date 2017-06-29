@@ -8,6 +8,23 @@ function goal_toggle(event) {
         children.style["display"] = "none";
     }
 }
+
+function goal_settings(event, show) {
+    if (event.target.classList.contains('todo_toplevel') || event.target.classList.contains('todo_task')) {
+        var el = event.target;
+    } else {
+        var el = event.target.parentNode;
+    }
+    if (show) {
+        el.getElementsByClassName("editgoal")[0].style["display"] = "block";
+        el.getElementsByClassName("addgoal")[0].style["display"] = "block";
+        el.getElementsByClassName("savegoal")[0].style["display"] = "block";
+    } else {
+        el.getElementsByClassName("editgoal")[0].style["display"] = "none";
+        el.getElementsByClassName("addgoal")[0].style["display"] = "none";
+        el.getElementsByClassName("savegoal")[0].style["display"] = "none";
+    }
+}
 </script>
 
 
@@ -15,12 +32,15 @@ function goal_toggle(event) {
     <div class="todo_title">Задачи</div>
     {% for record in todo recursive %}
         
-        <div class="{% if loop.depth == 1 %} todo_toplevel {% else %} todo_task {% endif %}">
+        <div class="{% if loop.depth == 1 %} todo_toplevel {% else %} todo_task {% endif %}" onmouseover="goal_settings(event, true)" onmouseout="goal_settings(event, false)">
             <div 
                 class="todoicon goalgroup {% if not record.children %} graygoal {% endif %} " 
                 {% if record.children %} onclick="goal_toggle(event)" {% endif %}>
             </div>
-            {{record.name}}
+            <div class="goalname">{{record.name}}</div>
+            <div class="todoicon editgoal"></div>
+            <div class="todoicon addgoal"></div>
+            <div class="todoicon savegoal"></div>
             {% if record.children %}
                 <div class="goal_childgroup">
                 {{ loop(record.children) }}
