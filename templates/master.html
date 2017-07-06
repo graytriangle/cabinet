@@ -311,6 +311,16 @@
                 }
             }
 
+            /*************************/
+            /* Aux functions */
+            /*************************/
+
+            function findAncestor(el, cls) {
+                // returns first ancestor with a certain class
+                while ((el = el.parentElement) && !el.classList.contains(cls));
+                return el;
+            }
+
         </script>
 
         <div id="main">

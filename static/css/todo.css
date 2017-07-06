@@ -1,4 +1,5 @@
 .todo {
+	/* the entire todo block */
     border-radius: 20px;
     border: 2px solid #a6caf0;
     padding: 20px; 
@@ -12,6 +13,7 @@
 }
 
 .todo_title {
+	/* title of the todo block */
     font-size: 13pt;
     color: #606080;
     margin-top: 0;
@@ -21,40 +23,37 @@
     text-align: center;
 }
 
-.todo_toplevel {
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 11pt;
-    margin-top: 5px;
-    font-weight: bold;
-    margin-bottom: 0px;
-    float: left;
-    clear: both;
-}
-
 .todo_task {
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 10pt;
+	/* parent class for a single intention */
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
     margin-top: 5px;
-    font-weight: normal;
     margin-bottom: 0px;
-    margin-left: 20px;
     float: left;
     clear: both;
 }
 
-.goal_childgroup {
-	display: block;
-	opacity: 1;
+.toptask {
+	/* style for top-level intentions */
+    font-size: 11pt;
+    font-weight: bold;
+}
+
+.childtask {
+	/* style for child intentions */
+    font-size: 10pt;
+    font-weight: normal;
+    margin-left: 20px;
 }
 
 .todoicon {
-    float: left; /* Обтекание по правому краю */
+	/* parent icon class */
+    float: left;
     width: 16px;
     height: 16px;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    margin-right: 6;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 6px;
     padding-top: 0;
     padding-bottom: 0;
     padding-left: 0;
@@ -66,42 +65,60 @@
 }
 
 .goalgroup {
+	/* triangle hide/show icon in default "show" state */
     background-image: url('../img/todo/show.png');
-    background-position: 0px 0px;
 }
 
 .hiddengoal { 
+	/* hide/show icon in "hide" state */
     background-position: 0px -16px;
 } 
 
 .graygoal { 
+	/* hide/show icon greyed out, for elements without children */
     background-position: 0px -48px;
     cursor: default;
 } 
 
+.goal_childgroup {
+	/* div for children goals; hidden/shown with js */
+}
+
 .goalname { 
-	float: left;
-    margin-bottom: 0px;
-    margin-right: 6;
+	/* div for intention text and trailing icons */
+    overflow: auto;
 } 
 
 .goalname_done { 
+	/* additional style for finished intention */
 	text-decoration: line-through;
 	color: #606060;
 } 
 
+.settinggroup {
+	/* wrapping div for trailing icons */
+    vertical-align: bottom;
+	float: none;
+	display: inline-block;
+	margin-left: 6px;
+}
+
 .goalsetting {
+	/* parent div for trailing icons */
 	display: none;
 }
 
 .editgoal { 
+	/* edit intention icon */
     background-image: url('../img/todo/edit.png');
 } 
 
 .checkgoal { 
+	/* finish intention icon */
     background-image: url('../img/todo/check.png');
 } 
 
 .addgoal { 
+	/* add new child intention icon */
     background-image: url('../img/todo/add.png');
 } 

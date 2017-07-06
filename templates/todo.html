@@ -10,25 +10,22 @@ function goal_toggle(event) {
 }
 
 function goal_settings(event, show) {
-    if (event.target.classList.contains('todo_toplevel') || event.target.classList.contains('todo_task')) {
+    if (event.target.classList.contains('todo_task')) {
         var el = event.target;
     } else {
-        var el = event.target.parentNode;
+        var el = findAncestor(event.target, 'todo_task');
     }
     /* hide/show icons that are immediate children of a target div */
-    for (var i = 0; i < el.childNodes.length; i++) {
-        if (typeof el.childNodes[i].classList !== "undefined" 
-            && el.childNodes[i].classList.contains('goalsetting')) {
-            if (show) {
-                el.childNodes[i].style["display"] = "block";
-            } else {
-                el.childNodes[i].style["display"] = "none";
-            }
-        }        
+    var icgroup = el.getElementsByClassName("goalname")[0].getElementsByClassName("settinggroup")[0].getElementsByClassName("goalsetting");
+    for (var i = 0; i < icgroup.length; i++) {
+        if (show) {
+            icgroup[i].style["display"] = "block";
+        } else {
+            icgroup[i].style["display"] = "none";
+        }
     }
 }
 </script>
-
 
 <div class="todo">
     <div class="todo_title">Задачи</div>
@@ -37,18 +34,21 @@ function goal_settings(event, show) {
         {% if record.children and not record.finished %}
             {% set active = True %}
         {% endif %}
-        <div class="{% if loop.depth == 1 %} todo_toplevel {% else %} todo_task {% endif %}" onmouseover="goal_settings(event, true)" onmouseout="goal_settings(event, false)">
+        <div class="todo_task {% if loop.depth == 1 %} toptask {% else %} childtask {% endif %}">
             <div 
                 class="todoicon goalgroup {% if not active %} graygoal {% endif %} " 
                 {% if active %} onclick="goal_toggle(event)" {% endif %}>
             </div>
-            <div class="goalname {% if record.finished %} goalname_done {% endif %}">
-            {{record.name}}</div>
-            {% if not record.finished %}
-                <div class="todoicon goalsetting editgoal"></div>
-                <div class="todoicon goalsetting addgoal"></div>
-            {% endif %}
-            <div class="todoicon goalsetting checkgoal"></div>
+            <div class="goalname {% if record.finished %} goalname_done {% endif %}" onmouseover="goal_settings(event, true)" onmouseout="goal_settings(event, false)">
+                {{record.name -}}
+                <div class="settinggroup">
+                    {% if not record.finished %}
+                        <div class="todoicon goalsetting editgoal"></div>
+                        <div class="todoicon goalsetting addgoal"></div>
+                    {% endif %}
+                    <div class="todoicon goalsetting checkgoal"></div>
+                </div>
+            </div>
             {% if active %}
                 <div class="goal_childgroup">
                 {{ loop(record.children) }}
