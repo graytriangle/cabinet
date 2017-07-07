@@ -7,6 +7,7 @@ from flask import request
 import psycopg2
 import uuid
 import dbsettings
+import intentions
 from datetime import datetime
 
 QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
@@ -20,10 +21,11 @@ def get_db():
     return db
 
 app = Flask(__name__)
+app.register_blueprint(intentions.intentions)
 
 @app.context_processor
 def inject_now():
-    return {'now': datetime.utcnow()}
+    return {'now': datetime.now()}
 
 @app.route('/')
 def main_page():
@@ -37,9 +39,9 @@ def main_page():
             "order by created desc;")
         main = dictfetchall(cur)
 
-        cur.execute("select * from goals "
-            "where coalesce(finished, timezone('utc'::text, now())) "
-            "> (timezone('utc'::text, now()) - '5 day'::interval);")
+        cur.execute("select * from intentions "
+            "where coalesce(finished, LOCALTIMESTAMP) "
+            "> (LOCALTIMESTAMP - '5 day'::interval);")
         todo = dictfetchall(cur)
     finally:
         cur.close()
@@ -57,7 +59,7 @@ def my_form_post():
     cur = get_db().cursor()
     try:
         cur.execute("INSERT INTO notes (uid, maintext, important, url) VALUES (%s, %s, %s, %s) "
-            "ON CONFLICT (uid) DO UPDATE SET maintext=excluded.maintext, changed=timezone('utc'::text, now()), important=excluded.important, url=excluded.url;", (postuid, maintext, importance, source))
+            "ON CONFLICT (uid) DO UPDATE SET maintext=excluded.maintext, changed=LOCALTIMESTAMP, important=excluded.important, url=excluded.url;", (postuid, maintext, importance, source))
         get_db().commit()
         if topic:
             topicsarray = topic.split(',')
@@ -167,41 +169,6 @@ def gettopic(topic):
         return render_template('master.html', data=result)
     else:
         return render_template('404.html', message=EMPTY_TOPIC)
-
-# "goals block" functions
-
-@app.route('/goals/check', methods=['GET'])
-def goal_check():
-    uid = (request.args.get('uid', ''),)
-    cur = get_db().cursor()
-    try:
-        cur.execute("UPDATE goals SET finished=timezone('utc'::text, now()) WHERE uid = %s::uuid;", uid)
-        get_db().commit()
-    finally:
-        cur.close()
-    return uid # getting uid back to delete post from page
-
-@app.route('/goals/uncheck', methods=['GET'])
-def goal_uncheck():
-    uid = (request.args.get('uid', ''),)
-    cur = get_db().cursor()
-    try:
-        cur.execute("UPDATE goals SET finished=NULL WHERE uid = %s::uuid;", uid)
-        get_db().commit()
-    finally:
-        cur.close()
-    return uid # getting uid back to delete post from page
-
-@app.route('/goals/delete', methods=['GET'])
-def goal_delete():
-    uid = (request.args.get('uid', ''),)
-    cur = get_db().cursor()
-    try:
-        cur.execute("DELETE FROM goals WHERE uid = %s::uuid;", uid)
-        get_db().commit()
-    finally:
-        cur.close()
-    return uid # getting uid back to delete post from page
 
 # auxiliary finctions
 

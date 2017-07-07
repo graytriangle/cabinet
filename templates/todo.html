@@ -25,6 +25,47 @@ function goal_settings(event, show) {
         }
     }
 }
+
+function intent_check(uid) {
+    // AJAX marking the intention as "done"
+    httpRequest = new XMLHttpRequest();
+    var el = document.getElementById(uid);
+    var status = "true"; // if current intention is active
+    if (el.getElementsByClassName("goalgroup")[0].classList.contains('graygoal')) {
+        status = "false";
+    }
+    if (!httpRequest) {
+        alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+        return false;
+    }
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                el.getElementsByClassName("goalgroup")[0].classList.toggle('graygoal');
+
+                if (status == "false") {
+                    var checkdiv = el.getElementsByClassName("checkgoal")[0];
+                    var editdiv = document.createElement('div');
+                    editdiv.className = "todoicon goalsetting editgoal";
+                    var adddiv= document.createElement('div');
+                    adddiv.className = "todoicon goalsetting addgoal";
+                    insertBefore(editdiv, checkdiv);
+                    insertBefore(adddiv, checkdiv);
+                } else {
+                    var editdiv = el.getElementsByClassName("editgoal")[0];
+                    editdiv.parentNode.removeChild(editdiv);
+                    var adddiv = el.getElementsByClassName("addgoal")[0];
+                    adddiv.parentNode.removeChild(adddiv);
+                }
+            } else {
+                alert("Ошибка сервера при смене статуса намерения: " + httpRequest.status);
+            }
+        }
+    };
+    httpRequest.open('GET', '/intent_check?uid=' + uid + '&status=' + status);
+    httpRequest.send();
+}
+
 </script>
 
 <div class="todo">
@@ -34,7 +75,7 @@ function goal_settings(event, show) {
         {% if record.children and not record.finished %}
             {% set active = True %}
         {% endif %}
-        <div class="todo_task {% if loop.depth == 1 %} toptask {% else %} childtask {% endif %}">
+        <div class="todo_task {% if loop.depth == 1 %} toptask {% else %} childtask {% endif %}" id="{{ record.uid }}">
             <div 
                 class="todoicon goalgroup {% if not active %} graygoal {% endif %} " 
                 {% if active %} onclick="goal_toggle(event)" {% endif %}>
@@ -46,7 +87,7 @@ function goal_settings(event, show) {
                         <div class="todoicon goalsetting editgoal"></div>
                         <div class="todoicon goalsetting addgoal"></div>
                     {% endif %}
-                    <div class="todoicon goalsetting checkgoal"></div>
+                    <div class="todoicon goalsetting checkgoal" onclick="intent_check('{{ record.uid }}')"></div>
                 </div>
             </div>
             {% if active %}
