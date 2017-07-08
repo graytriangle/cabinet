@@ -1,5 +1,6 @@
 <script>
-function goal_toggle(event) {
+function intent_toggle(event) {
+    // minimizes/restores intention subgroup
     var children = event.target.parentNode.getElementsByClassName("goal_childgroup")[0];
     event.target.classList.toggle('hiddengoal');
     if (children.style["display"] == "none") {
@@ -9,7 +10,8 @@ function goal_toggle(event) {
     }
 }
 
-function goal_settings(event, show) {
+function intent_settings(event, show) {
+    // shows/hides buttons near every intention
     if (event.target.classList.contains('todo_task')) {
         var el = event.target;
     } else {
@@ -31,7 +33,7 @@ function intent_check(uid) {
     httpRequest = new XMLHttpRequest();
     var el = document.getElementById(uid);
     var status = "true"; // if current intention is active
-    if (el.getElementsByClassName("goalgroup")[0].classList.contains('graygoal')) {
+    if (el.getElementsByClassName("goalname")[0].classList.contains('goalname_done')) {
         status = "false";
     }
     if (!httpRequest) {
@@ -41,7 +43,8 @@ function intent_check(uid) {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                el.getElementsByClassName("goalgroup")[0].classList.toggle('graygoal');
+                el.getElementsByClassName("goalname")[0].classList.toggle('goalname_done');
+                console.log(status);
 
                 if (status == "false") {
                     var checkdiv = el.getElementsByClassName("checkgoal")[0];
@@ -49,8 +52,8 @@ function intent_check(uid) {
                     editdiv.className = "todoicon goalsetting editgoal";
                     var adddiv= document.createElement('div');
                     adddiv.className = "todoicon goalsetting addgoal";
-                    insertBefore(editdiv, checkdiv);
-                    insertBefore(adddiv, checkdiv);
+                    checkdiv.parentNode.insertBefore(editdiv, checkdiv);
+                    checkdiv.parentNode.insertBefore(adddiv, checkdiv);
                 } else {
                     var editdiv = el.getElementsByClassName("editgoal")[0];
                     editdiv.parentNode.removeChild(editdiv);
@@ -62,8 +65,33 @@ function intent_check(uid) {
             }
         }
     };
-    httpRequest.open('GET', '/intent_check?uid=' + uid + '&status=' + status);
+    httpRequest.open('GET', '/intent/check?uid=' + uid + '&status=' + status);
     httpRequest.send();
+}
+
+function intent_delete(uid) {
+    // AJAX deleting the intention
+    var result = confirm("Подтвердите удаление намерения. Все дочерние намерения также будут удалены!");
+    if (result) {
+        httpRequest = new XMLHttpRequest();
+
+        if (!httpRequest) {
+            alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+            return false;
+        }
+        httpRequest.onreadystatechange = function() {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                if (httpRequest.status === 200) {
+                    var el = document.getElementById(uid);
+                    el.parentNode.removeChild(el);
+                } else {
+                    alert("Ошибка сервера при удалении записи: " + httpRequest.status);
+                }
+            }
+        };
+        httpRequest.open('GET', '/intent/delete?uid=' + uid);
+        httpRequest.send();
+    }
 }
 
 </script>
@@ -78,9 +106,9 @@ function intent_check(uid) {
         <div class="todo_task {% if loop.depth == 1 %} toptask {% else %} childtask {% endif %}" id="{{ record.uid }}">
             <div 
                 class="todoicon goalgroup {% if not active %} graygoal {% endif %} " 
-                {% if active %} onclick="goal_toggle(event)" {% endif %}>
+                {% if active %} onclick="intent_toggle(event)" {% endif %}>
             </div>
-            <div class="goalname {% if record.finished %} goalname_done {% endif %}" onmouseover="goal_settings(event, true)" onmouseout="goal_settings(event, false)">
+            <div class="goalname {% if record.finished %} goalname_done {% endif %}" onmouseover="intent_settings(event, true)" onmouseout="intent_settings(event, false)">
                 {{record.name -}}
                 <div class="settinggroup">
                     {% if not record.finished %}

@@ -1,14 +1,16 @@
 from flask import Blueprint
 from flask import request
 import psycopg2
+from cabinet import app
+from cabinet import functions as f
 
 intentions = Blueprint('intentions', __name__, template_folder='templates')
 
 @intentions.route('/intent/check', methods=['GET'])
-def mark():
+def intent_check():
     uid = (request.args.get('uid', ''),)
     status = (request.args.get('status', ''),)
-    cur = get_db().cursor()
+    cur = f.get_db().cursor()
     try:
         cur.execute("SELECT recurrent FROM intentions WHERE uid = %s::uuid;", (uid,))
         recurrent = cur.fetchone()[0]
@@ -19,18 +21,18 @@ def mark():
         		cur.execute("UPDATE intentions SET finished = now() - interval '4 hours' WHERE uid = %s::uuid;", (uid,))
         	else:
         		cur.execute("UPDATE intentions SET finished = NULL WHERE uid = %s::uuid;", (uid,))
-        get_db().commit()
+        f.get_db().commit()
     finally:
         cur.close()
     return uid 
 
 @app.route('/intent/delete', methods=['GET'])
-def goal_delete():
+def intent_delete():
     uid = (request.args.get('uid', ''),)
-    cur = get_db().cursor()
+    cur = f.get_db().cursor()
     try:
         cur.execute("DELETE FROM intentions WHERE uid = %s::uuid;", uid)
-        get_db().commit()
+        f.get_db().commit()
     finally:
         cur.close()
     return uid # getting uid back to delete post from page

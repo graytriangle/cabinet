@@ -1,2 +1,3 @@
-venv/
+cabinet/venv/
 *.pyc
+cabinet.egg-info/
