@@ -97,7 +97,7 @@ function intent_delete(uid) {
 </script>
 
 <div class="todo">
-    <div class="todo_title">Задачи</div>
+    <div class="todo_title">Намерения</div>
     {% for record in todo recursive %}
         {% set active = False %}
         {% if record.children and not record.finished %}

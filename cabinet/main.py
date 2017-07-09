@@ -171,9 +171,9 @@ def close_connection(exception):
 def get_intentions():
     cur = f.get_db().cursor()
     try:
-        cur.execute("select * from intentions "
-            "where coalesce(finished, LOCALTIMESTAMP) "
-            "> (LOCALTIMESTAMP - '5 day'::interval);")
+        cur.execute("select * from intentions where "
+            "(recurrent = 'f' and coalesce(finished, LOCALTIMESTAMP) > (LOCALTIMESTAMP - '5 day'::interval)) OR "
+            "(recurrent = 't' and LOCALTIMESTAMP > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
         todo = f.dictfetchall(cur)
     finally:
         cur.close()
