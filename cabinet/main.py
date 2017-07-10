@@ -6,7 +6,7 @@ from flask import render_template
 from flask import request
 import uuid
 from cabinet import app
-from cabinet import intentions
+from cabinet import intentions as i
 from cabinet import functions as f
 from datetime import datetime
 
@@ -14,7 +14,7 @@ QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
 NO_NOTE = u'Запись не существует!'
 EMPTY_TOPIC = u'Записей на данную тему не найдено!'
 
-app.register_blueprint(intentions.intentions)
+app.register_blueprint(i.intentions)
 
 @app.context_processor
 def inject_now():
@@ -34,7 +34,7 @@ def main_page():
 
     finally:
         cur.close()
-    return render_template('master.html', main=main, todo=get_intentions())
+    return render_template('master.html', main=main, todo=i.get_current_intentions())
 
 @app.route('/', methods=['POST'])
 def my_form_post():
@@ -111,7 +111,7 @@ def show_post(post_id):
     finally:
         cur.close()
     if result:
-        return render_template('master.html', main=result, todo=get_intentions())
+        return render_template('master.html', main=result, todo=i.get_current_intentions())
     else:
         return render_template('404.html', message=NO_NOTE)
 
@@ -156,7 +156,7 @@ def gettopic(topic):
         cur.close()
     if result:
         print result
-        return render_template('master.html', main=result, todo=get_intentions())
+        return render_template('master.html', main=result, todo=i.get_current_intentions())
     else:
         return render_template('404.html', message=EMPTY_TOPIC)
 
@@ -168,13 +168,3 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
-def get_intentions():
-    cur = f.get_db().cursor()
-    try:
-        cur.execute("select * from intentions where "
-            "(recurrent = 'f' and coalesce(finished, LOCALTIMESTAMP) > (LOCALTIMESTAMP - '5 day'::interval)) OR "
-            "(recurrent = 't' and LOCALTIMESTAMP > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
-        todo = f.dictfetchall(cur)
-    finally:
-        cur.close()
-    return f.get_nested(todo)

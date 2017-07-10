@@ -1,10 +1,15 @@
 from flask import Blueprint
 from flask import request
+from flask import render_template
 import psycopg2
 from cabinet import app
 from cabinet import functions as f
 
 intentions = Blueprint('intentions', __name__, template_folder='templates')
+
+##################
+# VIEW FUNCTIONS #
+##################
 
 @intentions.route('/intent/check', methods=['GET'])
 def intent_check():
@@ -45,3 +50,46 @@ def intent_delete():
     finally:
         cur.close()
     return uid # getting uid back to delete post from page
+
+@app.route('/intent/reload', methods=['GET'])
+def intent_reload():
+    # get the intentions tree
+    all = request.args.get('all')
+    try:
+        if all == 'true':
+            return render_template('todo.html', todo=get_all_intentions())
+        else:
+            return render_template('todo.html', todo=get_current_intentions())
+    except:
+        return render_template('404.html', message=QUERY_ERR)
+
+###################
+# OTHER FUNCTIONS #
+###################
+
+def get_current_intentions():
+    cur = f.get_db().cursor()
+    try:
+        cur.execute("select * from intentions where "
+            "(recurrent = 'f' and coalesce(finished, LOCALTIMESTAMP) >= (LOCALTIMESTAMP - '5 day'::interval)) OR "
+            "(recurrent = 't' and LOCALTIMESTAMP > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
+        todo = f.dictfetchall(cur)
+    except Exception as e: raise
+    finally:
+        cur.close()
+    return f.get_nested(todo)
+
+def get_all_intentions():
+    cur = f.get_db().cursor()
+    try:
+        cur.execute("select "
+            "uid, name, description, important, recurrent, parent, created, "
+            "case when (recurrent = 't' and LOCALTIMESTAMP < (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day'))) "
+            "then startdate else finished end as finished, "
+            "startdate, frequency, reminder, oldstartdate "
+            "FROM public.intentions ;")
+        todo = f.dictfetchall(cur)
+    except Exception as e: raise
+    finally:
+        cur.close()
+    return f.get_nested(todo)

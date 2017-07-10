@@ -311,6 +311,41 @@
                 }
             }
 
+            function intent_reload(checkbox) {
+                if (checkbox.checked) {
+                    intent_load(true);
+                } else {
+                    intent_load();
+                }
+            }
+
+            function intent_load(all=false) {
+                // AJAX reloading of the intentions tree
+                httpRequest = new XMLHttpRequest();
+                var todoparent = document.getElementsByClassName("todo")[0];
+                var oldlist = document.getElementById("todo_content");
+                if (!httpRequest) {
+                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                    return false;
+                }
+                httpRequest.onreadystatechange = function() {
+                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                        if (httpRequest.status === 200) {
+                            todoparent.removeChild(oldlist);
+                            var wrapper = document.createElement('div');
+                            wrapper.id = 'todo_content';
+                            wrapper.innerHTML= httpRequest.responseText;
+                            todoparent.appendChild(wrapper);
+                        } else {
+                            alert("Ошибка сервера при обновлении списка намерений: " + httpRequest.status);
+                        }
+                    }
+                };
+                httpRequest.open('GET', '/intent/reload?all=' + all);
+                httpRequest.send();
+            }
+
+
             /*************************/
             /* Aux functions */
             /*************************/
@@ -325,7 +360,16 @@
 
         <div id="main">
             <div id="leftcol">
-                {% include "todo.html" %}
+                <div class="todo">
+                    <div class="todo_title">Намерения</div>
+                    <div class="intent_showall_container">
+                        <input type="checkbox" class="intent_showall_checkbox" id="intent_showall" onchange="intent_reload(this)">
+                        <label class="intent_showall_label" for="intent_showall">Показать всё</label>
+                    </div>
+                    <div id="todo_content">
+                        {% include "todo.html" %}
+                    </div>
+                </div>
             </div>
 
             <div id="maincol">

@@ -23,3 +23,22 @@
     flex: 11;
     order: 3;
 }
+
+.intent_showall_container {
+    font-size: 13px;
+    text-align: right;
+    padding: 5px 0 0 2px;
+    display: flex;
+    align-items: center;
+    float: right;
+}
+
+.intent_showall_checkbox {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.intent_showall_label {
+    cursor: pointer;
+    padding: 2px 0 0 0;
+}

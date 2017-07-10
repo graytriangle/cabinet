@@ -96,33 +96,31 @@ function intent_delete(uid) {
 
 </script>
 
-<div class="todo">
-    <div class="todo_title">Намерения</div>
-    {% for record in todo recursive %}
-        {% set active = False %}
-        {% if record.children and not record.finished %}
-            {% set active = True %}
-        {% endif %}
-        <div class="todo_task {% if loop.depth == 1 %} toptask {% else %} childtask {% endif %}" id="{{ record.uid }}">
-            <div 
-                class="todoicon goalgroup {% if not active %} graygoal {% endif %} " 
-                {% if active %} onclick="intent_toggle(event)" {% endif %}>
-            </div>
-            <div class="goalname {% if record.finished %} goalname_done {% endif %}" onmouseover="intent_settings(event, true)" onmouseout="intent_settings(event, false)">
-                {{record.name -}}
-                <div class="settinggroup">
-                    {% if not record.finished %}
-                        <div class="todoicon goalsetting editgoal"></div>
-                        <div class="todoicon goalsetting addgoal"></div>
-                    {% endif %}
-                    <div class="todoicon goalsetting checkgoal" onclick="intent_check('{{ record.uid }}')"></div>
-                </div>
-            </div>
-            {% if active %}
-                <div class="goal_childgroup">
-                {{ loop(record.children) }}
-                </div>
-            {% endif %}
+
+{% for record in todo recursive %}
+    {% set active = False %}
+    {% if record.children %}
+        {% set active = True %}
+    {% endif %}
+    <div class="todo_task {% if loop.depth == 1 %} toptask {% else %} childtask {% endif %}" id="{{ record.uid }}">
+        <div 
+            class="todoicon goalgroup {% if not active %} graygoal {% endif %} " 
+            {% if active %} onclick="intent_toggle(event)" {% endif %}>
         </div>
-    {% endfor %}
-</div>
+        <div class="goalname {% if record.finished %} goalname_done {% endif %}" onmouseover="intent_settings(event, true)" onmouseout="intent_settings(event, false)">
+            {{record.name -}}
+            <div class="settinggroup">
+                {% if not record.finished %}
+                    <div class="todoicon goalsetting editgoal"></div>
+                    <div class="todoicon goalsetting addgoal"></div>
+                {% endif %}
+                <div class="todoicon goalsetting checkgoal" onclick="intent_check('{{ record.uid }}')"></div>
+            </div>
+        </div>
+        {% if active %}
+            <div class="goal_childgroup">
+            {{ loop(record.children) }}
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
