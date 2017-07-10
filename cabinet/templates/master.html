@@ -312,6 +312,7 @@
             }
 
             function intent_reload(checkbox) {
+                checkbox.disabled = true;
                 if (checkbox.checked) {
                     intent_load(true);
                 } else {
@@ -321,11 +322,13 @@
 
             function intent_load(all=false) {
                 // AJAX reloading of the intentions tree
+                var checkbox = document.getElementById("intent_showall");
                 httpRequest = new XMLHttpRequest();
                 var todoparent = document.getElementsByClassName("todo")[0];
                 var oldlist = document.getElementById("todo_content");
                 if (!httpRequest) {
                     alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                    checkbox.disabled = false;
                     return false;
                 }
                 httpRequest.onreadystatechange = function() {
@@ -339,6 +342,7 @@
                         } else {
                             alert("Ошибка сервера при обновлении списка намерений: " + httpRequest.status);
                         }
+                        checkbox.disabled = false;
                     }
                 };
                 httpRequest.open('GET', '/intent/reload?all=' + all);
