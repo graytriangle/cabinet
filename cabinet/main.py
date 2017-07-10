@@ -48,7 +48,7 @@ def my_form_post():
     cur = f.get_db().cursor()
     try:
         cur.execute("INSERT INTO notes (uid, maintext, important, url) VALUES (%s, %s, %s, %s) "
-            "ON CONFLICT (uid) DO UPDATE SET maintext=excluded.maintext, changed=LOCALTIMESTAMP, important=excluded.important, url=excluded.url;", (postuid, maintext, importance, source))
+            "ON CONFLICT (uid) DO UPDATE SET maintext=excluded.maintext, changed=timezone('MSK'::text, now()), important=excluded.important, url=excluded.url;", (postuid, maintext, importance, source))
         f.get_db().commit()
         if topic:
             topicsarray = topic.split(',')

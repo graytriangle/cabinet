@@ -27,12 +27,12 @@ def intent_check():
             if status == 'true':
                 cur.execute("UPDATE intentions SET oldstartdate = startdate WHERE uid = %s::uuid;", (uid,))
                 # set startdate to next 4:00 AM
-                cur.execute("UPDATE intentions SET startdate = date_trunc('day', LOCALTIMESTAMP + interval '20 hours') + interval '4 hours' WHERE uid = %s::uuid;", (uid,))
+                cur.execute("UPDATE intentions SET startdate = date_trunc('day', timezone('MSK'::text, now()) + interval '20 hours') + interval '4 hours' WHERE uid = %s::uuid;", (uid,))
             else:
                 cur.execute("UPDATE intentions SET startdate = oldstartdate WHERE uid = %s::uuid;", (uid,))
         else:
             if status == 'true':
-                cur.execute("UPDATE intentions SET finished = LOCALTIMESTAMP WHERE uid = %s::uuid;", (uid,))
+                cur.execute("UPDATE intentions SET finished = timezone('MSK'::text, now()) WHERE uid = %s::uuid;", (uid,))
             else:
                 cur.execute("UPDATE intentions SET finished = NULL WHERE uid = %s::uuid;", (uid,))
         f.get_db().commit()
@@ -73,16 +73,16 @@ def get_current_intentions():
         cur.execute("select "
             "uid, name, description, important, recurrent, parent, created, "
             # for recurrent intentions that didn't reach their reminder we set "finished" to mark them as completed
-            "case when (recurrent = 't' and LOCALTIMESTAMP < (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day'))) "
+            "case when (recurrent = 't' and timezone('MSK'::text, now()) < (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day'))) "
             "then startdate else finished end as finished, "
             "startdate, frequency, reminder, oldstartdate "
             "FROM public.intentions where "
             # non-recurrent intentions that are either not completed or completed less than 5 days ago
-            "(recurrent = 'f' and coalesce(finished, LOCALTIMESTAMP) >= (LOCALTIMESTAMP - '5 day'::interval)) OR "
+            "(recurrent = 'f' and coalesce(finished, timezone('MSK'::text, now())) >= (timezone('MSK'::text, now()) - '5 day'::interval)) OR "
             # recurrent intentions that were completed recently (less than 5 days ago)
-            "(recurrent = 't' and LOCALTIMESTAMP < (startdate + '5 day'::interval)) OR "
+            "(recurrent = 't' and timezone('MSK'::text, now()) < (startdate + '5 day'::interval)) OR "
             # recurrent intentions that should be completed in the near future (reminder reached)
-            "(recurrent = 't' and LOCALTIMESTAMP > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
+            "(recurrent = 't' and timezone('MSK'::text, now()) > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
         todo = f.dictfetchall(cur)
     except Exception as e: raise
     finally:
@@ -94,7 +94,7 @@ def get_all_intentions():
     try:
         cur.execute("select "
             "uid, name, description, important, recurrent, parent, created, "
-            "case when (recurrent = 't' and LOCALTIMESTAMP < (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day'))) "
+            "case when (recurrent = 't' and timezone('MSK'::text, now()) < (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day'))) "
             "then startdate else finished end as finished, "
             "startdate, frequency, reminder, oldstartdate "
             "FROM public.intentions ;")
