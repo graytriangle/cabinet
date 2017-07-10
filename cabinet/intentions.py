@@ -70,8 +70,18 @@ def intent_reload():
 def get_current_intentions():
     cur = f.get_db().cursor()
     try:
-        cur.execute("select * from intentions where "
+        cur.execute("select "
+            "uid, name, description, important, recurrent, parent, created, "
+            # for recurrent intentions that didn't reach their reminder we set "finished" to mark them as completed
+            "case when (recurrent = 't' and LOCALTIMESTAMP < (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day'))) "
+            "then startdate else finished end as finished, "
+            "startdate, frequency, reminder, oldstartdate "
+            "FROM public.intentions where "
+            # non-recurrent intentions that are either not completed or completed less than 5 days ago
             "(recurrent = 'f' and coalesce(finished, LOCALTIMESTAMP) >= (LOCALTIMESTAMP - '5 day'::interval)) OR "
+            # recurrent intentions that were completed recently (less than 5 days ago)
+            "(recurrent = 't' and LOCALTIMESTAMP < (startdate + '5 day'::interval)) OR "
+            # recurrent intentions that should be completed in the near future (reminder reached)
             "(recurrent = 't' and LOCALTIMESTAMP > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
         todo = f.dictfetchall(cur)
     except Exception as e: raise
