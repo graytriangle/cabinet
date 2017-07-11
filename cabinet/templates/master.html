@@ -112,19 +112,31 @@
                 var result = confirm("Подтвердите удаление записи!");
                 if (result) {
                     httpRequest = new XMLHttpRequest();
+                    var el = document.getElementById(uid);
+                    el.getElementsByClassName("deletepost")[0].removeAttribute("onclick");
+                    el.getElementsByClassName("editpost")[0].removeAttribute("onclick");
+                    el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+                    el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
 
                     if (!httpRequest) {
                         alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                        el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "deletePost('" + uid + "')");
+                        el.getElementsByClassName("editpost")[0].setAttribute("onclick", "editPost('" + uid + "')");
+                        el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+                        el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
                         return false;
                     }
                     httpRequest.onreadystatechange = function() {
                         if (httpRequest.readyState === XMLHttpRequest.DONE) {
                             if (httpRequest.status === 200) {
-                                var el = document.getElementById(uid);
                                 el.parentNode.removeChild(el);
                             } else {
                                 alert("Ошибка сервера при удалении записи: " + httpRequest.status);
                             }
+                            el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "deletePost('" + uid + "')");
+                            el.getElementsByClassName("editpost")[0].setAttribute("onclick", "editPost('" + uid + "')");
+                            el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+                            el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
                         }
                     };
                     httpRequest.open('GET', '/delete?uid=' + uid);
@@ -166,9 +178,20 @@
                 // AJAX updating of an existing post
                 httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(uid);
+                // disable save/cancel buttons
+                el.getElementsByClassName("canceledit")[0].removeAttribute("onclick");
+                el.getElementsByClassName("savepost")[0].removeAttribute("onclick");
+                el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
+                el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
+
                 var formData = new FormData(el.getElementsByTagName("form")[0]);
                 if (!httpRequest) {
                     alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                    // reenable save/cancel buttons
+                    el.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
+                    el.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
+                    el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
+                    el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
                     return false;
                 }
                 httpRequest.onreadystatechange = function() {
@@ -183,6 +206,11 @@
                         } else {
                             alert("Ошибка сервера при обновлении записи: " + httpRequest.status);
                         }
+                        // reenable save/cancel buttons
+                        el.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
+                        el.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
+                        el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
+                        el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
                     }
                 };
                 httpRequest.open('POST', '/');
@@ -191,11 +219,21 @@
 
             function addPost() {
                 // AJAX adding of a new post
+                // here goes disabling
                 httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(NEW_POST);
+                el.getElementsByClassName("deletepost")[0].removeAttribute("onclick");
+                el.getElementsByClassName("savepost")[0].removeAttribute("onclick");
+                el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+                el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
                 var formData = new FormData(el.getElementsByTagName("form")[0]);
                 if (!httpRequest) {
                     alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                    // reenable save/cancel buttons
+                    el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "clearNewPost()");
+                    el.getElementsByClassName("savepost")[0].setAttribute("onclick", "addPost()");
+                    el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+                    el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
                     return false;
                 }
                 httpRequest.onreadystatechange = function() {
@@ -210,6 +248,11 @@
                         } else {
                             alert("Ошибка сервера при добавлении записи: " + httpRequest.status);
                         }
+                        // reenable save/cancel buttons
+                        el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "clearNewPost()");
+                        el.getElementsByClassName("savepost")[0].setAttribute("onclick", "addPost()");
+                        el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+                        el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
                     }
                 };
                 httpRequest.open('POST', '/');
@@ -281,6 +324,7 @@
 
             function clearNewPost() {
                 // clears all fields of the "new post" form
+                console.log("clear");
                 var el = document.getElementById(NEW_POST);
                 if (el.getElementsByClassName("star_field")[0].getAttribute("value") === "true") {
                     np_toggleImportant(NEW_POST);
@@ -291,11 +335,6 @@
                 //document.getElementById("np_maintext").value = "";
             }
 
-
-            function insertAfter(newNode, referenceNode) {
-                // inserts new node after a referenceNode
-                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-            }
 
             function np_toggleImportant(uid) {
                 // toggles "important" star in "new post" and "edit post" forms
@@ -358,6 +397,11 @@
                 // returns first ancestor with a certain class
                 while ((el = el.parentElement) && !el.classList.contains(cls));
                 return el;
+            }
+
+            function insertAfter(newNode, referenceNode) {
+                // inserts new node after a referenceNode
+                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
             }
 
         </script>

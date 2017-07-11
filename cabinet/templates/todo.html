@@ -44,7 +44,6 @@ function intent_check(uid) {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 el.getElementsByClassName("goalname")[0].classList.toggle('goalname_done');
-                console.log(status);
 
                 if (status == "false") {
                     var checkdiv = el.getElementsByClassName("checkgoal")[0];

@@ -133,22 +133,34 @@ blockquote[cite]:before { /* стиль цитаты со ссылкой */
 .editpost { 
     margin-right: 12;
     background-image: url('../img/edit.png');
+    width: 15px;
+    height: 15px;
+    background-size: 15px;
 } 
 .deletepost { 
     margin-right: 8;
     background-image: url('../img/delete.png');
+    width: 15px;
+    height: 15px;
+    background-size: 15px;
 } 
 .savepost { 
     margin-right: 12;
     background-image: url('../img/save.png');
+    width: 15px;
+    height: 15px;
+    background-size: 15px;
 } 
 .canceledit { 
     margin-right: 8;
-    padding-top: 1;
     background-image: url('../img/cancel.png');
     width: 15px;
     height: 15px;
     background-size: 15px;
+} 
+.posticon_gray { 
+    background-position: 0px -15px;
+    cursor: default;
 } 
 
 .smallicon { 
