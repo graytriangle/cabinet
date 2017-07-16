@@ -109,11 +109,11 @@ function intent_delete(uid) {
         <div class="goalname {% if record.finished %} goalname_done {% endif %}" onmouseover="intent_settings(event, true)" onmouseout="intent_settings(event, false)">
             {{record.name -}}
             <div class="settinggroup">
-                {% if not record.finished %}
-                    <div class="todoicon goalsetting editgoal"></div>
-                    <div class="todoicon goalsetting addgoal"></div>
-                {% endif %}
                 <div class="todoicon goalsetting checkgoal" onclick="intent_check('{{ record.uid }}')"></div>
+                {% if not record.finished %}
+                    <div class="todoicon goalsetting addgoal"></div>
+                    <div class="todoicon goalsetting editgoal"></div>
+                {% endif %}
             </div>
         </div>
         {% if active %}
