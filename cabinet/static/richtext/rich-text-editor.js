@@ -177,11 +177,16 @@ var richtext = {
 			if (richtext.validateMode(oDoc) && confirm("Подтвердите удаление записи!")) { oDoc.innerHTML = "<p><br></p>"; };
 		},
 		"createLink": function (oDoc) {
-			var sLnk = prompt("Write the URL here", "http:\/\/");
-			if (sLnk && sLnk !== "http://"){ richtext.formatDoc(oDoc, "createlink", sLnk); }
+			var sLnk = prompt("Введите ссылку на источник:", "");
+			if (sLnk){ richtext.formatDoc(oDoc, "createlink", sLnk); }
 		},
 		"blockquote": function (oDoc) {
-			richtext.formatDoc(oDoc, "insertHTML", '<blockquote>' + richtext.getSelectionHtml() + '</blockquote>');
+			var sLnk = prompt("Введите адрес ссылки:", "");
+			if (sLnk) { 
+				richtext.formatDoc(oDoc, "insertHTML", '<blockquote cite="' + sLnk + '">' + richtext.getSelectionHtml() + '</blockquote>');
+			} else {
+				richtext.formatDoc(oDoc, "insertHTML", '<blockquote>' + richtext.getSelectionHtml() + '</blockquote>');
+			}
 		},
 		"preformat": function (oDoc) {
 			richtext.formatDoc(oDoc, "insertHTML", '<pre>' + richtext.getSelectionHtml() + '</pre>');

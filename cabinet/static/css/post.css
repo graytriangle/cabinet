@@ -71,6 +71,11 @@ p {
     margin-bottom: 0px;
 }
 
+li {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 10pt;
+}
+
 blockquote { /* blockquote element style */
     font-family: Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, serif;
     font-size: 10.5pt;

@@ -24,6 +24,14 @@
 			"text": "Выделить моноширинным шрифтом",
 			"command": "preformat",
 			"image": "\/static\/img\/richtext\/pre.png"
+		}, {
+			"text": "Оформить как маркированный список",
+			"command": "insertUnorderedList",
+			"image": "\/static\/img\/richtext\/dottedlist.png"
+		}, {
+			"text": "Добавить ссылку",
+			"command": "createLink",
+			"image": "\/static\/img\/richtext\/hyperlink.png"
 		}
 	]
 }
