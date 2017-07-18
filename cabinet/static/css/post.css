@@ -72,6 +72,8 @@ p {
 }
 
 blockquote { /* blockquote element style */
+    font-family: Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, serif;
+    font-size: 10.5pt;
     margin-top: 7px;
     margin-bottom: 0px;
     margin-left: 0px;
