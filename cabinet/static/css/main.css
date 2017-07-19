@@ -42,3 +42,35 @@
     cursor: pointer;
     padding: 2px 0 0 0;
 }
+
+.sections {
+    display: flex;
+    flex-flow: row nowrap;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.section {
+    width: 35px;
+    height: 35px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 8px;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-position: 0px 0px;
+    background-size: 35px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.diary {
+    background-image: url('../img/diary.png');
+}
+
+.other {
+    background-image: url('../img/other.png');
+}

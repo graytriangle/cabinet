@@ -388,6 +388,41 @@
                 httpRequest.send();
             }
 
+            function notes_load(section='', topic='', uid='') {
+                // AJAX reloading of the intentions tree
+                var current_section = document.getElementById("section_selected").getAttribute("value");
+                if (section == current_section || section === '') {
+                    section = "all";
+                }
+                document.getElementById("section_selected").setAttribute("value", section);
+
+                httpRequest = new XMLHttpRequest();
+                var postsparent = document.getElementById("maincol");
+                var oldlist = document.getElementById("notes_content");
+                if (!httpRequest) {
+                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                    // checkbox.disabled = false;
+                    return false;
+                }
+                httpRequest.onreadystatechange = function() {
+                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                        if (httpRequest.status === 200) {
+                            postsparent.removeChild(oldlist);
+                            var wrapper = document.createElement('div');
+                            wrapper.id = 'notes_content';
+                            wrapper.innerHTML= httpRequest.responseText;
+                            postsparent.appendChild(wrapper);
+                        } else {
+                            alert("Ошибка сервера при обновлении списка записей: " + httpRequest.status);
+                        }
+                        // checkbox.disabled = false;
+                    }
+                };
+                httpRequest.open('GET', '/notes?type=' + section + '&topic='+ topic + '&uid='+ uid);
+                httpRequest.send();
+
+            }
+
 
             /*************************/
             /* Aux functions */
@@ -421,6 +456,12 @@
             </div>
 
             <div id="maincol">
+
+                <div class="sections">
+                    <input id="section_selected" type="hidden" value="all">
+                    <div class="section diary" onclick="notes_load('diary')"></div>
+                    <div class="section other" onclick="notes_load('other')"></div>
+                </div>
             <!-- "new post" window -->
                 <div class="post" id="00000000-0000-0000-0000-000000000000">
                     <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
@@ -455,10 +496,10 @@
                     </form>
                 </div>
 
+                <div id="notes_content">
                 <!-- actual posts -->
-                {% for record in main %}
-                    {% include "post.html" %}
-                {% endfor %}
+                    {% include "notes.html" %}
+                </div>
 
             </div>
 

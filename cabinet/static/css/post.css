@@ -7,6 +7,27 @@
     margin-bottom: 8px;
     background-color: #f7fbff;
 }
+
+div .error {
+    text-align: center;
+}
+.error a {
+    font-size: 10pt;
+    color: #808080;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.error a:hover {
+    color: #606060;
+    text-decoration: none;
+}
+.error h3 {
+    font-size: 13pt;
+    color: #606080;
+    margin-top: 0;
+    margin-bottom: 5;
+}
+
 .source {
     font-size: 10pt;
     color: #808080;

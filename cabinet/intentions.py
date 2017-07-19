@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import Blueprint
 from flask import request
 from flask import render_template
@@ -60,8 +62,8 @@ def intent_reload():
             return render_template('todo.html', todo=get_all_intentions())
         else:
             return render_template('todo.html', todo=get_current_intentions())
-    except:
-        return render_template('404.html', message=QUERY_ERR)
+    except Exception as e:
+        return render_template('404.html', message=f.QUERY_ERR, details=str(e))
 
 ###################
 # OTHER FUNCTIONS #

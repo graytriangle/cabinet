@@ -7,14 +7,12 @@ from flask import request
 import uuid
 from cabinet import app
 from cabinet import intentions as i
+from cabinet import notes as n
 from cabinet import functions as f
 from datetime import datetime
 
-QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
-NO_NOTE = u'Запись не существует!'
-EMPTY_TOPIC = u'Записей на данную тему не найдено!'
-
 app.register_blueprint(i.intentions)
+app.register_blueprint(n.notes)
 
 @app.context_processor
 def inject_now():
@@ -34,7 +32,7 @@ def main_page():
 
     finally:
         cur.close()
-    return render_template('master.html', main=main, todo=i.get_current_intentions())
+    return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions())
 
 @app.route('/', methods=['POST'])
 def my_form_post():
@@ -69,7 +67,7 @@ def my_form_post():
                 pass
     finally:
         cur.close()
-    return getpost(postuid)
+    return n.notes_load(postuid)
 
 @app.route('/delete', methods=['GET'])
 def delete():
@@ -93,72 +91,6 @@ def mark():
     finally:
         cur.close()
     return uid 
-
-@app.route('/post/<string:post_id>') # TODO: switch to uuids; it fails for some reason
-def show_post(post_id):
-    # show the post with the given id, the id is an uuid
-    cur = f.get_db().cursor()
-    try:
-        cur.execute("select n.*, "
-            "(select string_agg(name, ',') from topics t "
-            "left join notes_topics nt on nt.topic = t.uid "
-            "where nt.note = n.uid) topics "
-            "from notes n "
-            "where n.uid = %s;", (post_id,))
-        result = f.dictfetchall(cur)
-    except:
-        return render_template('404.html', message=QUERY_ERR)
-    finally:
-        cur.close()
-    if result:
-        return render_template('master.html', main=result, todo=i.get_current_intentions())
-    else:
-        return render_template('404.html', message=NO_NOTE)
-
-@app.route('/getpost', methods=['GET'])
-def getpost(post_id=None):
-    # get the post with the given id, the id is an uuid
-    uid = request.args.get('uid')
-    if not uid:
-        uid = post_id
-    cur = f.get_db().cursor()
-    try:
-        cur.execute("select n.*, "
-            "(select string_agg(name, ',') from topics t "
-            "left join notes_topics nt on nt.topic = t.uid "
-            "where nt.note = n.uid) topics "
-            "from notes n "
-            "where n.uid = %s;", (uid,))
-        result = f.dictfetchall(cur)
-    except:
-        return render_template('404.html', message=QUERY_ERR)
-    finally:
-        cur.close()
-    return render_template('post.html', record=result[0])
-
-@app.route('/topic/<string:topic>')
-def gettopic(topic):
-    # show notes on given topic
-    cur = f.get_db().cursor()
-    try:
-        cur.execute("select n.*, "
-            "(select string_agg(name, ',') from topics t "
-            "left join notes_topics nt on nt.topic = t.uid "
-            "where nt.note = n.uid) topics "
-            "from notes n "
-            "left join notes_topics nt on nt.note = n.uid "
-            "left join topics t on nt.topic = t.uid "
-            "where t.name = %s;", (topic.lower(),))
-        result = f.dictfetchall(cur)
-    except:
-        return render_template('404.html', message=QUERY_ERR)
-    finally:
-        cur.close()
-    if result:
-        print result
-        return render_template('master.html', main=result, todo=i.get_current_intentions())
-    else:
-        return render_template('404.html', message=EMPTY_TOPIC)
 
 # auxiliary finctions
 

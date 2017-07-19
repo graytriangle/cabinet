@@ -1,6 +1,12 @@
+# -*- coding: utf-8 -*-
+
 from flask import g
 import psycopg2
 from cabinet import dbsettings
+
+QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
+NO_NOTE = u'Запись не существует!'
+EMPTY_TOPIC = u'Записей на данную тему не найдено!'
 
 def get_db():
     db = getattr(g, '_database', None)
