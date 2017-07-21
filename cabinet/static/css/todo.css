@@ -23,6 +23,29 @@
     text-align: center;
 }
 
+
+
+.todo_error {
+    /* class for sql error text */
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    float: left;
+    clear: both;
+    font-size: 10pt;
+    font-weight: normal;
+    line-height: 17px;
+}
+
+.todo_errortitle {
+    /* style for sql error title */
+    font-size: 11pt;
+    font-weight: bold;
+    line-height: 18px;
+    text-align: center;
+    float: none;
+}
+
 .todo_task {
 	/* parent class for a single intention */
 	font-family: "Trebuchet MS", Helvetica, sans-serif;

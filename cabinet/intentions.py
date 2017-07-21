@@ -57,13 +57,10 @@ def intent_delete():
 def intent_reload():
     # get the intentions tree
     all = request.args.get('all')
-    try:
-        if all == 'true':
-            return render_template('todo.html', todo=get_all_intentions())
-        else:
-            return render_template('todo.html', todo=get_current_intentions())
-    except Exception as e:
-        return render_template('404.html', message=f.QUERY_ERR, details=str(e))
+    if all == 'true':
+        return render_template('todo.html', todo=get_all_intentions())
+    else:
+        return render_template('todo.html', todo=get_current_intentions())
 
 ###################
 # OTHER FUNCTIONS #
@@ -86,12 +83,13 @@ def get_current_intentions():
             # recurrent intentions that should be completed in the near future (reminder reached)
             "(recurrent = 't' and timezone('MSK'::text, now()) > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
         todo = f.dictfetchall(cur)
+        result = f.get_nested(todo)
     except psycopg2.Error as e: 
         f.get_db().rollback()
-        raise
+        result = [{'error': str(e)}]
     finally:
         cur.close()
-    return f.get_nested(todo)
+    return result
 
 def get_all_intentions():
     cur = f.get_db().cursor()
@@ -103,9 +101,10 @@ def get_all_intentions():
             "startdate, frequency, reminder, oldstartdate "
             "FROM public.intentions ;")
         todo = f.dictfetchall(cur)
+        result = f.get_nested(todo)
     except psycopg2.Error as e: 
         f.get_db().rollback()
-        raise
+        result = [{'error': str(e)}]
     finally:
         cur.close()
-    return f.get_nested(todo)
+    return result
