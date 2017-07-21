@@ -173,8 +173,11 @@ var richtext = {
 	rId: /\d+$/,
 	oToolsReq: new XMLHttpRequest(),
 	customCommands: {
-		"cleanDoc": function (oDoc) {
-			if (richtext.validateMode(oDoc) && confirm("Подтвердите удаление записи!")) { oDoc.innerHTML = "<p><br></p>"; };
+		"cleanDoc": function (oDoc, confirmed=false) {
+			if (confirmed === false) { // if we ask for confirmation explicitly
+				confirmed = confirm("Подтвердите удаление записи!");
+			}
+			if (richtext.validateMode(oDoc) && confirmed) { oDoc.innerHTML = "<p><br></p>"; };
 		},
 		"createLink": function (oDoc) {
 			var sLnk = prompt("Введите ссылку на источник:", "");

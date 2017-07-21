@@ -199,10 +199,7 @@
                         if (httpRequest.status === 200) {
                             cancelEdit(uid);
                             var oldel = document.getElementById(uid);
-                            var wrapper= document.createElement('div');
-                            wrapper.innerHTML= httpRequest.responseText;
-                            var newel = wrapper.firstChild;
-                            oldel.parentNode.replaceChild(newel, oldel);
+                            oldel.parentNode.replaceChild(elementFromText(httpRequest.responseText), oldel);
                         } else {
                             alert("Ошибка сервера при обновлении записи: " + httpRequest.status);
                         }
@@ -239,12 +236,17 @@
                 httpRequest.onreadystatechange = function() {
                     if (httpRequest.readyState === XMLHttpRequest.DONE) {
                         if (httpRequest.status === 200) {
-                            if (window.location.pathname === "/") {
-                                window.location.reload(true); 
-                            } else {
-                                clearNewPost();
-                                alert("Запись сохранена!");
-                            }
+
+                            var parentnode = document.getElementById("notes_content");
+                            parentnode.insertBefore(elementFromText(httpRequest.responseText), parentnode.firstChild);
+                            clearNewPost(true); // silent clearing of the newpost form
+
+                            // if (window.location.pathname === "/") {
+                            //     window.location.reload(true); 
+                            // } else {
+                            //     clearNewPost();
+                            //     alert("Запись сохранена!");
+                            // }
                         } else {
                             alert("Ошибка сервера при добавлении записи: " + httpRequest.status);
                         }
@@ -322,7 +324,7 @@
                 document.getElementById(uid + '_tmp').setAttribute("id", uid);
             }
 
-            function clearNewPost() {
+            function clearNewPost(confirmed=false) {
                 // clears all fields of the "new post" form
                 console.log("clear");
                 var el = document.getElementById(NEW_POST);
@@ -331,7 +333,7 @@
                 }
                 document.getElementById("np_source").value = "";
                 document.getElementById("np_topic").value = "";
-                richtext.customCommands['cleanDoc'](el.getElementsByClassName("rte-editbox")[0]);
+                richtext.customCommands['cleanDoc'](el.getElementsByClassName("rte-editbox")[0], confirmed);
                 //document.getElementById("np_maintext").value = "";
             }
 
@@ -437,6 +439,20 @@
             function insertAfter(newNode, referenceNode) {
                 // inserts new node after a referenceNode
                 referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+            }
+
+            function getFirstChild(el){
+                var firstChild = el.firstChild;
+                while (firstChild != null && firstChild.nodeType != 1) { // skip TextNodes, comments etc.
+                    firstChild = firstChild.nextSibling;
+                }
+                return firstChild;
+            }
+
+            function elementFromText(text){
+                var wrapper= document.createElement('div');
+                wrapper.innerHTML = text;
+                return getFirstChild(wrapper);
             }
 
         </script>
