@@ -20,10 +20,9 @@ def show_post(post_id):
     # you can also return single post with ajax, see below
     try:
         result = get_notes('', " where n.uid = '%s' " % post_id)
-        if result:
-            return render_template('master.html', notes=result, showtypes=True, todo=i.get_current_intentions())
-        else:
-            return render_template('404.html', message=f.NO_NOTE)
+        if not result:
+            result = {}
+        return render_template('master.html', notes=result, showtypes=True, todo=i.get_current_intentions(), message=f.NO_NOTE)
     except Exception as e:
         return render_template('404.html', message=f.QUERY_ERR, details=str(e))
 

@@ -498,7 +498,11 @@
 
                 <div id="notes_content">
                 <!-- actual posts -->
+                {% if notes %}
                     {% include "notes.html" %}
+                {% else %}
+                    {% include "404.html" %}
+                {% endif %}
                 </div>
 
             </div>
