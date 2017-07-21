@@ -86,7 +86,9 @@ def get_current_intentions():
             # recurrent intentions that should be completed in the near future (reminder reached)
             "(recurrent = 't' and timezone('MSK'::text, now()) > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
         todo = f.dictfetchall(cur)
-    except Exception as e: raise
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        raise
     finally:
         cur.close()
     return f.get_nested(todo)
@@ -101,7 +103,9 @@ def get_all_intentions():
             "startdate, frequency, reminder, oldstartdate "
             "FROM public.intentions ;")
         todo = f.dictfetchall(cur)
-    except Exception as e: raise
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        raise
     finally:
         cur.close()
     return f.get_nested(todo)

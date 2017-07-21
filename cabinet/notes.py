@@ -23,8 +23,9 @@ def show_post(post_id):
         if not result:
             result = {}
         return render_template('master.html', notes=result, showtypes=True, todo=i.get_current_intentions(), message=f.NO_NOTE)
-    except Exception as e:
-        return render_template('404.html', message=f.QUERY_ERR, details=str(e))
+    except psycopg2.Error as e:
+        return render_template('master.html', notes={}, showtypes=True, todo=i.get_current_intentions(), message=f.QUERY_ERR, details=str(e))
+        # return render_template('404.html', message=f.QUERY_ERR, details=str(e))
 
 @notes.route('/notes', methods=['GET'])
 def notes_load(post_id=None):
@@ -55,7 +56,8 @@ def notes_load(post_id=None):
             return render_template('notes.html', notes=result, showtypes=showtypes)
         else:
             return render_template('404.html', message=f.NO_NOTE)
-    except Exception as e:
+    except psycopg2.Error as e:
+        f.get_db().rollback()
         return render_template('404.html', message=f.QUERY_ERR, details=str(e))
 
 ###################
@@ -78,7 +80,9 @@ def get_notes(join='', where=''):
     try:
         cur.execute(sql)
         notes = f.dictfetchall(cur)
-    except Exception as e: raise
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        raise
     finally:
         cur.close()
     return notes
