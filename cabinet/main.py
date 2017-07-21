@@ -70,7 +70,7 @@ def mark():
     status = (request.args.get('status', ''),)
     cur = f.get_db().cursor()
     try:
-        cur.execute("UPDATE notes SET importantt = %s WHERE uid = %s::uuid;", (status, uid))
+        cur.execute("UPDATE notes SET important = %s WHERE uid = %s::uuid;", (status, uid))
         f.get_db().commit()
     # no exception handling; simple alert about "500 server error"
     finally:
