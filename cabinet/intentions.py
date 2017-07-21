@@ -38,6 +38,7 @@ def intent_check():
             else:
                 cur.execute("UPDATE intentions SET finished = NULL WHERE uid = %s::uuid;", (uid,))
         f.get_db().commit()
+    # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
     return uid 
@@ -49,9 +50,10 @@ def intent_delete():
     try:
         cur.execute("DELETE FROM intentions WHERE uid = %s::uuid;", uid)
         f.get_db().commit()
+    # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
-    return uid # getting uid back to delete post from page
+    return uid
 
 @app.route('/intent/reload', methods=['GET'])
 def intent_reload():

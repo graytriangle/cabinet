@@ -20,18 +20,6 @@ def inject_now():
 
 @app.route('/')
 def main_page():
-    cur = f.get_db().cursor()
-    try:
-        cur.execute("select n.*, "
-            "(select string_agg(name, ',') from topics t "
-            "left join notes_topics nt on nt.topic = t.uid "
-            "where nt.note = n.uid) topics "
-            "from notes n "
-            "order by created desc;")
-        main = f.dictfetchall(cur)
-
-    finally:
-        cur.close()
     return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions())
 
 @app.route('/', methods=['POST'])
@@ -47,24 +35,19 @@ def my_form_post():
     try:
         cur.execute("INSERT INTO notes (uid, maintext, important, url) VALUES (%s, %s, %s, %s) "
             "ON CONFLICT (uid) DO UPDATE SET maintext=excluded.maintext, changed=timezone('MSK'::text, now()), important=excluded.important, url=excluded.url;", (postuid, maintext, importance, source))
-        f.get_db().commit()
         if topic:
             topicsarray = topic.split(',')
             topicsarray = [i.strip() for i in topicsarray]
             topicsarray = [i for i in topicsarray if i] # removing empty strings
-            try:
-                for t in topicsarray:
-                    cur.execute("INSERT INTO topics (name) VALUES (%s) ON CONFLICT DO NOTHING;", (t,))
-                f.get_db().commit()
-                cur.execute("DELETE FROM notes_topics WHERE note = %s;", (postuid,))
-                f.get_db().commit()
-                for t in topicsarray:
-                    cur.execute("SELECT uid FROM topics WHERE name = %s;", (t,))
-                    topicuid = cur.fetchone()[0]
-                    cur.execute("INSERT INTO notes_topics (note, topic) VALUES (%s, %s);", (postuid, topicuid))
-                f.get_db().commit()
-            finally:
-                pass
+            for t in topicsarray:
+                cur.execute("INSERT INTO topics (name) VALUES (%s) ON CONFLICT DO NOTHING;", (t,))
+            cur.execute("DELETE FROM notes_topics WHERE note = %s;", (postuid,))
+            for t in topicsarray:
+                cur.execute("SELECT uid FROM topics WHERE name = %s;", (t,))
+                topicuid = cur.fetchone()[0]
+                cur.execute("INSERT INTO notes_topics (note, topic) VALUES (%s, %s);", (postuid, topicuid))
+        f.get_db().commit()
+    # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
     return n.notes_load(postuid)
@@ -76,6 +59,7 @@ def delete():
     try:
         cur.execute("DELETE FROM notes WHERE uid = %s::uuid;", uid)
         f.get_db().commit()
+    # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
     return uid # getting uid back to delete post from page
@@ -86,8 +70,9 @@ def mark():
     status = (request.args.get('status', ''),)
     cur = f.get_db().cursor()
     try:
-        cur.execute("UPDATE notes SET important = %s WHERE uid = %s::uuid;", (status, uid))
+        cur.execute("UPDATE notes SET importantt = %s WHERE uid = %s::uuid;", (status, uid))
         f.get_db().commit()
+    # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
     return uid 

@@ -18,14 +18,8 @@ notes = Blueprint('notes', __name__, template_folder='templates')
 def show_post(post_id):
     # show the post with the given id, the id is an uuid
     # you can also return single post with ajax, see below
-    try:
-        result = get_notes('', " where n.uid = '%s' " % post_id)
-        if not result:
-            result = {}
-        return render_template('master.html', notes=result, showtypes=True, todo=i.get_current_intentions(), message=f.NO_NOTE)
-    except psycopg2.Error as e:
-        return render_template('master.html', notes={}, showtypes=True, todo=i.get_current_intentions(), message=f.QUERY_ERR, details=str(e))
-        # return render_template('404.html', message=f.QUERY_ERR, details=str(e))
+    result = get_notes('', " where n.uid = '%s' " % post_id)
+    return render_template('master.html', notes=result, showtypes=True, todo=i.get_current_intentions())
 
 @notes.route('/notes', methods=['GET'])
 def notes_load(post_id=None):
@@ -39,7 +33,6 @@ def notes_load(post_id=None):
     where = "where 1=1 "
     join = " "
     showtypes = True
-    cur = f.get_db().cursor()
     if (notetype and notetype != 'all'):
         where += " and nt.name = '%s' " % notetype
         showtypes = False
@@ -49,16 +42,8 @@ def notes_load(post_id=None):
         where += " and t.name = '%s' " % notetopic.lower()
     if (noteuid):
         where += " and n.uid = '%s' " % noteuid
-    print where
-    try:
-        result = get_notes(join, where)
-        if result:
-            return render_template('notes.html', notes=result, showtypes=showtypes)
-        else:
-            return render_template('404.html', message=f.NO_NOTE)
-    except psycopg2.Error as e:
-        f.get_db().rollback()
-        return render_template('404.html', message=f.QUERY_ERR, details=str(e))
+    result = get_notes(join, where)
+    return render_template('notes.html', notes=result, showtypes=showtypes)
 
 ###################
 # OTHER FUNCTIONS #
@@ -80,9 +65,11 @@ def get_notes(join='', where=''):
     try:
         cur.execute(sql)
         notes = f.dictfetchall(cur)
+        if not notes:
+            notes = [{'error': f.NO_NOTE, 'details': ''}]
     except psycopg2.Error as e: 
         f.get_db().rollback()
-        raise
+        notes = [{'error': f.QUERY_ERR, 'details': str(e)}]
     finally:
         cur.close()
     return notes

@@ -1,48 +1,56 @@
 {% for record in notes %}
-    <div class="post" id="{{record['uid']}}">
-        
-        {% set shorturl = record['url'] %}
-        {% if shorturl.startswith('http://') %}
-            {% set shorturl = shorturl[7:] %}
-        {% endif %}
-        {% if shorturl.startswith('https://') %}
-            {% set shorturl = shorturl[8:] %}
-        {% endif %}
-        {% if shorturl.startswith('www.') %}
-            {% set shorturl = shorturl[4:] %}
-        {% endif %}
-        {% if shorturl|length > 80 %}
-            {% set shorturl = shorturl[:80] + '...' %}
-        {% endif %}
-
-        {% if showtypes %}
-            <div><p>here goes the type</p></div>
-        {% endif %}
-
-        <div 
-            class="star {% if record['important'] %} staron {% endif %}" 
-            title="{% if record['important'] %} Убрать отметку важности {% else %} Отметить запись как важную {% endif %}" 
-            onclick="markPost('{{record['uid']}}')">
+    {% if record.error %}
+        <div class="post error">
+            <h3>{{record.error}}</h3>
+            <p>{{record.details}}</p>
+            <a href="/">Вернуться на главную страницу</a>
         </div>
-        <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>
-        <div class="posticon editpost" title="Редактировать запись" onclick="editPost('{{record['uid']}}')"></div>
-        <div class="title" title="{{record['created'].strftime("%d.%m.%Y %H:%M")}}"><a href="/note/{{record['uid']}}">{{record['created'].strftime("%d.%m.%Y")}}
-            {% if record['changed'] %} <span class="edits" title="Последнее изменение: {{record['changed'].strftime("%d.%m.%Y %H:%M")}}"> *</span> {% endif %}
-        </a></div>
-        {% if record['url'] %}
-            <div class="smallicon extlink" title="Основной источник"></div>
-            <div class="source"><a href="{{record['url']}}">{{shorturl}}</a></div>
-        {% endif %}
-        {% if record['topics'] %}
-            <div class="smallicon topic" title="Темы"></div>
-            <div class="tags">
-            {% for topic in record['topics'].split(',') %}
-                <a href="#" onclick="notes_load('all', '{{topic}}'); return false;">{{topic}}</a>{% if not loop.last %},{% endif %}
-            {% endfor %}
+    {% else %}
+        <div class="post" id="{{record['uid']}}">
+            
+            {% set shorturl = record['url'] %}
+            {% if shorturl.startswith('http://') %}
+                {% set shorturl = shorturl[7:] %}
+            {% endif %}
+            {% if shorturl.startswith('https://') %}
+                {% set shorturl = shorturl[8:] %}
+            {% endif %}
+            {% if shorturl.startswith('www.') %}
+                {% set shorturl = shorturl[4:] %}
+            {% endif %}
+            {% if shorturl|length > 80 %}
+                {% set shorturl = shorturl[:80] + '...' %}
+            {% endif %}
+
+            {% if showtypes %}
+                <div><p>here goes the type</p></div>
+            {% endif %}
+
+            <div 
+                class="star {% if record['important'] %} staron {% endif %}" 
+                title="{% if record['important'] %} Убрать отметку важности {% else %} Отметить запись как важную {% endif %}" 
+                onclick="markPost('{{record['uid']}}')">
             </div>
-        {% endif %}
-        <div class="posttext">
-            {{ record['maintext']|safe }}
+            <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>
+            <div class="posticon editpost" title="Редактировать запись" onclick="editPost('{{record['uid']}}')"></div>
+            <div class="title" title="{{record['created'].strftime("%d.%m.%Y %H:%M")}}"><a href="/note/{{record['uid']}}">{{record['created'].strftime("%d.%m.%Y")}}
+                {% if record['changed'] %} <span class="edits" title="Последнее изменение: {{record['changed'].strftime("%d.%m.%Y %H:%M")}}"> *</span> {% endif %}
+            </a></div>
+            {% if record['url'] %}
+                <div class="smallicon extlink" title="Основной источник"></div>
+                <div class="source"><a href="{{record['url']}}">{{shorturl}}</a></div>
+            {% endif %}
+            {% if record['topics'] %}
+                <div class="smallicon topic" title="Темы"></div>
+                <div class="tags">
+                {% for topic in record['topics'].split(',') %}
+                    <a href="#" onclick="notes_load('all', '{{topic}}'); return false;">{{topic}}</a>{% if not loop.last %},{% endif %}
+                {% endfor %}
+                </div>
+            {% endif %}
+            <div class="posttext">
+                {{ record['maintext']|safe }}
+            </div>
         </div>
-    </div>
+    {% endif %}
 {% endfor %}
