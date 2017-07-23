@@ -60,7 +60,6 @@
 
             function hideForm(event) {
                 // minimizing the "new post" form
-                console.log(event.type);
                 var execute = 0;
                 // alert(event.target.getAttribute("id"));
                 if (event.type == 'rteReadyEvent') {
@@ -70,7 +69,6 @@
                     execute = 1;
                 }
                 if (execute == 1) {
-                    console.log("hide execute");
                 // var formelements = ["np_maintext", "np_source", "np_topic"];
                 // var selected = document.activeElement;
                 // if (formelements.indexOf(selected.id) == -1) { /* проверка на вхождение в массив */
@@ -393,35 +391,69 @@
             function display_type(section) {
                 var prevtype = document.getElementsByClassName("section_selected")[0];
                 var clickedtype = event.target.parentElement;
-                console.log('prevtype: ' + prevtype);
-                console.log('cltype: ' + clickedtype);
                 if (!(prevtype === undefined && typeof prevtype === "undefined")) {
-                    // если было что-то выбрано, мы его выключаем
+                    // если было что-то выбрано, мы выключаем ему кружок
                     prevtype.classList.remove('section_selected');
-                    console.log('prevtype turnoff!');
                 }
                 if (prevtype != clickedtype) {
-                    // включаем кликнутое, если только оно уже не было выбрано
+                    // включаем кружок кликнутому, если только оно уже не было выбрано
                     clickedtype.classList.add('section_suspended');
-                    console.log('clicktype turnon!');
+                }
+
+                // перекрываем иконки "выключающим" стилем
+                for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
+                    document.getElementsByClassName("section_icon")[i].classList.add('section_icon_inactive');
+                }
+
+                // выключаем функции у всех переключателей
+                for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
+                    document.getElementsByClassName("section")[i].removeAttribute("onclick");
                 }
 
                 var notetype_callback_ok = function(){
+                    // включаем все иконки обратно
+                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
+                    }
+
+                    // если ранее был выбран раздел, сносим его иконке "активный" стиль
+                    if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                        prevtype.getElementsByClassName("section_icon")[0].classList.remove('section_icon_active');
+                    }
+
+                    // если включился новый раздел, активируем ему иконку и кружок
                     if (clickedtype.classList.contains('section_suspended')) {
                         clickedtype.classList.remove('section_suspended');
                         clickedtype.classList.add('section_selected');
+                        clickedtype.getElementsByClassName("section_icon")[0].classList.add('section_icon_active');
                     }
-                    console.log("callback works!");
+
+                    // включаем обратно функции у всех переключателей
+                    for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section")[i].setAttribute("onclick", "display_type(event)");
+                    }
                 };
 
+                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
                 var notetype_callback_error = function(){
+                    // включаем все иконки обратно
+                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
+                    }
+
+                    // если ранее был выбран раздел, включаем ему кружок обратно
                     if (!(prevtype === undefined && typeof prevtype === "undefined")) {
                         prevtype.classList.add('section_selected');
                     }
+                    // если пытались включить новый раздел, выключаем ему кружок
                     if (clickedtype.classList.contains('section_suspended')) {
                         clickedtype.classList.remove('section_suspended');
                     }
-                    console.log("callback works! error");
+
+                    // включаем обратно функции у всех переключателей
+                    for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section")[i].setAttribute("onclick", "display_type(event)");
+                    }
                 }
 
                 switch (clickedtype.getAttribute("id")) {
@@ -450,7 +482,6 @@
                 var oldlist = document.getElementById("notes_content");
                 if (!httpRequest) {
                     alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-                    // checkbox.disabled = false;
                     return false;
                 }
                 httpRequest.onreadystatechange = function() {
@@ -463,10 +494,10 @@
                             postsparent.appendChild(wrapper);
                             callback_ok();
                         } else {
+                            // по факту этот блок никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
                             callback_error();
                             alert("Ошибка сервера при обновлении списка записей: " + httpRequest.status);
                         }
-                        // checkbox.disabled = false;
                     }
                 };
                 httpRequest.open('GET', '/notes?type=' + section + '&topic='+ topic + '&uid='+ uid);
