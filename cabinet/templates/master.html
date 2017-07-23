@@ -390,8 +390,55 @@
                 httpRequest.send();
             }
 
-            function notes_load(section='', topic='', uid='') {
-                // AJAX reloading of the intentions tree
+            function display_type(section) {
+                var prevtype = document.getElementsByClassName("section_selected")[0];
+                var clickedtype = event.target.parentElement;
+                console.log('prevtype: ' + prevtype);
+                console.log('cltype: ' + clickedtype);
+                if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                    // если было что-то выбрано, мы его выключаем
+                    prevtype.classList.remove('section_selected');
+                    console.log('prevtype turnoff!');
+                }
+                if (prevtype != clickedtype) {
+                    // включаем кликнутое, если только оно уже не было выбрано
+                    clickedtype.classList.add('section_suspended');
+                    console.log('clicktype turnon!');
+                }
+
+                var notetype_callback_ok = function(){
+                    if (clickedtype.classList.contains('section_suspended')) {
+                        clickedtype.classList.remove('section_suspended');
+                        clickedtype.classList.add('section_selected');
+                    }
+                    console.log("callback works!");
+                };
+
+                var notetype_callback_error = function(){
+                    if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                        prevtype.classList.add('section_selected');
+                    }
+                    if (clickedtype.classList.contains('section_suspended')) {
+                        clickedtype.classList.remove('section_suspended');
+                    }
+                    console.log("callback works! error");
+                }
+
+                switch (clickedtype.getAttribute("id")) {
+                    case 'switch_type_note':
+                        notes_load('note', '', '', notetype_callback_ok, notetype_callback_error);
+                        break;
+                    case 'switch_type_diary':
+                        notes_load('diary', '', '', notetype_callback_ok, notetype_callback_error);
+                        break;
+                    case 'switch_type_draft':
+                        notes_load('draft', '', '', notetype_callback_ok, notetype_callback_error);
+                        break;
+                }
+            }
+
+            function notes_load(section='', topic='', uid='', callback_ok, callback_error) {
+                // AJAX reloading of the notes block
                 var current_section = document.getElementById("section_selected").getAttribute("value");
                 if (section == current_section || section === '') {
                     section = "all";
@@ -414,7 +461,9 @@
                             wrapper.id = 'notes_content';
                             wrapper.innerHTML= httpRequest.responseText;
                             postsparent.appendChild(wrapper);
+                            callback_ok();
                         } else {
+                            callback_error();
                             alert("Ошибка сервера при обновлении списка записей: " + httpRequest.status);
                         }
                         // checkbox.disabled = false;
@@ -475,8 +524,15 @@
 
                 <div class="sections">
                     <input id="section_selected" type="hidden" value="all">
-                    <div class="section diary" onclick="notes_load('diary')"></div>
-                    <div class="section other" onclick="notes_load('other')"></div>
+                    <div class="section" id="switch_type_note" onclick="display_type(event)">
+                        <div class="section_icon note"></div>
+                    </div>
+                    <div class="section" id="switch_type_diary" onclick="display_type(event)">
+                        <div class="section_icon diary"></div>
+                    </div>
+                    <div class="section" id="switch_type_draft" onclick="display_type(event)">
+                        <div class="section_icon draft"></div>
+                    </div>
                 </div>
             <!-- "new post" window -->
                 <div class="post" id="00000000-0000-0000-0000-000000000000">

@@ -67,10 +67,37 @@
     cursor: pointer;
 }
 
+.section_selected {
+    background-image: url('../img/circle_default.png');
+}
+
+.section_suspended {
+    background-image: url('../img/circle_inactive.png');
+}
+
+.section_icon {
+    background-position: 0px 0px;
+    background-size: 35px;
+    width: 35px;
+    height: 35px;
+}
+
+.note {
+    background-image: url('../img/note.png');
+}
+
 .diary {
     background-image: url('../img/diary.png');
 }
 
-.other {
-    background-image: url('../img/other.png');
+.draft {
+    background-image: url('../img/draft.png');
+}
+
+.section_inactive {
+    background-position: 0px 35px;
+}
+
+.section_active {
+    background-position: 0px 70px;
 }
