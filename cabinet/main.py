@@ -31,6 +31,8 @@ def my_form_post():
     source = request.form['source']
     if postuid == '00000000-0000-0000-0000-000000000000':
         postuid = str(uuid.uuid4())
+    if maintext == '<p><br></p>':
+        maintext = '' # for some bizarre reason None doesn't get converted into null
     cur = f.get_db().cursor()
     try:
         cur.execute("INSERT INTO notes (uid, maintext, important, url) VALUES (%s, %s, %s, %s) "

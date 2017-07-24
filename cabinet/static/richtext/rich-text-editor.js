@@ -181,7 +181,12 @@ var richtext = {
 		},
 		"createLink": function (oDoc) {
 			var sLnk = prompt("Введите ссылку на источник:", "");
-			if (sLnk){ richtext.formatDoc(oDoc, "createlink", sLnk); }
+			if (sLnk) {
+				if (sLnk.indexOf("//") == -1) {
+					sLnk = "//" + sLnk;
+				}
+				richtext.formatDoc(oDoc, "createlink", sLnk); 
+			}
 		},
 		"blockquote": function (oDoc) {
 			var sLnk = prompt("Введите адрес ссылки:", "");
