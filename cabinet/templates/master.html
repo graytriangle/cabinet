@@ -109,72 +109,63 @@
                 // AJAX deleting the existing post
                 var result = confirm("Подтвердите удаление записи!");
                 if (result) {
-                    httpRequest = new XMLHttpRequest();
                     var el = document.getElementById(uid);
                     el.getElementsByClassName("deletepost")[0].removeAttribute("onclick");
                     el.getElementsByClassName("editpost")[0].removeAttribute("onclick");
                     el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
                     el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
 
-                    if (!httpRequest) {
-                        alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                    var delpost_cb_ok = function(response) {
+                        el.parentNode.removeChild(el);
+                    }
+
+                    var delpost_cb_error = function(status) {
+                        if (status !== null) {
+                            alert("Ошибка сервера при удалении записи: " + status);
+                        }
+                    }
+
+                    var delpost_cb_finally = function() {
                         el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "deletePost('" + uid + "')");
                         el.getElementsByClassName("editpost")[0].setAttribute("onclick", "editPost('" + uid + "')");
                         el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
                         el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
-                        return false;
                     }
-                    httpRequest.onreadystatechange = function() {
-                        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                            if (httpRequest.status === 200) {
-                                el.parentNode.removeChild(el);
-                            } else {
-                                alert("Ошибка сервера при удалении записи: " + httpRequest.status);
-                            }
-                            el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "deletePost('" + uid + "')");
-                            el.getElementsByClassName("editpost")[0].setAttribute("onclick", "editPost('" + uid + "')");
-                            el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
-                            el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
-                        }
-                    };
-                    httpRequest.open('GET', '/delete?uid=' + uid);
-                    httpRequest.send();
+
+                    var address = '/delete?uid=' + uid;
+                    ajax('GET', address, delpost_cb_ok, delpost_cb_error, delpost_cb_finally);
                 }
             }
 
             function markPost(uid) {
                 // AJAX toggling the "important" star in posts
-                httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(uid);
                 var status = "true";
                 if (el.getElementsByClassName("star")[0].classList.contains('staron')) {
                     status = "false";
                 }
-                if (!httpRequest) {
-                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-                    return false;
-                }
-                httpRequest.onreadystatechange = function() {
-                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                        if (httpRequest.status === 200) {
-                            el.getElementsByClassName("star")[0].classList.toggle('staron');
-                            if (status == "false") {
-                                el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
-                            } else {
-                                el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
-                            }
-                        } else {
-                            alert("Ошибка сервера при установке отметки: " + httpRequest.status);
-                        }
+
+                var markpost_cb_ok = function(response) {
+                    el.getElementsByClassName("star")[0].classList.toggle('staron');
+                    if (status == "false") {
+                        el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
+                    } else {
+                        el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
                     }
-                };
-                httpRequest.open('GET', '/mark?uid=' + uid + '&status=' + status);
-                httpRequest.send();
+                }
+
+                var markpost_cb_error = function(status) {
+                    if (status !== null) {
+                        alert("Ошибка сервера при установке отметки: " + status);
+                    }
+                }
+
+                var address = '/mark?uid=' + uid + '&status=' + status;
+                ajax('GET', address, markpost_cb_ok, markpost_cb_error);
             }
 
             function updatePost(uid) {
                 // AJAX updating of an existing post
-                httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(uid);
                 // disable save/cancel buttons
                 el.getElementsByClassName("canceledit")[0].removeAttribute("onclick");
@@ -183,80 +174,59 @@
                 el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
 
                 var formData = new FormData(el.getElementsByTagName("form")[0]);
-                if (!httpRequest) {
-                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-                    // reenable save/cancel buttons
+
+                var updpost_cb_ok = function(response) {
+                    cancelEdit(uid);
+                    var oldel = document.getElementById(uid);
+                    oldel.parentNode.replaceChild(elementFromText(httpRequest.responseText), oldel);
+                }
+
+                var updpost_cb_error = function(status) {
+                    if (status !== null) {
+                        alert("Ошибка сервера при обновлении записи: " + status);
+                    }
+                }
+
+                var updpost_cb_finally = function() {
                     el.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
                     el.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
                     el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
                     el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
-                    return false;
                 }
-                httpRequest.onreadystatechange = function() {
-                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                        if (httpRequest.status === 200) {
-                            cancelEdit(uid);
-                            var oldel = document.getElementById(uid);
-                            oldel.parentNode.replaceChild(elementFromText(httpRequest.responseText), oldel);
-                        } else {
-                            alert("Ошибка сервера при обновлении записи: " + httpRequest.status);
-                        }
-                        // reenable save/cancel buttons
-                        el.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
-                        el.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
-                        el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
-                        el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
-                    }
-                };
-                httpRequest.open('POST', '/');
-                httpRequest.send(formData);
+
+                ajax('POST', '/', updpost_cb_ok, updpost_cb_error, updpost_cb_finally, formData);
             }
 
             function addPost() {
                 // AJAX adding of a new post
                 // here goes disabling
-                httpRequest = new XMLHttpRequest();
                 var el = document.getElementById(NEW_POST);
                 el.getElementsByClassName("deletepost")[0].removeAttribute("onclick");
                 el.getElementsByClassName("savepost")[0].removeAttribute("onclick");
                 el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
                 el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
                 var formData = new FormData(el.getElementsByTagName("form")[0]);
-                if (!httpRequest) {
-                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-                    // reenable save/cancel buttons
+
+                var addpost_cb_ok = function(response) {
+                    var parentnode = document.getElementById("notes_content");
+                    parentnode.insertBefore(elementFromText(response), parentnode.firstChild);
+                    clearNewPost(true); // silent clearing of the newpost form
+                }
+
+                var addpost_cb_error = function(status) {
+                    if (status !== null) {
+                        alert("Ошибка сервера при добавлении записи: " + status);
+                    }
+                }
+
+                var addpost_cb_finally = function() {
                     el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "clearNewPost()");
                     el.getElementsByClassName("savepost")[0].setAttribute("onclick", "addPost()");
                     el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
                     el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
-                    return false;
                 }
-                httpRequest.onreadystatechange = function() {
-                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                        if (httpRequest.status === 200) {
 
-                            var parentnode = document.getElementById("notes_content");
-                            parentnode.insertBefore(elementFromText(httpRequest.responseText), parentnode.firstChild);
-                            clearNewPost(true); // silent clearing of the newpost form
-
-                            // if (window.location.pathname === "/") {
-                            //     window.location.reload(true); 
-                            // } else {
-                            //     clearNewPost();
-                            //     alert("Запись сохранена!");
-                            // }
-                        } else {
-                            alert("Ошибка сервера при добавлении записи: " + httpRequest.status);
-                        }
-                        // reenable save/cancel buttons
-                        el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "clearNewPost()");
-                        el.getElementsByClassName("savepost")[0].setAttribute("onclick", "addPost()");
-                        el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
-                        el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
-                    }
-                };
-                httpRequest.open('POST', '/');
-                httpRequest.send(formData);
+                ajax('POST', '/', addpost_cb_ok, addpost_cb_error, addpost_cb_finally, formData);
             }
 
             /*************************/
@@ -324,7 +294,6 @@
 
             function clearNewPost(confirmed=false) {
                 // clears all fields of the "new post" form
-                console.log("clear");
                 var el = document.getElementById(NEW_POST);
                 if (el.getElementsByClassName("star_field")[0].getAttribute("value") === "true") {
                     np_toggleImportant(NEW_POST);
@@ -350,42 +319,30 @@
                 }
             }
 
-            function intent_reload(checkbox) {
-                checkbox.disabled = true;
-                if (checkbox.checked) {
-                    intent_load(true);
-                } else {
-                    intent_load();
-                }
-            }
-
-            function intent_load(all=false) {
+            function intent_load(all) {
                 // AJAX reloading of the intentions tree
                 var checkbox = document.getElementById("intent_showall");
-                httpRequest = new XMLHttpRequest();
                 var todoparent = document.getElementsByClassName("todo")[0];
                 var oldlist = document.getElementById("todo_content");
-                if (!httpRequest) {
-                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-                    checkbox.disabled = false;
-                    return false;
+                checkbox.disabled = true;
+
+                var intent_cb_ok = function(response) {
+                    todoparent.removeChild(oldlist);
+                    var wrapper = document.createElement('div');
+                    wrapper.id = 'todo_content';
+                    wrapper.innerHTML = response;
+                    todoparent.appendChild(wrapper);
+                    checkbox.disabled = false; // не стал писать finally ради одной общей строчки
                 }
-                httpRequest.onreadystatechange = function() {
-                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                        if (httpRequest.status === 200) {
-                            todoparent.removeChild(oldlist);
-                            var wrapper = document.createElement('div');
-                            wrapper.id = 'todo_content';
-                            wrapper.innerHTML= httpRequest.responseText;
-                            todoparent.appendChild(wrapper);
-                        } else {
-                            alert("Ошибка сервера при обновлении списка намерений: " + httpRequest.status);
-                        }
-                        checkbox.disabled = false;
+
+                var intent_cb_error = function(status) {
+                    checkbox.disabled = false; // не стал писать finally ради одной общей строчки
+                    if (status !== null) {
+                        alert("Ошибка сервера при обновлении списка намерений: " + status);
                     }
-                };
-                httpRequest.open('GET', '/intent/reload?all=' + all);
-                httpRequest.send();
+                }
+
+                ajax('GET', '/intent/reload?all=' + all, intent_cb_ok, intent_cb_error);
             }
 
             function display_type(section) {
@@ -400,66 +357,67 @@
                     // включаем кружок кликнутому, если только оно уже не было выбрано
                     clickedtype.classList.add('section_suspended');
                 }
-
                 // перекрываем иконки "выключающим" стилем
                 for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
                     document.getElementsByClassName("section_icon")[i].classList.add('section_icon_inactive');
                 }
-
                 // выключаем функции у всех переключателей
                 for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
                     document.getElementsByClassName("section")[i].removeAttribute("onclick");
                 }
 
-                var notetype_callback_ok = function(){
+                var notetype_callback_ok = function(response){
                     // callback to execute on successful note loading
-
-                    // включаем все иконки обратно
-                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
-                    }
 
                     // если ранее был выбран раздел, сносим его иконке "активный" стиль
                     if (!(prevtype === undefined && typeof prevtype === "undefined")) {
                         prevtype.getElementsByClassName("section_icon")[0].classList.remove('section_icon_active');
                     }
-
                     // если включился новый раздел, активируем ему иконку и кружок
                     if (clickedtype.classList.contains('section_suspended')) {
-                        clickedtype.classList.remove('section_suspended');
                         clickedtype.classList.add('section_selected');
                         clickedtype.getElementsByClassName("section_icon")[0].classList.add('section_icon_active');
                     }
 
-                    // включаем обратно функции у всех переключателей
-                    for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section")[i].setAttribute("onclick", "display_type(event)");
-                    }
+                    var postsparent = document.getElementById("maincol");
+                    var oldlist = document.getElementById("notes_content");
+                    postsparent.removeChild(oldlist);
+                    var wrapper = document.createElement('div');
+                    wrapper.id = 'notes_content';
+                    wrapper.innerHTML = response;
+                    postsparent.appendChild(wrapper);
                 };
 
                 // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
-                var notetype_callback_error = function(){
+                var notetype_callback_error = function(status){
                     // callback to execute on unsuccessful note loading
-
-                    // включаем все иконки обратно
-                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
-                    }
 
                     // если ранее был выбран раздел, включаем ему кружок обратно
                     if (!(prevtype === undefined && typeof prevtype === "undefined")) {
                         prevtype.classList.add('section_selected');
                     }
-                    // если пытались включить новый раздел, выключаем ему кружок
-                    if (clickedtype.classList.contains('section_suspended')) {
-                        clickedtype.classList.remove('section_suspended');
-                    }
 
+                    if (status !== null) {
+                        alert("Ошибка сервера при обновлении списка записей: " + status);
+                    }
+                };
+
+                var notetype_callback_finally = function(){
+                    // callback to execute in all cases
+
+                    // включаем все иконки обратно
+                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
+                    }
                     // включаем обратно функции у всех переключателей
                     for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
                         document.getElementsByClassName("section")[i].setAttribute("onclick", "display_type(event)");
                     }
-                }
+                    // если пытались включить новый раздел, выключаем ему заморозку
+                    if (clickedtype.classList.contains('section_suspended')) {
+                        clickedtype.classList.remove('section_suspended');
+                    }
+                };
 
                 var typename;
                 switch (clickedtype.getAttribute("id")) {
@@ -478,43 +436,46 @@
                     typename = 'all';
                 }
                 document.getElementById("section_selected").setAttribute("value", typename);
-                notes_load(typename, '', '', notetype_callback_ok, notetype_callback_error);
+
+                var address = '/notes?type=' + typename;
+                ajax('GET', address, notetype_callback_ok, notetype_callback_error, notetype_callback_finally);
             }
 
-            function notes_load(section='', topic='', uid='', callback_ok, callback_error) {
-                // AJAX reloading of the notes block
+            /*************************/
+            /* Aux functions */
+            /*************************/
+
+            function ajax(type, address, success, error, cleanup=function(){}, post_data=null) {
                 httpRequest = new XMLHttpRequest();
-                var postsparent = document.getElementById("maincol");
-                var oldlist = document.getElementById("notes_content");
                 if (!httpRequest) {
                     alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                    error(null);
+                    cleanup();
                     return false;
                 }
                 httpRequest.onreadystatechange = function() {
                     if (httpRequest.readyState === XMLHttpRequest.DONE) {
                         if (httpRequest.status === 200) {
-                            postsparent.removeChild(oldlist);
-                            var wrapper = document.createElement('div');
-                            wrapper.id = 'notes_content';
-                            wrapper.innerHTML= httpRequest.responseText;
-                            postsparent.appendChild(wrapper);
-                            callback_ok();
+                            success(httpRequest.responseText);
+                            cleanup();
                         } else {
-                            // по факту этот блок никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
-                            callback_error();
-                            alert("Ошибка сервера при обновлении списка записей: " + httpRequest.status);
+                            error(httpRequest.status);
+                            cleanup();
                         }
                     }
                 };
-                httpRequest.open('GET', '/notes?type=' + section + '&topic='+ topic + '&uid='+ uid);
-                httpRequest.send();
-
+                httpRequest.open(type, address);
+                if (type == 'GET') {
+                    httpRequest.send();
+                } else if (type == 'POST') {
+                    httpRequest.send(post_data);
+                } else {
+                    alert('Неизвестный тип запроса');
+                    error();
+                    cleanup();
+                    return false;
+                }
             }
-
-
-            /*************************/
-            /* Aux functions */
-            /*************************/
 
             function findAncestor(el, cls) {
                 // returns first ancestor with a certain class
@@ -548,7 +509,7 @@
                 <div class="todo">
                     <div class="todo_title">Намерения</div>
                     <div class="intent_showall_container">
-                        <input type="checkbox" class="intent_showall_checkbox" id="intent_showall" onchange="intent_reload(this)">
+                        <input type="checkbox" class="intent_showall_checkbox" id="intent_showall" onchange="intent_load(this.checked)">
                         <label class="intent_showall_label" for="intent_showall">Показать всё</label>
                     </div>
                     <div id="todo_content">
