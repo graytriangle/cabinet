@@ -389,6 +389,7 @@
             }
 
             function display_type(section) {
+                // wrapper for switching displayed note types
                 var prevtype = document.getElementsByClassName("section_selected")[0];
                 var clickedtype = event.target.parentElement;
                 if (!(prevtype === undefined && typeof prevtype === "undefined")) {
@@ -411,6 +412,8 @@
                 }
 
                 var notetype_callback_ok = function(){
+                    // callback to execute on successful note loading
+
                     // включаем все иконки обратно
                     for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
                         document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
@@ -436,6 +439,8 @@
 
                 // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
                 var notetype_callback_error = function(){
+                    // callback to execute on unsuccessful note loading
+
                     // включаем все иконки обратно
                     for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
                         document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
@@ -456,27 +461,28 @@
                     }
                 }
 
+                var typename;
                 switch (clickedtype.getAttribute("id")) {
                     case 'switch_type_note':
-                        notes_load('note', '', '', notetype_callback_ok, notetype_callback_error);
+                        typename = 'note';
                         break;
                     case 'switch_type_diary':
-                        notes_load('diary', '', '', notetype_callback_ok, notetype_callback_error);
+                        typename = 'diary';
                         break;
                     case 'switch_type_draft':
-                        notes_load('draft', '', '', notetype_callback_ok, notetype_callback_error);
+                        typename = 'draft';
                         break;
                 }
+                var current_typename = document.getElementById("section_selected").getAttribute("value");
+                if (typename == current_typename) {
+                    typename = 'all';
+                }
+                document.getElementById("section_selected").setAttribute("value", typename);
+                notes_load(typename, '', '', notetype_callback_ok, notetype_callback_error);
             }
 
             function notes_load(section='', topic='', uid='', callback_ok, callback_error) {
                 // AJAX reloading of the notes block
-                var current_section = document.getElementById("section_selected").getAttribute("value");
-                if (section == current_section || section === '') {
-                    section = "all";
-                }
-                document.getElementById("section_selected").setAttribute("value", section);
-
                 httpRequest = new XMLHttpRequest();
                 var postsparent = document.getElementById("maincol");
                 var oldlist = document.getElementById("notes_content");
@@ -556,13 +562,13 @@
                 <div class="sections">
                     <input id="section_selected" type="hidden" value="all">
                     <div class="section" id="switch_type_note" onclick="display_type(event)">
-                        <div class="section_icon note"></div>
+                        <div class="section_icon note" title="Показать только заметки"></div>
                     </div>
                     <div class="section" id="switch_type_diary" onclick="display_type(event)">
-                        <div class="section_icon diary"></div>
+                        <div class="section_icon diary" title="Показать только дневник"></div>
                     </div>
                     <div class="section" id="switch_type_draft" onclick="display_type(event)">
-                        <div class="section_icon draft"></div>
+                        <div class="section_icon draft" title="Показать только черновики"></div>
                     </div>
                 </div>
             <!-- "new post" window -->
