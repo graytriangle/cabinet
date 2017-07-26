@@ -1,0 +1,12 @@
+<script>
+
+</script>
+
+{% for record in topics %}
+    {% if record.error %} 
+        <div class="rc_topic rc_current_topic">Ошибка при загрузке списка тем!</div>
+        <div class="rc_topic">{{record.error}}</div>
+    {% else %}
+        <div class="rc_topic">{{record.name}}</div>
+    {% endif %}
+{% endfor %}

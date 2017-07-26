@@ -9,10 +9,12 @@ from cabinet import app
 from cabinet import intentions as i
 from cabinet import notes as n
 from cabinet import functions as f
+from cabinet import topics as t
 from datetime import datetime
 
 app.register_blueprint(i.intentions)
 app.register_blueprint(n.notes)
+app.register_blueprint(t.topics)
 
 @app.context_processor
 def inject_now():
@@ -20,7 +22,7 @@ def inject_now():
 
 @app.route('/')
 def main_page():
-    return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions())
+    return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
 
 @app.route('/', methods=['POST'])
 def my_form_post():

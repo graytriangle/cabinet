@@ -1,0 +1,23 @@
+.searchbar {
+    height: 35px;
+    margin-bottom: 10px;
+}
+
+.rc_topic {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 10pt;
+    padding-left: 10px;
+    max-width: 250px;
+    min-height: 25px;
+    margin-bottom: 3px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column; 
+}
+
+.rc_current_topic {
+    border-left: 2px solid #a6caf0;
+    background-color: #f7fbff;
+    font-weight: bold;
+}

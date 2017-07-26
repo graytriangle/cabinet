@@ -7,6 +7,7 @@ import psycopg2
 from cabinet import app
 from cabinet import functions as f
 from cabinet import intentions as i
+from cabinet import topics as t
 
 notes = Blueprint('notes', __name__, template_folder='templates')
 
@@ -19,7 +20,7 @@ def show_post(post_id):
     # show the post with the given id, the id is an uuid
     # you can also return single post with ajax, see below
     result = get_notes('', " where n.uid = '%s' " % post_id)
-    return render_template('master.html', notes=result, showtypes=True, todo=i.get_current_intentions())
+    return render_template('master.html', notes=result, showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
 
 @notes.route('/notes', methods=['GET'])
 def notes_load(post_id=None):
@@ -64,12 +65,12 @@ def get_notes(join='', where=''):
             order by created desc;""" % (join, where)
     try:
         cur.execute(sql)
-        notes = f.dictfetchall(cur)
-        if not notes:
-            notes = [{'error': f.NO_NOTE, 'details': ''}]
+        result = f.dictfetchall(cur)
+        if not result:
+            result = [{'error': f.NO_NOTE, 'details': ''}]
     except psycopg2.Error as e: 
         f.get_db().rollback()
-        notes = [{'error': f.QUERY_ERR, 'details': str(e)}]
+        result = [{'error': f.QUERY_ERR, 'details': str(e)}]
     finally:
         cur.close()
-    return notes
+    return result

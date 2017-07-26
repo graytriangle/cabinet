@@ -44,7 +44,7 @@
                 <div class="smallicon topic" title="Темы"></div>
                 <div class="tags">
                 {% for topic in record['topics'].split(',') %}
-                    <a href="#" onclick="notes_load('all', '{{topic}}'); return false;">{{topic}}</a>{% if not loop.last %},{% endif %}
+                    <a href="#" onclick="display_topic('{{topic}}'); return false;">{{topic}}</a>{% if not loop.last %},{% endif %}
                 {% endfor %}
                 </div>
             {% endif %}

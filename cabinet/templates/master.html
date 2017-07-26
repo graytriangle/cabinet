@@ -8,6 +8,7 @@
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/post.css')}}>
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/newpost.css')}}>
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/todo.css')}}>
+        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/rightcol.css')}}>
         <script type="text/javascript" src={{url_for('static', filename='richtext/rich-text-editor.js')}}></script>
         <link rel="stylesheet" type="text/css" href={{url_for('static', filename='richtext/rich-text-editor.css')}}>
     </head>
@@ -345,6 +346,32 @@
                 ajax('GET', '/intent/reload?all=' + all, intent_cb_ok, intent_cb_error);
             }
 
+            function display_topic(topic) {
+                // AJAX reloading of the notes block
+
+                var topic_callback_ok = function(response){
+                    // callback to execute on successful note loading
+
+                    var postsparent = document.getElementById("maincol");
+                    var oldlist = document.getElementById("notes_content");
+                    postsparent.removeChild(oldlist);
+                    var wrapper = document.createElement('div');
+                    wrapper.id = 'notes_content';
+                    wrapper.innerHTML = response;
+                    postsparent.appendChild(wrapper);
+                };
+
+                var topic_callback_error = function(status){
+                    // callback to execute on unsuccessful note loading
+                    if (status !== null) {
+                        alert("Ошибка сервера при обновлении списка записей: " + status);
+                    }
+                };
+
+                var address = '/notes?topic=' + topic;
+                ajax('GET', address, topic_callback_ok, topic_callback_error);
+            }
+
             function display_type(section) {
                 // wrapper for switching displayed note types
                 var prevtype = document.getElementsByClassName("section_selected")[0];
@@ -574,7 +601,8 @@
             </div>
 
             <div id="rightcol">
-
+                <div class="searchbar"></div>
+                {% include "topics.html" %}
             </div>
         </div>
 
