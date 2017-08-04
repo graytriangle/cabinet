@@ -102,3 +102,14 @@
     background-position: 0px 35px;
     cursor: default;
 }
+
+/* common link style; redefined for certain elements */
+a {
+    color: #356cbd;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #3787ff;
+    text-decoration: none;
+}
