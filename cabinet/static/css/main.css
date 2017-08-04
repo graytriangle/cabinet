@@ -50,6 +50,7 @@
     justify-content: center;
 }
 
+/* container for section symbol */
 .section {
     width: 35px;
     height: 35px;
@@ -61,19 +62,22 @@
     padding-bottom: 0;
     padding-left: 0;
     padding-right: 0;
-    background-position: 0px 0px;
     background-size: 35px;
     background-repeat: no-repeat;
+    /* preloading image but not showing it yet */
+    background-position: 0px 35px;
+    background-image: url('../img/circle.png');
 }
 
 .section_selected {
-    background-image: url('../img/circle_default.png');
+    background-position: 0px 0px;
 }
 
 .section_suspended {
-    background-image: url('../img/circle_inactive.png');
+    background-position: 0px -35px;
 }
 
+/* actual icons for different note types */
 .section_icon {
     background-position: 0px 0px;
     background-size: 35px;

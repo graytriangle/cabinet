@@ -372,7 +372,7 @@
                 ajax('GET', address, topic_callback_ok, topic_callback_error);
             }
 
-            function display_type(section) {
+            function display_type(event) {
                 // wrapper for switching displayed note types
                 var prevtype = document.getElementsByClassName("section_selected")[0];
                 var clickedtype = event.target.parentElement;
