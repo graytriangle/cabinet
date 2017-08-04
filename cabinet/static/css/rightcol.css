@@ -14,10 +14,31 @@
     justify-content: center;
     align-content: center;
     flex-direction: column; 
+    color: #356cbd;
+    cursor: pointer;
 }
 
 .rc_current_topic {
     border-left: 2px solid #a6caf0;
     background-color: #f7fbff;
     font-weight: bold;
+}
+
+.rc_topic:hover {
+    color: #3787ff;
+}
+
+.rc_inactive.rc_topic {
+    color: #6a6a6a;
+    cursor: default;
+}
+
+.rc_inactive.rc_current_topic {
+    border-left: 2px solid #c6c6c6;
+    background-color: #fafafa;
+    font-weight: bold;
+}
+
+.rc_inactive:hover {
+    color: #6a6a6a;
 }
