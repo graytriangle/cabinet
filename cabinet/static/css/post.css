@@ -48,14 +48,21 @@ div .error {
     margin-top: 0;
     margin-bottom: 0
 }
-.tags a {
+.inner_topic {
     color: #808080;
     text-decoration: none;
 }
-.tags a:hover {
+.inner_topic:hover {
     color: #606060;
     text-decoration: none;
 }
+.inner_topic_inact {
+    
+}
+.inner_topic_inact:hover {
+    color: #808080;
+}
+
 /*.edits {
     font-size: 13pt;
     margin-top: 0;

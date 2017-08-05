@@ -475,11 +475,11 @@
                 var topic_callback_error = function(status){
                     // callback to execute on unsuccessful note loading
 
-                    // если ранее был выбран раздел, включаем ему кружок обратно
+                    // если ранее была выбрана тема, включаем ей выделение обратно
                     if (!(prevtype === undefined && typeof prevtype === "undefined")) {
                         prevtype.classList.add('rc_current_topic');
                     }
-                    // если пытались включить новый раздел, выключаем его
+                    // если пытались включить новую тему, выключаем её
                     if (clickedtype.classList.contains('rc_current_topic')) {
                         clickedtype.classList.remove('rc_current_topic');
                     }
@@ -515,6 +515,18 @@
                         document.getElementsByClassName("rc_topic")[i].classList.add('rc_inactive');
                         document.getElementsByClassName("rc_topic")[i].removeAttribute("onclick");
                     }
+                    // выключаем тэги в постах
+                    for (var i = document.getElementsByClassName("inner_topic").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("inner_topic")[i].classList.add('inner_topic_inact');
+                        document.getElementsByClassName("inner_topic")[i].removeAttribute("onclick");
+                    }
+                    // деактивируем кружок выбранного типа
+                    var seltype = document.getElementsByClassName("section_selected")[0];
+                    if (!(seltype === undefined && typeof prevtype === "undefined")) {
+                        // если было что-то выбрано, мы выключаем ему выделение
+                        seltype.classList.add('section_suspended');
+                    }
+
                 } else {
                     // включаем все иконки типов обратно
                     for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
@@ -528,6 +540,17 @@
                     for (var i = document.getElementsByClassName("rc_topic").length - 1; i >= 0; i--) {
                         document.getElementsByClassName("rc_topic")[i].classList.remove('rc_inactive');
                         document.getElementsByClassName("rc_topic")[i].setAttribute("onclick", "display_topic(event)");
+                    }
+                    // включаем тэги в постах
+                    for (var i = document.getElementsByClassName("inner_topic").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("inner_topic")[i].classList.remove('inner_topic_inact');
+                        document.getElementsByClassName("inner_topic")[i].setAttribute("onclick", "display_topic(event)");
+                    }
+                    // активируем кружок выбранного типа
+                    var seltype = document.getElementsByClassName("section_selected")[0];
+                    if (!(seltype === undefined && typeof prevtype === "undefined")) {
+                        // если было что-то выбрано, мы выключаем ему выделение
+                        seltype.classList.remove('section_suspended');
                     }
                 }
             }
