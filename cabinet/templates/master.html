@@ -346,32 +346,6 @@
                 ajax('GET', '/intent/reload?all=' + all, intent_cb_ok, intent_cb_error);
             }
 
-            function display_topic(topic) {
-                // AJAX reloading of the notes block
-
-                var topic_callback_ok = function(response){
-                    // callback to execute on successful note loading
-
-                    var postsparent = document.getElementById("maincol");
-                    var oldlist = document.getElementById("notes_content");
-                    postsparent.removeChild(oldlist);
-                    var wrapper = document.createElement('div');
-                    wrapper.id = 'notes_content';
-                    wrapper.innerHTML = response;
-                    postsparent.appendChild(wrapper);
-                };
-
-                var topic_callback_error = function(status){
-                    // callback to execute on unsuccessful note loading
-                    if (status !== null) {
-                        alert("Ошибка сервера при обновлении списка записей: " + status);
-                    }
-                };
-
-                var address = '/notes?topic=' + topic;
-                ajax('GET', address, topic_callback_ok, topic_callback_error);
-            }
-
             function display_type(event) {
                 // wrapper for switching displayed note types
                 var prevtype = document.getElementsByClassName("section_selected")[0];
@@ -384,14 +358,7 @@
                     // включаем кружок кликнутому, если только оно уже не было выбрано
                     clickedtype.classList.add('section_suspended');
                 }
-                // перекрываем иконки "выключающим" стилем
-                for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
-                    document.getElementsByClassName("section_icon")[i].classList.add('section_icon_inactive');
-                }
-                // выключаем функции у всех переключателей
-                for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
-                    document.getElementsByClassName("section")[i].removeAttribute("onclick");
-                }
+                suspend_switches(true);
 
                 var notetype_callback_ok = function(response){
                     // callback to execute on successful note loading
@@ -431,15 +398,7 @@
 
                 var notetype_callback_finally = function(){
                     // callback to execute in all cases
-
-                    // включаем все иконки обратно
-                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
-                    }
-                    // включаем обратно функции у всех переключателей
-                    for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section")[i].setAttribute("onclick", "display_type(event)");
-                    }
+                    suspend_switches(false);
                     // если пытались включить новый раздел, выключаем ему заморозку
                     if (clickedtype.classList.contains('section_suspended')) {
                         clickedtype.classList.remove('section_suspended');
@@ -464,8 +423,113 @@
                 }
                 document.getElementById("section_selected").setAttribute("value", typename);
 
-                var address = '/notes?type=' + typename;
+                var current_topic = document.getElementsByClassName("rc_current_topic")[0];
+                if (!(current_topic === undefined && typeof current_topic === "undefined")) {
+                    current_topic = current_topic.textContent;
+                } else {
+                    current_topic = '';
+                }
+
+                var address = '/notes?type=' + typename + '&topic=' + current_topic;
                 ajax('GET', address, notetype_callback_ok, notetype_callback_error, notetype_callback_finally);
+            }
+
+            function display_topic(event) {
+                // wrapper for switching displayed topics
+                var prevtype = document.getElementsByClassName("rc_current_topic")[0];
+                var clickedtype = event.target;
+                var current_topic = '';
+                if (clickedtype.classList.contains('inner_topic')) {
+                    var topictext = clickedtype.textContent;
+                    for (var i = 0; i < document.getElementsByClassName("rc_topic").length; i++) {
+                        if (document.getElementsByClassName("rc_topic")[i].textContent == topictext) {
+                            clickedtype = document.getElementsByClassName("rc_topic")[i];
+                            break;
+                        }
+                    }
+                }
+
+                if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                    // если было что-то выбрано, мы выключаем ему выделение
+                    prevtype.classList.remove('rc_current_topic');
+                }
+                if (prevtype != clickedtype) {
+                    // включаем подсветку кликнутому, если только оно уже не было выбрано
+                    clickedtype.classList.add('rc_current_topic');
+                    current_topic = clickedtype.textContent;
+                }
+                suspend_switches(true);
+
+                var topic_callback_ok = function(response){
+                    // callback to execute on successful note loading
+                    var postsparent = document.getElementById("maincol");
+                    var oldlist = document.getElementById("notes_content");
+                    postsparent.removeChild(oldlist);
+                    var wrapper = document.createElement('div');
+                    wrapper.id = 'notes_content';
+                    wrapper.innerHTML = response;
+                    postsparent.appendChild(wrapper);
+                };
+
+                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+                var topic_callback_error = function(status){
+                    // callback to execute on unsuccessful note loading
+
+                    // если ранее был выбран раздел, включаем ему кружок обратно
+                    if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                        prevtype.classList.add('rc_current_topic');
+                    }
+                    // если пытались включить новый раздел, выключаем его
+                    if (clickedtype.classList.contains('rc_current_topic')) {
+                        clickedtype.classList.remove('rc_current_topic');
+                    }
+
+                    if (status !== null) {
+                        alert("Ошибка сервера при обновлении списка записей: " + status);
+                    }
+                };
+
+                var topic_callback_finally = function(){
+                    // callback to execute in all cases
+                    suspend_switches(false);
+                };
+
+                var current_typename = document.getElementById("section_selected").getAttribute("value");
+
+                var address = '/notes?type=' + current_typename + '&topic=' + current_topic;
+                ajax('GET', address, topic_callback_ok, topic_callback_error, topic_callback_finally);
+            }
+
+            function suspend_switches(on=true) {
+                if (on) {
+                    // перекрываем иконки переключения типов "выключающим" стилем
+                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section_icon")[i].classList.add('section_icon_inactive');
+                    }
+                    // выключаем функции у всех переключателей типов
+                    for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section")[i].removeAttribute("onclick");
+                    }
+                    // перекрываем все ссылки на темы "выключающим" стилем и вырубаем им функции
+                    for (var i = document.getElementsByClassName("rc_topic").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("rc_topic")[i].classList.add('rc_inactive');
+                        document.getElementsByClassName("rc_topic")[i].removeAttribute("onclick");
+                    }
+                } else {
+                    // включаем все иконки типов обратно
+                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
+                    }
+                    // включаем обратно функции у всех переключателей типов
+                    for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("section")[i].setAttribute("onclick", "display_type(event)");
+                    }
+                    // включаем обратно цвет и функции у всех переключателей тем
+                    for (var i = document.getElementsByClassName("rc_topic").length - 1; i >= 0; i--) {
+                        document.getElementsByClassName("rc_topic")[i].classList.remove('rc_inactive');
+                        document.getElementsByClassName("rc_topic")[i].setAttribute("onclick", "display_topic(event)");
+                    }
+                }
             }
 
             /*************************/

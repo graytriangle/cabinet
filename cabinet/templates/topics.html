@@ -7,6 +7,6 @@
         <div class="rc_topic rc_current_topic">Ошибка при загрузке списка тем!</div>
         <div class="rc_topic">{{record.error}}</div>
     {% else %}
-        <div class="rc_topic">{{record.name}}</div>
+        <div class="rc_topic" onclick="display_topic(event)">{{record.name}}</div>
     {% endif %}
 {% endfor %}
