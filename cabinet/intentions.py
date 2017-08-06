@@ -79,9 +79,9 @@ def get_current_intentions():
             "startdate, frequency, reminder, oldstartdate "
             "FROM public.intentions where "
             # non-recurrent intentions that are either not completed or completed less than 5 days ago
-            "(recurrent = 'f' and coalesce(finished, timezone('MSK'::text, now())) >= (timezone('MSK'::text, now()) - '5 day'::interval)) OR "
+            "(recurrent = 'f' and coalesce(finished, timezone('MSK'::text, now())) >= (timezone('MSK'::text, now()) - '2 day'::interval)) OR "
             # recurrent intentions that were completed recently (less than 5 days ago)
-            "(recurrent = 't' and timezone('MSK'::text, now()) < (startdate + '5 day'::interval)) OR "
+            "(recurrent = 't' and timezone('MSK'::text, now()) < (startdate + '2 day'::interval)) OR "
             # recurrent intentions that should be completed in the near future (reminder reached)
             "(recurrent = 't' and timezone('MSK'::text, now()) > (startdate + (frequency * INTERVAL '1 day') - (reminder * INTERVAL '1 day')));")
         todo = f.dictfetchall(cur)

@@ -57,7 +57,8 @@ def get_notes(join='', where=''):
             (select string_agg(name, ',') from topics t 
             left join notes_topics nt on nt.topic = t.uid 
             where nt.note = n.uid) topics, 
-            nt.name as typename 
+            nt.name as typename,
+            nt.fullname as fullname
             from notes n 
             left join notetypes nt on n.type = nt.uid
             %s
