@@ -1,7 +1,7 @@
 /*
 Navicat PGSQL Data Transfer
 
-Source Server         : heroku-cabinet
+Source Server         : cabinet-heroku
 Source Server Version : 90601
 Source Host           : ec2-54-247-177-33.eu-west-1.compute.amazonaws.com:5432
 Source Database       : d3g15d5rjd0b42
@@ -11,7 +11,7 @@ Target Server Type    : PGSQL
 Target Server Version : 90601
 File Encoding         : 65001
 
-Date: 2017-07-10 10:53:41
+Date: 2017-08-06 23:55:26
 */
 
 
@@ -26,7 +26,7 @@ CREATE TABLE "intentions" (
 "important" bool DEFAULT false NOT NULL,
 "recurrent" bool DEFAULT false NOT NULL,
 "parent" uuid,
-"created" timestamp(6) DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+"created" timestamp(6) DEFAULT timezone('MSK'::text, now()) NOT NULL,
 "finished" timestamp(6),
 "startdate" timestamp(6),
 "frequency" int4,
@@ -54,14 +54,16 @@ DROP TABLE IF EXISTS "notes";
 CREATE TABLE "notes" (
 "uid" uuid DEFAULT uuid_generate_v4() NOT NULL,
 "maintext" text COLLATE "default",
-"created" timestamp(6) DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+"created" timestamp(6) DEFAULT timezone('MSK'::text, now()) NOT NULL,
 "changed" timestamp(6),
 "important" bool DEFAULT false NOT NULL,
-"url" text COLLATE "default"
+"url" text COLLATE "default",
+"type" uuid DEFAULT get_default_notetype() NOT NULL
 )
 WITH (OIDS=FALSE)
 
 ;
+COMMENT ON COLUMN "notes"."type" IS 'Link to the "notetypes" table';
 
 -- ----------------------------
 -- Table structure for notes_topics
@@ -82,7 +84,8 @@ WITH (OIDS=FALSE)
 DROP TABLE IF EXISTS "notetypes";
 CREATE TABLE "notetypes" (
 "uid" uuid DEFAULT uuid_generate_v4() NOT NULL,
-"name" text COLLATE "default" NOT NULL
+"name" text COLLATE "default" NOT NULL,
+"fullname" text COLLATE "default" NOT NULL
 )
 WITH (OIDS=FALSE)
 
@@ -98,6 +101,17 @@ CREATE TABLE "topics" (
 )
 WITH (OIDS=FALSE)
 
+;
+
+-- ----------------------------
+-- Function structure for get_default_notetype
+-- ----------------------------
+CREATE OR REPLACE FUNCTION "get_default_notetype"()
+  RETURNS "pg_catalog"."uuid" AS $BODY$BEGIN
+	RETURN (select uid from notetypes where name = 'draft');
+END
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE COST 100
 ;
 
 -- ----------------------------
