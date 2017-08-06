@@ -14,7 +14,7 @@
     justify-content: center;
     align-content: center;
     flex-direction: column; 
-    color: #8080a0;
+    color: #5050a0;
     cursor: pointer;
 }
 
@@ -22,15 +22,15 @@
     border-left: 2px solid #a6caf0;
     background-color: #f7fbff;
     font-weight: bold;
-    color: #606080;
+    color: #303080;
 }
 
 .rc_topic:hover {
-    color: #606080;
+    color: #303080;
 }
 
 .rc_inactive.rc_topic {
-    color: #6a6a6a;
+    color: #585858;
     cursor: default;
 }
 
@@ -38,8 +38,5 @@
     border-left: 2px solid #c6c6c6;
     background-color: #fafafa;
     font-weight: bold;
-}
-
-.rc_inactive:hover {
-    color: #6a6a6a;
+    color: #3a3a3a;
 }

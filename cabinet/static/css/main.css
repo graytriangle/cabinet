@@ -109,11 +109,11 @@
 
 /* common link style; redefined for certain elements */
 a {
-    color: #356cbd;
+    color: #5090d0;
     text-decoration: none;
 }
 
 a:hover {
-    color: #3787ff;
+    color: #3070b0;
     text-decoration: none;
 }
