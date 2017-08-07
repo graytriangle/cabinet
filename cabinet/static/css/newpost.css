@@ -1,75 +1,70 @@
 .np {
+	visibility: visible;
+	opacity: 1;
+    transition: line-height 0.5s, margin-bottom 0.5s, height 0.5s, visibility 0.3s, opacity 0.3s linear;
+}
+
+.np_star { 
+    height: 14px;
+	margin-top: 3px;
+} 
+
+.np_delete { 
+    height: 14px;
+    margin-top: 4px;
+} 
+
+.np_save { 
+    height: 14px;
+    margin-top: 4px;
+} 
+
+.np_title { 
+    height: 21px;
+	margin-bottom: 5;
+	line-height: 21px;
+} 
+
+.np_source_icon { 
+    height: 9px;
+    margin-top: 6px;
+} 
+
+.np_topic_icon { 
+    height: 12px;
+    margin-top: 3px;
+} 
+
+.np_source { 
+    height: 18px;
+    font-size: 10pt;
+    border-width: 0 1px 1px 0;
+    margin-bottom: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 0px;
+    padding-bottom: 0px;
+} 
+
+.np_topic { 
+    height: 18px;
+    font-size: 10pt;
+    border-width: 0 1px 1px 0;
+    margin-bottom: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 0px;
+    padding-bottom: 0px;
+} 
+
+.np_hidden {
     height: 0px;
-	visibility: hidden;
-	opacity: 0;
-}
-
-#np_star { 
-	margin-top: 0px;
-    transition: height 0.5s, visibility 0.3s, opacity 0.3s linear;
-} 
-
-#np_delete { 
-	margin-top: 0px;
-    transition: height 0.5s, visibility 0.3s, opacity 0.3s linear;
-} 
-
-#np_save { 
-	margin-top: 0px;
-    transition: height 0.5s, visibility 0.3s, opacity 0.3s linear;
-} 
-
-#np_title { 
-	margin-bottom: 0;
-	line-height: 0px;
-    transition: line-height 0.5s, margin-bottom 0.5s, visibility 0.3s, opacity 0.3s linear;
-} 
-
-#np_source_icon { 
-	margin-top: 0px;
-    transition: height 0.5s, visibility 0.3s, opacity 0.3s linear;
-} 
-
-#np_topic_icon { 
-	margin-top: 0px;
-    transition: height 0.5s, visibility 0.3s, opacity 0.3s linear;
-} 
-
-.np_input { 
-	height: 0px;
-	font-size: 0pt;
-	border-width: 0px;
-	margin-bottom: 0px;
-} 
-
-#np_source { 
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    transition: height 0.5s, visibility 0.3s, opacity 0.3s linear;
-} 
-
-#np_topic { 
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    transition: height 0.5s, visibility 0.3s, opacity 0.3s linear;
-} 
-
-#np_maintext { 
-    transition: height 0.5s;
-    margin-left: auto;
-    margin-right: auto;
-} 
-
-#np_maintext::-moz-placeholder {
-	font-family: "Trebuchet MS", Helvetica, sans-serif;
-	font-size: 10pt;
-}
-
-#np_maintext::-webkit-input-placeholder {
-	font-family: "Trebuchet MS", Helvetica, sans-serif;
-	font-size: 10pt;
+    visibility: hidden;
+    opacity: 0;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 0pt;
+    border-width: 0px;
+    line-height: 0px;
+    transition: line-height 0.5s, margin-bottom 0.5s, height 0.5s, visibility 0.3s, opacity 0.3s linear;
 }

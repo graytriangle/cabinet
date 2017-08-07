@@ -30,30 +30,8 @@
             function showForm() {
                 // maximizing the "new post" form
                 for (var i = document.getElementsByClassName("np").length - 1; i >= 0; i--) {
-                    document.getElementsByClassName("np")[i].style.visibility = "visible";
-                    document.getElementsByClassName("np")[i].style.opacity = "1";
+                    document.getElementsByClassName("np")[i].classList.remove('np_hidden');
                 }
-                document.getElementById("np_star").style.height = "14px";
-                document.getElementById("np_star").style["margin-top"] = "3px";
-                document.getElementById("np_delete").style.height = "14px";
-                document.getElementById("np_delete").style["margin-top"] = "4px";
-                document.getElementById("np_save").style.height = "14px";
-                document.getElementById("np_save").style["margin-top"] = "4px";
-                document.getElementById("np_title").style.height = "21px";
-                document.getElementById("np_title").style["margin-bottom"] = "5";
-                document.getElementById("np_title").style["line-height"] = "21px";
-                document.getElementById("np_source_icon").style.height = "9px";
-                document.getElementById("np_source_icon").style["margin-top"] = "6px";
-                document.getElementById("np_source").style.height = "18px";
-                document.getElementById("np_source").style["font-size"] = "10pt";
-                document.getElementById("np_source").style["border-width"] = "0 1px 1px 0";
-                document.getElementById("np_source").style["margin-bottom"] = "2px";
-                document.getElementById("np_topic_icon").style.height = "12px";
-                document.getElementById("np_topic_icon").style["margin-top"] = "3px";
-                document.getElementById("np_topic").style.height = "18px";
-                document.getElementById("np_topic").style["font-size"] = "10pt";
-                document.getElementById("np_topic").style["border-width"] = "0 1px 1px 0";
-                document.getElementById("np_topic").style["margin-bottom"] = "2px";
                 document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].style["min-height"] = "200px";
 
 
@@ -74,26 +52,11 @@
                 // var selected = document.activeElement;
                 // if (formelements.indexOf(selected.id) == -1) { /* проверка на вхождение в массив */
                     if ((document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].innerHTML == "<p><br></p>") &&
-                        (document.getElementById("np_source").value == "") &&
-                        (document.getElementById("np_topic").value == "")) {
+                        (document.getElementsByClassName("np_source")[0].value == "") &&
+                        (document.getElementsByClassName("np_topic")[0].value == "")) {
                         for (var i = document.getElementsByClassName("np").length - 1; i >= 0; i--) {
-                            document.getElementsByClassName("np")[i].style.visibility = "hidden";
-                            document.getElementsByClassName("np")[i].style.opacity = "0";
-                            document.getElementsByClassName("np")[i].style.height = "0px";
+                            document.getElementsByClassName("np")[i].classList.add('np_hidden');
                         }
-                        document.getElementById("np_star").style["margin-top"] = "0px";
-                        document.getElementById("np_delete").style["margin-top"] = "0px";
-                        document.getElementById("np_save").style["margin-top"] = "0px";
-                        document.getElementById("np_title").style["margin-bottom"] = "0";
-                        document.getElementById("np_title").style["line-height"] = "0px";
-                        document.getElementById("np_source_icon").style["margin-top"] = "0px";
-                        document.getElementById("np_source").style["font-size"] = "0pt";
-                        document.getElementById("np_source").style["border-width"] = "0px";
-                        document.getElementById("np_source").style["margin-bottom"] = "0px";
-                        document.getElementById("np_topic_icon").style["margin-top"] = "0px";
-                        document.getElementById("np_topic").style["font-size"] = "0pt";
-                        document.getElementById("np_topic").style["border-width"] = "0px";
-                        document.getElementById("np_topic").style["margin-bottom"] = "0px";
                         document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].style["min-height"] = "50px";
 
                     }
@@ -299,8 +262,8 @@
                 if (el.getElementsByClassName("star_field")[0].getAttribute("value") === "true") {
                     np_toggleImportant(NEW_POST);
                 }
-                document.getElementById("np_source").value = "";
-                document.getElementById("np_topic").value = "";
+                document.getElementsByClassName("np_source")[0].value = "";
+                document.getElementsByClassName("np_topic")[0].value = "";
                 richtext.customCommands['cleanDoc'](el.getElementsByClassName("rte-editbox")[0], confirmed);
                 //document.getElementById("np_maintext").value = "";
             }
@@ -650,7 +613,7 @@
                 <div class="post" id="00000000-0000-0000-0000-000000000000">
                     <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
                         <input class="uid_field" type="hidden" name="uid" value="00000000-0000-0000-0000-000000000000">
-                        <div class="star np" title="Отметить запись как важную" id="np_star" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
+                        <div class="star np np_star np_hidden" title="Отметить запись как важную" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
 
                         <div class="select-sim" id="select-color">
                           <div class="options">
@@ -688,14 +651,14 @@
                         </div>
                         
                         <input class="star_field" type="hidden" name="importance" value="false">
-                        <div class="posticon deletepost np" title="Удалить запись" id="np_delete" onclick="clearNewPost()"></div>
-                        <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="addPost()"></div>
-                        <div class="np title" title="{{now.strftime("%d.%m.%Y %H:%M")}}" id="np_title">{{ now.strftime('%d.%m.%Y') }}</div>
-                        <div class="smallicon extlink np" title="Основной источник" id="np_source_icon"></div>
-                        <input class="inputfield np_input np" name="source" type="text" id="np_source" onfocus="showForm()">
-                        <div class="smallicon topic np" title="Темы" id="np_topic_icon"></div>
-                        <input class="inputfield np_input np" name="topic" type="text" id="np_topic" onfocus="showForm()">
-                        <textarea class="rich-text-editor" id="np_maintext" style="margin-bottom: 0px; margin-top: 0px;" name="maintext" onfocus="showForm()"></textarea>
+                        <div class="posticon deletepost np np_delete np_hidden" title="Удалить запись" onclick="clearNewPost()"></div>
+                        <div class="posticon savepost np np_save np_hidden" title="Сохранить запись" onclick="addPost()"></div>
+                        <div class="np title np_title np_hidden" title="{{now.strftime("%d.%m.%Y %H:%M")}}">{{ now.strftime('%d.%m.%Y') }}</div>
+                        <div class="smallicon extlink np np_source_icon np_hidden" title="Основной источник"></div>
+                        <input class="inputfield np np_source np_hidden" name="source" type="text" onfocus="showForm()">
+                        <div class="smallicon topic np np_topic_icon np_hidden" title="Темы"></div>
+                        <input class="inputfield np np_topic np_hidden" name="topic" type="text" onfocus="showForm()">
+                        <textarea class="rich-text-editor" style="margin-bottom: 0px; margin-top: 0px;" name="maintext" onfocus="showForm()"></textarea>
                     </form>
                 </div>
 
