@@ -118,6 +118,7 @@ a:hover {
     text-decoration: none;
 }
 
+/* контейнер селектора */
 .select-sim {
     width:30px;
     height:18px;
@@ -128,78 +129,98 @@ a:hover {
     overflow:hidden;
     float: left; 
     margin-top: 3px;
-    margin-bottom: 0;
-    margin-left: 0;
     margin-right: 8;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    padding-right: 0;
+    visibility: visible;
+    opacity: 1;
+    transition: line-height 0.5s, margin-top 0.5s, height 0.5s, visibility 0.3s, opacity 0.3s linear;
 }
 
+/* класс для скрытия селектора */
+.select-sim.hidden {
+    height:0px;
+    line-height:0px;
+    margin-top: 0px;
+    visibility: hidden;
+    opacity: 0;
+    transition: line-height 0.5s, margin-top 0.5s, height 0.5s, visibility 0.3s, opacity 0.3s linear;
+}
+
+/* стрелочка селектора */
 .select-sim::after {
-  content:"▼";
-  font-size:0.5em;
-  font-family:arial;
-  position:absolute;
-  top:40%;
-  right:4px;
-  transform:translate(0, -50%);
+    content:"▼";
+    font-size:0.5em;
+    font-family:arial;
+    position:absolute;
+    top:40%;
+    right:4px;
+    transform:translate(0, -50%);
 }
 
+/* все лейблы скрыты... */
+.select-sim .options .option label {
+    display:none;
+}
+
+/* ...кроме выбранного (плюс означает "следующий за указанным элемент", т.е. лейбл после выбранного инпута) */
+.select-sim .options .option input:checked + label {
+    display:block;
+    width:100%;
+}
+
+/* все инпуты, т.е. сами радиокнопки, тоже скрыты */
+.select-sim .options .option input {
+    width:0;
+    height:0;
+    overflow:hidden;
+    margin:0;
+    padding:0;
+    float:left;
+    display:inline-block;
+    /* fix specific for Firefox */
+    position: absolute;
+    left: -10000px;
+}
+
+/* при наведении мы показываем все имеющиеся элементы... */
 .select-sim:hover {
-  overflow:visible;
+    overflow:visible;
 }
 
-.select-sim:hover .options .option label {
-  display:inline-block;
-}
-
+/* ...отрисовываем подложку для лейблов... */
 .select-sim:hover .options {
   background:#f7fbff;
   position:absolute;
   width:100%;
 }
 
-.select-sim .options .option {
-    overflow:hidden;
-}
-
+/* ...показываем контейнеры лейблов... */
 .select-sim:hover .options .option {
     height:18px;
     overflow:hidden;
 }
 
-.select-sim .options .option img {
-  vertical-align:middle;
-}
-
-.select-sim .options .option label {
-  display:none;
-}
-
-.select-sim .options .option input {
-  width:0;
-  height:0;
-  overflow:hidden;
-  margin:0;
-  padding:0;
-  float:left;
-  display:inline-block;
-  /* fix specific for Firefox */
-  position: absolute;
-  left: -10000px;
-}
-
-.select-sim .options .option input:checked + label {
-  display:block;
-  width:100%;
-}
-
+/* ...и сами лейблы... */
+/* можно сделать инлайн-блок */ 
 .select-sim:hover .options .option input + label {
-  display:block;
+    display:block;
 }
 
+/* ...а выбранный ещё и подсвечиваем */
 .select-sim:hover .options .option input:checked + label {
-  background:#e1efff;
+    background:#e1efff;
 }
+
+/* довольно бессмысленное занятие - мы и так наследуем оверфлоу от контейнера */
+/*.select-sim .options .option {
+    overflow:hidden;
+}*/
+
+/* можно равнять картинку пункта, но у нас она и так хорошо сидит */
+/*.select-sim .options .option img {
+    vertical-align:middle;
+}*/
+
+/* бессмысленный код - у нас это перекрывается селектором input + label */
+/*.select-sim:hover .options .option label {
+  display:inline-block;
+}*/

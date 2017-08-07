@@ -31,14 +31,18 @@ def my_form_post():
     maintext = request.form['maintext']
     topic = request.form['topic']
     source = request.form['source']
+    print 'source'
+    notetype = request.form['notetype']
+    print 'notetype'
     if postuid == '00000000-0000-0000-0000-000000000000':
         postuid = str(uuid.uuid4())
     if maintext == '<p><br></p>':
         maintext = '' # for some bizarre reason None doesn't get converted into null
     cur = f.get_db().cursor()
     try:
-        cur.execute("INSERT INTO notes (uid, maintext, important, url) VALUES (%s, %s, %s, %s) "
-            "ON CONFLICT (uid) DO UPDATE SET maintext=excluded.maintext, changed=timezone('MSK'::text, now()), important=excluded.important, url=excluded.url;", (postuid, maintext, importance, source))
+        cur.execute("INSERT INTO notes (uid, maintext, important, url, type) VALUES (%s, %s, %s, %s, (SELECT uid FROM notetypes WHERE name = %s)) "
+            "ON CONFLICT (uid) DO UPDATE SET maintext=excluded.maintext, changed=timezone('MSK'::text, now()), "
+            "important=excluded.important, url=excluded.url, type=excluded.type;", (postuid, maintext, importance, source, notetype))
         if topic:
             topicsarray = topic.split(',')
             topicsarray = [i.strip() for i in topicsarray]

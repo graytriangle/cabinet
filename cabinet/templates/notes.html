@@ -29,7 +29,7 @@
             </div>
             {% if showtypes %}
                 <div 
-                    class="notetype_small {{record['typename']}}_small" title="{{record['fullname']}}" >
+                    class="notetype_small {{record['typename']}}_small" title="{{record['fullname']}}" data-notetype="{{record['typename']}}" >
                 </div>
             {% endif %}
             <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>
