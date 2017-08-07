@@ -29,8 +29,8 @@
 
             function showForm() {
                 // maximizing the "new post" form
-                for (var i = document.getElementsByClassName("np").length - 1; i >= 0; i--) {
-                    document.getElementsByClassName("np")[i].classList.remove('np_hidden');
+                for (let i of document.getElementsByClassName("np")) {
+                    i.classList.remove('np_hidden');
                 }
                 document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].style["min-height"] = "200px";
 
@@ -54,8 +54,8 @@
                     if ((document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].innerHTML == "<p><br></p>") &&
                         (document.getElementsByClassName("np_source")[0].value == "") &&
                         (document.getElementsByClassName("np_topic")[0].value == "")) {
-                        for (var i = document.getElementsByClassName("np").length - 1; i >= 0; i--) {
-                            document.getElementsByClassName("np")[i].classList.add('np_hidden');
+                        for (let i of document.getElementsByClassName("np")) {
+                            i.classList.add('np_hidden');
                         }
                         document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].style["min-height"] = "50px";
 
@@ -404,9 +404,9 @@
                 var current_topic = '';
                 if (clickedtype.classList.contains('inner_topic')) {
                     var topictext = clickedtype.textContent;
-                    for (var i = 0; i < document.getElementsByClassName("rc_topic").length; i++) {
-                        if (document.getElementsByClassName("rc_topic")[i].textContent == topictext) {
-                            clickedtype = document.getElementsByClassName("rc_topic")[i];
+                    for (let i of document.getElementsByClassName("rc_topic")) {
+                        if (i.textContent == topictext) {
+                            clickedtype = i;
                             break;
                         }
                     }
@@ -466,22 +466,22 @@
             function suspend_switches(on=true) {
                 if (on) {
                     // перекрываем иконки переключения типов "выключающим" стилем
-                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section_icon")[i].classList.add('section_icon_inactive');
+                    for (let i of document.getElementsByClassName("section_icon")) {
+                        i.classList.add('section_icon_inactive');
                     }
                     // выключаем функции у всех переключателей типов
-                    for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section")[i].removeAttribute("onclick");
+                    for (let i of document.getElementsByClassName("section")) {
+                        i.removeAttribute("onclick");
                     }
                     // перекрываем все ссылки на темы "выключающим" стилем и вырубаем им функции
-                    for (var i = document.getElementsByClassName("rc_topic").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("rc_topic")[i].classList.add('rc_inactive');
-                        document.getElementsByClassName("rc_topic")[i].removeAttribute("onclick");
+                    for (let i of document.getElementsByClassName("rc_topic")) {
+                        i.classList.add('rc_inactive');
+                        i.removeAttribute("onclick");
                     }
                     // выключаем тэги в постах
-                    for (var i = document.getElementsByClassName("inner_topic").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("inner_topic")[i].classList.add('inner_topic_inact');
-                        document.getElementsByClassName("inner_topic")[i].removeAttribute("onclick");
+                    for (let i of document.getElementsByClassName("inner_topic")) {
+                        i.classList.add('inner_topic_inact');
+                        i.removeAttribute("onclick");
                     }
                     // деактивируем кружок выбранного типа
                     var seltype = document.getElementsByClassName("section_selected")[0];
@@ -492,22 +492,22 @@
 
                 } else {
                     // включаем все иконки типов обратно
-                    for (var i = document.getElementsByClassName("section_icon").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section_icon")[i].classList.remove('section_icon_inactive');
+                    for (let i of document.getElementsByClassName("section_icon")) {
+                        i.classList.remove('section_icon_inactive');
                     }
                     // включаем обратно функции у всех переключателей типов
-                    for (var i = document.getElementsByClassName("section").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("section")[i].setAttribute("onclick", "display_type(event)");
+                    for (let i of document.getElementsByClassName("section")) {
+                        i.setAttribute("onclick", "display_type(event)");
                     }
                     // включаем обратно цвет и функции у всех переключателей тем
-                    for (var i = document.getElementsByClassName("rc_topic").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("rc_topic")[i].classList.remove('rc_inactive');
-                        document.getElementsByClassName("rc_topic")[i].setAttribute("onclick", "display_topic(event)");
+                    for (let i of document.getElementsByClassName("rc_topic")) {
+                        i.classList.remove('rc_inactive');
+                        i.setAttribute("onclick", "display_topic(event)");
                     }
                     // включаем тэги в постах
-                    for (var i = document.getElementsByClassName("inner_topic").length - 1; i >= 0; i--) {
-                        document.getElementsByClassName("inner_topic")[i].classList.remove('inner_topic_inact');
-                        document.getElementsByClassName("inner_topic")[i].setAttribute("onclick", "display_topic(event)");
+                    for (let i of document.getElementsByClassName("inner_topic")) {
+                        i.classList.remove('inner_topic_inact');
+                        i.setAttribute("onclick", "display_topic(event)");
                     }
                     // активируем кружок выбранного типа
                     var seltype = document.getElementsByClassName("section_selected")[0];

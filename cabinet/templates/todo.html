@@ -19,11 +19,11 @@ function intent_settings(event, show) {
     }
     /* hide/show icons that are immediate children of a target div */
     var icgroup = el.getElementsByClassName("goalname")[0].getElementsByClassName("settinggroup")[0].getElementsByClassName("goalsetting");
-    for (var i = 0; i < icgroup.length; i++) {
+    for (let i of icgroup) {
         if (show) {
-            icgroup[i].style["display"] = "block";
+            i.style["display"] = "block";
         } else {
-            icgroup[i].style["display"] = "none";
+            i.style["display"] = "none";
         }
     }
 }
