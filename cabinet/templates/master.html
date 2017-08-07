@@ -34,7 +34,7 @@
                     document.getElementsByClassName("np")[i].style.opacity = "1";
                 }
                 document.getElementById("np_star").style.height = "14px";
-                document.getElementById("np_star").style["margin-top"] = "4px";
+                document.getElementById("np_star").style["margin-top"] = "3px";
                 document.getElementById("np_delete").style.height = "14px";
                 document.getElementById("np_delete").style["margin-top"] = "4px";
                 document.getElementById("np_save").style.height = "14px";
@@ -651,6 +651,42 @@
                     <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
                         <input class="uid_field" type="hidden" name="uid" value="00000000-0000-0000-0000-000000000000">
                         <div class="star np" title="Отметить запись как важную" id="np_star" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
+
+                        <div class="select-sim" id="select-color">
+                          <div class="options">
+                            <div class="option">
+                              <input type="radio" name="color" value="red" id="color-red" checked />
+                              <label for="color-red">
+                                <img src="../static/img/draft_small.png" alt="" />
+                              </label>
+                            </div>
+                            <div class="option">
+                              <input type="radio" name="color" value="green" id="color-green" />
+                              <label for="color-green">
+                                <img src="../static/img/diary_small.png" alt="" />
+                              </label>
+                            </div>
+                            <div class="option">
+                              <input type="radio" name="color" value="blue" id="color-blue" />
+                              <label for="color-blue">
+                                <img src="../static/img/note_small.png" alt="" />
+                              </label>
+                            </div>
+                            <div class="option">
+                              <input type="radio" name="color" value="yellow" id="color-yellow" />
+                              <label for="color-yellow">
+                                <img src="http://placehold.it/14/ffff00/ffffff" alt="" />
+                              </label>
+                            </div>
+                            <div class="option">
+                              <input type="radio" name="color" value="pink" id="color-pink" />
+                              <label for="color-pink">
+                                <img src="http://placehold.it/14/ff00ff/ffffff" alt="" />
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                        
                         <input class="star_field" type="hidden" name="importance" value="false">
                         <div class="posticon deletepost np" title="Удалить запись" id="np_delete" onclick="clearNewPost()"></div>
                         <div class="posticon savepost np" title="Сохранить запись" id="np_save" onclick="addPost()"></div>

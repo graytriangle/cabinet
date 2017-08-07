@@ -117,3 +117,89 @@ a:hover {
     color: #3070b0;
     text-decoration: none;
 }
+
+.select-sim {
+    width:30px;
+    height:18px;
+    line-height:18px;
+    vertical-align:middle;
+    position:relative;
+    background:#f7fbff;
+    overflow:hidden;
+    float: left; 
+    margin-top: 3px;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 8;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.select-sim::after {
+  content:"▼";
+  font-size:0.5em;
+  font-family:arial;
+  position:absolute;
+  top:40%;
+  right:4px;
+  transform:translate(0, -50%);
+}
+
+.select-sim:hover {
+  overflow:visible;
+}
+
+.select-sim:hover .options .option label {
+  display:inline-block;
+}
+
+.select-sim:hover .options {
+  background:#f7fbff;
+  position:absolute;
+  width:100%;
+}
+
+.select-sim .options .option {
+    overflow:hidden;
+}
+
+.select-sim:hover .options .option {
+    height:18px;
+    overflow:hidden;
+}
+
+.select-sim .options .option img {
+  vertical-align:middle;
+}
+
+.select-sim .options .option label {
+  display:none;
+}
+
+.select-sim .options .option input {
+  width:0;
+  height:0;
+  overflow:hidden;
+  margin:0;
+  padding:0;
+  float:left;
+  display:inline-block;
+  /* fix specific for Firefox */
+  position: absolute;
+  left: -10000px;
+}
+
+.select-sim .options .option input:checked + label {
+  display:block;
+  width:100%;
+}
+
+.select-sim:hover .options .option input + label {
+  display:block;
+}
+
+.select-sim:hover .options .option input:checked + label {
+  background:#e1efff;
+}
