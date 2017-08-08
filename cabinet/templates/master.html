@@ -145,6 +145,7 @@
                     cancelEdit(uid);
                     var oldel = document.getElementById(uid);
                     oldel.parentNode.replaceChild(elementFromText(httpRequest.responseText), oldel);
+                    reload_topiclist();
                 }
 
                 var updpost_cb_error = function(status) {
@@ -177,6 +178,7 @@
                     var parentnode = document.getElementById("notes_content");
                     parentnode.insertBefore(elementFromText(response), parentnode.firstChild);
                     clearNewPost(true); // silent clearing of the newpost form
+                    reload_topiclist();
                 }
 
                 var addpost_cb_error = function(status) {
@@ -484,6 +486,39 @@
                 ajax('GET', address, topic_callback_ok, topic_callback_error, topic_callback_finally);
             }
 
+            function reload_topiclist(type = '') {
+                // wrapper for switching displayed topics
+                suspend_switches(true);
+
+                var topiclist_callback_ok = function(response){
+                    // callback to execute on successful note loading
+                    var postsparent = document.getElementById("rightcol");
+                    var oldlist = document.getElementById("topiclist");
+                    postsparent.removeChild(oldlist);
+                    var wrapper = document.createElement('div');
+                    wrapper.id = 'topiclist';
+                    wrapper.innerHTML = response;
+                    postsparent.appendChild(wrapper);
+                };
+
+                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+                var topiclist_callback_error = function(status){
+                    // callback to execute on unsuccessful note loading
+
+                    if (status !== null) {
+                        alert("Ошибка сервера при обновлении списка записей: " + status);
+                    }
+                };
+
+                var topiclist_callback_finally = function(){
+                    // callback to execute in all cases
+                    suspend_switches(false);
+                };
+
+                var address = '/topics';
+                ajax('GET', address, topiclist_callback_ok, topiclist_callback_error, topiclist_callback_finally);
+            }
+
             function suspend_switches(on=true) {
                 if (on) {
                     // перекрываем иконки переключения типов "выключающим" стилем
@@ -751,7 +786,9 @@
 
             <div id="rightcol">
                 <div class="searchbar"></div>
-                {% include "topics.html" %}
+                <div id = "topiclist">
+                    {% include "topics.html" %}
+                </div>
             </div>
         </div>
 

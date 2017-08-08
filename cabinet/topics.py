@@ -9,6 +9,11 @@ from cabinet import functions as f
 
 topics = Blueprint('topics', __name__, template_folder='templates')
 
+@topics.route('/topics', methods=['GET'])
+def notes_load():
+    result = get_topics()
+    return render_template('topics.html', topics=result)
+
 def get_topics():
     cur = f.get_db().cursor()
     sql = """\
