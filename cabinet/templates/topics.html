@@ -4,8 +4,8 @@
 
 {% for record in topics %}
     {% if record.error %} 
-        <div class="rc_topic rc_current_topic">Ошибка при загрузке списка тем!</div>
-        <div class="rc_topic">{{record.error}}</div>
+        <div class="rc_error rc_errorheader">Ошибка при загрузке списка тем!</div>
+        <div class="rc_error">{{record.error}}</div>
     {% else %}
         <div class="rc_topic" onclick="display_topic(event)">{{record.name}}</div>
     {% endif %}

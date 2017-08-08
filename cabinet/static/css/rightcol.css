@@ -31,7 +31,8 @@
 
 .rc_inactive.rc_topic {
     color: #585858;
-    cursor: default;
+    cursor: defa
+    ult;
 }
 
 .rc_inactive.rc_current_topic {
@@ -39,4 +40,25 @@
     background-color: #fafafa;
     font-weight: bold;
     color: #3a3a3a;
+}
+
+.rc_error {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 10pt;
+    padding-left: 10px;
+    max-width: 250px;
+    min-height: 25px;
+    margin-bottom: 3px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column; 
+    color: #5050a0;
+}
+
+.rc_errorheader {
+    border-left: 2px solid #a6caf0;
+    background-color: #f7fbff;
+    font-weight: bold;
+    color: #303080;
 }
