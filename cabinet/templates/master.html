@@ -394,6 +394,12 @@
                     case 'switch_type_draft':
                         typename = 'draft';
                         break;
+                    case 'switch_type_people':
+                        typename = 'people';
+                        break;
+                    case 'switch_type_fun':
+                        typename = 'fun';
+                        break;
                 }
                 var current_typename = document.getElementById("section_selected").getAttribute("value");
                 if (typename == current_typename) {
@@ -623,6 +629,12 @@
                     <div class="section" id="switch_type_draft" onclick="display_type(event)">
                         <div class="section_icon draft" title="Показать только черновики"></div>
                     </div>
+                    <div class="section" id="switch_type_people" onclick="display_type(event)">
+                        <div class="section_icon people" title="Показать только людей"></div>
+                    </div>
+                    <div class="section" id="switch_type_fun" onclick="display_type(event)">
+                        <div class="section_icon fun" title="Показать только смешное"></div>
+                    </div>
                 </div>
             <!-- "new post" window -->
                 <div class="post" id="00000000-0000-0000-0000-000000000000">
@@ -653,13 +665,13 @@
                             <div class="option">
                               <input type="radio" name="notetype" value="people" id="people" />
                               <label for="people">
-                                <img src="http://placehold.it/14/ffff00/ffffff"/>
+                                <img src="../static/img/people_small.png"/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="fun" id="fun" />
                               <label for="fun">
-                                <img src="http://placehold.it/14/ff00ff/ffffff"/>
+                                <img src="../static/img/fun_small.png"/>
                               </label>
                             </div>
                           </div>
@@ -706,13 +718,13 @@
                             <div class="option">
                               <input type="radio" name="notetype" value="people" id="people-" />
                               <label for="people-">
-                                <img src="http://placehold.it/14/ffff00/ffffff"/>
+                                <img src="../static/img/people_small.png"/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="fun" id="fun-" />
                               <label for="fun-">
-                                <img src="http://placehold.it/14/ff00ff/ffffff"/>
+                                <img src="../static/img/fun_small.png"/>
                               </label>
                             </div>
                           </div>

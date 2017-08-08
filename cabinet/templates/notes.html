@@ -27,11 +27,11 @@
                 title="{% if record['important'] %} Убрать отметку важности {% else %} Отметить запись как важную {% endif %}" 
                 onclick="markPost('{{record['uid']}}')">
             </div>
-            {% if showtypes %}
-                <div 
-                    class="notetype_small {{record['typename']}}_small" title="{{record['fullname']}}" data-notetype="{{record['typename']}}" >
-                </div>
-            {% endif %}
+            <div 
+                class="notetype_small {{record['typename']}}_small 
+                {% if not showtypes %} hidden {% endif %}" 
+                title="{{record['fullname']}}" data-notetype="{{record['typename']}}" >
+            </div>
             <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>
             <div class="posticon editpost" title="Редактировать запись" onclick="editPost('{{record['uid']}}')"></div>
             <div class="title" title="{{record['created'].strftime("%d.%m.%Y %H:%M")}}"><a href="/note/{{record['uid']}}">{{record['created'].strftime("%d.%m.%Y")}}

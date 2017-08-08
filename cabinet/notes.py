@@ -34,6 +34,7 @@ def notes_load(post_id=None):
     where = "where 1=1 "
     join = " "
     showtypes = True
+    # if we get a batch of notes through a type switch
     if (notetype and notetype != 'all'):
         where += " and nt.name = '%s' " % notetype
         showtypes = False

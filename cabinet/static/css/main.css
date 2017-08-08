@@ -98,6 +98,14 @@
     background-image: url('../img/draft.png');
 }
 
+.people {
+    background-image: url('../img/people.png');
+}
+
+.fun {
+    background-image: url('../img/fun.png');
+}
+
 .section_icon_active {
     background-position: 0px 70px;
 }

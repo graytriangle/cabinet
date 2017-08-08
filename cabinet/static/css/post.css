@@ -171,6 +171,10 @@ blockquote[cite]:before { /* стиль цитаты со ссылкой */
     background-size: 14px;
 }
 
+.notetype_small.hidden {
+    display: none;
+}
+
 .diary_small {
     background-image: url('../img/diary_small.png');
 }
@@ -181,6 +185,14 @@ blockquote[cite]:before { /* стиль цитаты со ссылкой */
 
 .note_small {
     background-image: url('../img/note_small.png');
+}
+
+.people_small {
+    background-image: url('../img/people_small.png');
+}
+
+.fun_small {
+    background-image: url('../img/fun_small.png');
 }
 
 .posticon {
