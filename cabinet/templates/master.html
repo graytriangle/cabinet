@@ -340,9 +340,41 @@
                 }
                 suspend_switches(true);
 
+                var typename;
+                switch (clickedtype.getAttribute("id")) {
+                    case 'switch_type_note':
+                        typename = 'note';
+                        break;
+                    case 'switch_type_diary':
+                        typename = 'diary';
+                        break;
+                    case 'switch_type_draft':
+                        typename = 'draft';
+                        break;
+                    case 'switch_type_people':
+                        typename = 'people';
+                        break;
+                    case 'switch_type_fun':
+                        typename = 'fun';
+                        break;
+                }
+                var current_typename = document.getElementById("section_selected").getAttribute("value");
+                if (typename == current_typename) {
+                    typename = 'all';
+                }
+                document.getElementById("section_selected").setAttribute("value", typename);
+
+                var current_topic = document.getElementsByClassName("rc_current_topic")[0];
+                if (!(current_topic === undefined && typeof current_topic === "undefined")) {
+                    current_topic = current_topic.textContent;
+                } else {
+                    current_topic = '';
+                }
+
                 var notetype_callback_ok = function(response){
                     // callback to execute on successful note loading
 
+                    console.log("working note callback!");
                     // если ранее был выбран раздел, сносим его иконке "активный" стиль
                     if (!(prevtype === undefined && typeof prevtype === "undefined")) {
                         prevtype.getElementsByClassName("section_icon")[0].classList.remove('section_icon_active');
@@ -376,48 +408,48 @@
                     }
                 };
 
-                var notetype_callback_finally = function(){
-                    // callback to execute in all cases
-                    suspend_switches(false);
-                    // если пытались включить новый раздел, выключаем ему заморозку
-                    if (clickedtype.classList.contains('section_suspended')) {
-                        clickedtype.classList.remove('section_suspended');
+                var topiclist_callback_ok = function(response){
+                    // callback to execute on successful topiclist loading
+
+                    console.log("working topic callback!");
+                    var postsparent = document.getElementById("rightcol");
+                    var oldlist = document.getElementById("topiclist");
+                    postsparent.removeChild(oldlist);
+                    var wrapper = document.createElement('div');
+                    wrapper.id = 'topiclist';
+                    wrapper.innerHTML = response;
+                    postsparent.appendChild(wrapper);
+                };
+
+                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+                var topiclist_callback_error = function(status){
+                    // callback to execute on unsuccessful topiclist loading
+
+                    if (status !== null) {
+                        alert("Ошибка сервера при обновлении списка тем: " + status);
                     }
                 };
 
-                var typename;
-                switch (clickedtype.getAttribute("id")) {
-                    case 'switch_type_note':
-                        typename = 'note';
-                        break;
-                    case 'switch_type_diary':
-                        typename = 'diary';
-                        break;
-                    case 'switch_type_draft':
-                        typename = 'draft';
-                        break;
-                    case 'switch_type_people':
-                        typename = 'people';
-                        break;
-                    case 'switch_type_fun':
-                        typename = 'fun';
-                        break;
-                }
-                var current_typename = document.getElementById("section_selected").getAttribute("value");
-                if (typename == current_typename) {
-                    typename = 'all';
-                }
-                document.getElementById("section_selected").setAttribute("value", typename);
+                var callback_counter = 0;
 
-                var current_topic = document.getElementsByClassName("rc_current_topic")[0];
-                if (!(current_topic === undefined && typeof current_topic === "undefined")) {
-                    current_topic = current_topic.textContent;
-                } else {
-                    current_topic = '';
-                }
+                var common_callback_finally = function(){
+                    // callback to execute in all cases
+                    if (callback_counter === 1) {
+                        suspend_switches(false);
+                        // если пытались включить новый раздел, выключаем ему заморозку
+                        if (clickedtype.classList.contains('section_suspended')) {
+                            clickedtype.classList.remove('section_suspended');
+                        }
+                    }
+                    callback_counter += 1;
+                };
 
-                var address = '/notes?type=' + typename + '&topic=' + current_topic;
-                ajax('GET', address, notetype_callback_ok, notetype_callback_error, notetype_callback_finally);
+                var address = '/notes?type=' + typename;
+                // var address = '/notes?type=' + typename + '&topic=' + current_topic;
+                ajax('GET', address, notetype_callback_ok, notetype_callback_error, common_callback_finally);
+
+                var address = '/topics?type=' + typename;
+                ajax('GET', address, topiclist_callback_ok, topiclist_callback_error, common_callback_finally);
             }
 
             function display_topic(event) {
@@ -486,7 +518,7 @@
                 ajax('GET', address, topic_callback_ok, topic_callback_error, topic_callback_finally);
             }
 
-            function reload_topiclist(type = '') {
+            function reload_topiclist(type = 'all') {
                 // wrapper for switching displayed topics
                 suspend_switches(true);
 
@@ -515,7 +547,7 @@
                     suspend_switches(false);
                 };
 
-                var address = '/topics';
+                var address = '/topics?type=' + type;
                 ajax('GET', address, topiclist_callback_ok, topiclist_callback_error, topiclist_callback_finally);
             }
 
@@ -579,13 +611,15 @@
             /*************************/
 
             function ajax(type, address, success, error, cleanup=function(){}, post_data=null) {
-                httpRequest = new XMLHttpRequest();
+                let httpRequest = new XMLHttpRequest(); 
+                // we need let for multiple ajax calls to read onreadystatechange correctly
                 if (!httpRequest) {
                     alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
                     error(null);
                     cleanup();
                     return false;
                 }
+                httpRequest.open(type, address);
                 httpRequest.onreadystatechange = function() {
                     if (httpRequest.readyState === XMLHttpRequest.DONE) {
                         if (httpRequest.status === 200) {
@@ -597,7 +631,6 @@
                         }
                     }
                 };
-                httpRequest.open(type, address);
                 if (type == 'GET') {
                     httpRequest.send();
                 } else if (type == 'POST') {

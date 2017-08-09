@@ -10,16 +10,26 @@ from cabinet import functions as f
 topics = Blueprint('topics', __name__, template_folder='templates')
 
 @topics.route('/topics', methods=['GET'])
-def notes_load():
-    result = get_topics()
+def topics_load():
+    print 'topics start'
+    notetype = request.args.get('type')
+    joinwhere = ''
+    if (notetype and notetype != 'all'):
+        joinwhere = """ inner join notes_topics nt on t.uid = nt.topic
+            inner join notes n on n.uid = nt.note
+            inner join notetypes nty on n."type" = nty.uid
+            where nty."name" = '%s' """ % notetype
+    result = get_topics(joinwhere)
     return render_template('topics.html', topics=result)
 
-def get_topics():
+def get_topics(joinwhere=''):
+    print 'topics get'
     cur = f.get_db().cursor()
     sql = """\
-            select uid, name 
-            from topics 
-            order by name;"""
+            select distinct t.uid, t.name 
+            from topics t 
+            %s
+            order by t.name;""" % joinwhere
     try:
         cur.execute(sql)
         result = f.dictfetchall(cur)
