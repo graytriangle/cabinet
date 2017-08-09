@@ -11,7 +11,6 @@ topics = Blueprint('topics', __name__, template_folder='templates')
 
 @topics.route('/topics', methods=['GET'])
 def topics_load():
-    print 'topics start'
     notetype = request.args.get('type')
     joinwhere = ''
     if (notetype and notetype != 'all'):
@@ -23,7 +22,6 @@ def topics_load():
     return render_template('topics.html', topics=result)
 
 def get_topics(joinwhere=''):
-    print 'topics get'
     cur = f.get_db().cursor()
     sql = """\
             select distinct t.uid, t.name 

@@ -24,7 +24,6 @@ def show_post(post_id):
 
 @notes.route('/notes', methods=['GET'])
 def notes_load(post_id=None):
-    print 'notes start'
     notetype = request.args.get('type')
     notetopic = request.args.get('topic')
     noteuid = request.args.get('uid')
@@ -52,7 +51,6 @@ def notes_load(post_id=None):
 ###################
 
 def get_notes(join='', where=''):
-    print 'notes get'
     cur = f.get_db().cursor()
     sql = """\
             select n.*, 

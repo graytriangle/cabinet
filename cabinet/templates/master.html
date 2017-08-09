@@ -143,9 +143,10 @@
 
                 var updpost_cb_ok = function(response) {
                     cancelEdit(uid);
-                    var oldel = document.getElementById(uid);
-                    oldel.parentNode.replaceChild(elementFromText(httpRequest.responseText), oldel);
-                    reload_topiclist();
+                    let oldel = document.getElementById(uid);
+                    oldel.parentNode.replaceChild(elementFromText(response), oldel);
+                    let current_type = document.getElementById("section_selected").getAttribute("value");
+                    reload_topiclist(current_type);
                 }
 
                 var updpost_cb_error = function(status) {
@@ -175,10 +176,11 @@
                 var formData = new FormData(el.getElementsByTagName("form")[0]);
 
                 var addpost_cb_ok = function(response) {
-                    var parentnode = document.getElementById("notes_content");
+                    let parentnode = document.getElementById("notes_content");
                     parentnode.insertBefore(elementFromText(response), parentnode.firstChild);
                     clearNewPost(true); // silent clearing of the newpost form
-                    reload_topiclist();
+                    let current_type = document.getElementById("section_selected").getAttribute("value");
+                    reload_topiclist(current_type);
                 }
 
                 var addpost_cb_error = function(status) {
@@ -230,7 +232,6 @@
                     // i.getElementsByTagName("input")[0].setAttribute("name", "notetype-" + uid);
                     i.getElementsByTagName("input")[0].setAttribute("id", tmpselid);
                     i.getElementsByTagName("label")[0].setAttribute("for", tmpselid);
-                    console.log(i.getElementsByTagName("input")[0].checked);
                     if (i.getElementsByTagName("input")[0].getAttribute("value") == tmpnotetype) {
                         i.getElementsByTagName("input")[0].checked = true;
                     }
@@ -374,7 +375,6 @@
                 var notetype_callback_ok = function(response){
                     // callback to execute on successful note loading
 
-                    console.log("working note callback!");
                     // если ранее был выбран раздел, сносим его иконке "активный" стиль
                     if (!(prevtype === undefined && typeof prevtype === "undefined")) {
                         prevtype.getElementsByClassName("section_icon")[0].classList.remove('section_icon_active');
@@ -411,7 +411,6 @@
                 var topiclist_callback_ok = function(response){
                     // callback to execute on successful topiclist loading
 
-                    console.log("working topic callback!");
                     var postsparent = document.getElementById("rightcol");
                     var oldlist = document.getElementById("topiclist");
                     postsparent.removeChild(oldlist);
@@ -433,7 +432,7 @@
                 var callback_counter = 0;
 
                 var common_callback_finally = function(){
-                    // callback to execute in all cases
+                    // callback to execute after both ajaxes finished loading
                     if (callback_counter === 1) {
                         suspend_switches(false);
                         // если пытались включить новый раздел, выключаем ему заморозку
