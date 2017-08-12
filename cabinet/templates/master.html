@@ -69,8 +69,6 @@
             /* AJAX functions */
             /******************/
 
-            var httpRequest;
-
             function deletePost(uid) {
                 // AJAX deleting the existing post
                 var result = confirm("Подтвердите удаление записи!");
@@ -145,7 +143,7 @@
                     cancelEdit(uid);
                     let oldel = document.getElementById(uid);
                     oldel.parentNode.replaceChild(elementFromText(response), oldel);
-                    let current_type = document.getElementById("section_selected").getAttribute("value");
+                    let current_type = document.getElementById("current_type").getAttribute("value");
                     reload_topiclist(current_type);
                 }
 
@@ -179,7 +177,7 @@
                     let parentnode = document.getElementById("notes_content");
                     parentnode.insertBefore(elementFromText(response), parentnode.firstChild);
                     clearNewPost(true); // silent clearing of the newpost form
-                    let current_type = document.getElementById("section_selected").getAttribute("value");
+                    let current_type = document.getElementById("current_type").getAttribute("value");
                     reload_topiclist(current_type);
                 }
 
@@ -359,11 +357,11 @@
                         typename = 'fun';
                         break;
                 }
-                var current_typename = document.getElementById("section_selected").getAttribute("value");
+                var current_typename = document.getElementById("current_type").getAttribute("value");
                 if (typename == current_typename) {
                     typename = 'all';
                 }
-                document.getElementById("section_selected").setAttribute("value", typename);
+                document.getElementById("current_type").setAttribute("value", typename);
 
                 var current_topic = document.getElementsByClassName("rc_current_topic")[0];
                 if (!(current_topic === undefined && typeof current_topic === "undefined")) {
@@ -393,7 +391,7 @@
                     wrapper.innerHTML = response;
                     postsparent.appendChild(wrapper);
 
-                    for (i of document.getElementById(NEW_POST).getElementsByClassName("option")) {
+                    for (let i of document.getElementById(NEW_POST).getElementsByClassName("option")) {
                         if (i.getElementsByTagName("input")[0].hasAttribute("checked")) {
                             console.log("removing checked");
                             i.getElementsByTagName("input")[0].checked = false;
@@ -523,7 +521,7 @@
                     suspend_switches(false);
                 };
 
-                var current_typename = document.getElementById("section_selected").getAttribute("value");
+                var current_typename = document.getElementById("current_type").getAttribute("value");
 
                 var address = '/notes?type=' + current_typename + '&topic=' + current_topic;
                 ajax('GET', address, topic_callback_ok, topic_callback_error, topic_callback_finally);
@@ -698,7 +696,7 @@
             <div id="maincol">
 
                 <div class="sections">
-                    <input id="section_selected" type="hidden" value="all">
+                    <input id="current_type" type="hidden" value="all">
                     <div class="section" id="switch_type_note" onclick="display_type(event)">
                         <div class="section_icon note" title="Показать только заметки"></div>
                     </div>

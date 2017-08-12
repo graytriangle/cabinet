@@ -30,66 +30,67 @@ function intent_settings(event, show) {
 
 function intent_check(uid) {
     // AJAX marking the intention as "done"
-    httpRequest = new XMLHttpRequest();
     var el = document.getElementById(uid);
-    var status = "true"; // if current intention is active
+    var istatus = "true"; // if current intention is active
     if (el.getElementsByClassName("goalname")[0].classList.contains('goalname_done')) {
-        status = "false";
+        istatus = "false";
     }
-    if (!httpRequest) {
-        alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-        return false;
-    }
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                el.getElementsByClassName("goalname")[0].classList.toggle('goalname_done');
 
-                if (status == "false") {
-                    var checkdiv = el.getElementsByClassName("checkgoal")[0];
-                    var editdiv = document.createElement('div');
-                    editdiv.className = "todoicon goalsetting editgoal";
-                    var adddiv= document.createElement('div');
-                    adddiv.className = "todoicon goalsetting addgoal";
-                    checkdiv.parentNode.insertBefore(editdiv, checkdiv);
-                    checkdiv.parentNode.insertBefore(adddiv, checkdiv);
-                } else {
-                    var editdiv = el.getElementsByClassName("editgoal")[0];
-                    editdiv.parentNode.removeChild(editdiv);
-                    var adddiv = el.getElementsByClassName("addgoal")[0];
-                    adddiv.parentNode.removeChild(adddiv);
-                }
-            } else {
-                alert("Ошибка сервера при смене статуса намерения: " + httpRequest.status);
-            }
+    var intcheck_cb_ok = function(response){
+        // callback to execute on successful note loading
+        el.getElementsByClassName("goalname")[0].classList.toggle('goalname_done');
+
+        if (istatus == "false") {
+            var checkdiv = el.getElementsByClassName("checkgoal")[0];
+            var editdiv = document.createElement('div');
+            editdiv.className = "todoicon goalsetting editgoal";
+            var adddiv= document.createElement('div');
+            adddiv.className = "todoicon goalsetting addgoal";
+            checkdiv.parentNode.insertBefore(editdiv, checkdiv);
+            checkdiv.parentNode.insertBefore(adddiv, checkdiv);
+        } else {
+            var editdiv = el.getElementsByClassName("editgoal")[0];
+            editdiv.parentNode.removeChild(editdiv);
+            var adddiv = el.getElementsByClassName("addgoal")[0];
+            adddiv.parentNode.removeChild(adddiv);
         }
     };
-    httpRequest.open('GET', '/intent/check?uid=' + uid + '&status=' + status);
-    httpRequest.send();
+
+    // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+    var intcheck_cb_error = function(status){
+        // callback to execute on unsuccessful note loading
+
+        if (status !== null) {
+            alert("Ошибка сервера при смене статуса намерения: " + status);
+        }
+    };
+
+    var address = '/intent/check?uid=' + uid + '&status=' + istatus;
+    ajax('GET', address, intcheck_cb_ok, intcheck_cb_error);
 }
 
 function intent_delete(uid) {
     // AJAX deleting the intention
     var result = confirm("Подтвердите удаление намерения. Все дочерние намерения также будут удалены!");
     if (result) {
-        httpRequest = new XMLHttpRequest();
 
-        if (!httpRequest) {
-            alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-            return false;
-        }
-        httpRequest.onreadystatechange = function() {
-            if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                if (httpRequest.status === 200) {
-                    var el = document.getElementById(uid);
-                    el.parentNode.removeChild(el);
-                } else {
-                    alert("Ошибка сервера при удалении записи: " + httpRequest.status);
-                }
+        var intdel_cb_ok = function(response) {
+            // callback to execute on successful note loading
+            var el = document.getElementById(uid);
+            el.parentNode.removeChild(el);
+        };
+
+        // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+        var intdel_cb_error = function(status) {
+            // callback to execute on unsuccessful note loading
+
+            if (status !== null) {
+                alert("Ошибка сервера при удалении намерения: " + status);
             }
         };
-        httpRequest.open('GET', '/intent/delete?uid=' + uid);
-        httpRequest.send();
+
+        var address = '/intent/delete?uid=' + uid;
+        ajax('GET', address, intdel_cb_ok, intdel_cb_error);
     }
 }
 

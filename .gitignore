@@ -2,3 +2,4 @@ cabinet/venv/
 *.pyc
 cabinet.egg-info/
 venv/
+cabinet/tmp/
