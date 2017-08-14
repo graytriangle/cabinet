@@ -3,17 +3,25 @@
     margin-bottom: 10px;
 }
 
+#topiclist {
+    display: flex;
+    flex-direction: column; 
+    flex-wrap: wrap;
+    justify-content: center; /* vertical (main axis) */
+    align-content: center; /* horizontal */
+}
+
 .rc_topic {
+    display: flex;
+    flex-direction: row; 
+    align-content: center;
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 10pt;
     padding-left: 10px;
     max-width: 250px;
     min-height: 25px;
+    line-height: 25px;
     margin-bottom: 3px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    flex-direction: column; 
     color: #5050a0;
     cursor: pointer;
 }
@@ -41,6 +49,11 @@
     color: #6a6a6a;
 }
 
+.rc_empty.rc_topic {
+    color: #888888;
+    cursor: default;
+}
+
 .rc_error {
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 10pt;
@@ -60,4 +73,21 @@
     background-color: #f7fbff;
     font-weight: bold;
     color: #303080;
+}
+
+.topicicon_delete {
+    width: 16px;
+    height: 16px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    margin-left: 6px;
+    margin-right: 6px;
+    background-size: 16px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-image: url('../img/del_topic.png');
+}
+
+.topicicon_delete.hidden {
+    display: none;
 }

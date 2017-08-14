@@ -1,5 +1,44 @@
 <script>
+function topic_settings(event, show) {
+    // shows/hides buttons near every intention
+    if (event.target.classList.contains('rc_empty')) {
+        el = event.target;
+    } else {
+        el = event.target.parentNode;
+    }
+    /* hide/show icons that are immediate children of a target div */
+    icon = el.getElementsByClassName("topicicon_delete")[0];
+    if (show) {
+        icon.classList.remove("hidden");
+    } else {
+        icon.classList.add("hidden");
+    }
+}
 
+function delete_topic(uid) {
+    // AJAX deleting the intention
+    var result = confirm("Подтвердите удаление темы");
+    if (result) {
+        httpRequest = new XMLHttpRequest();
+
+        if (!httpRequest) {
+            alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+            return false;
+        }
+        httpRequest.onreadystatechange = function() {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                if (httpRequest.status === 200) {
+                    var el = document.getElementById(uid);
+                    el.parentNode.removeChild(el);
+                } else {
+                    alert("Ошибка сервера при удалении записи: " + httpRequest.status);
+                }
+            }
+        };
+        httpRequest.open('GET', '/topics/delete?uid=' + uid);
+        httpRequest.send();
+    }
+}
 </script>
 
 {% for record in topics %}
@@ -7,6 +46,12 @@
         <div class="rc_error rc_errorheader">Ошибка при загрузке списка тем!</div>
         <div class="rc_error">{{record.error}}</div>
     {% else %}
-        <div class="rc_topic" onclick="display_topic(event)">{{record.name}}</div>
+        <div id="{{record.uid}}" class="rc_topic {% if record.count == 0 %} rc_empty {% endif %}" 
+        {% if record.count != 0 %} onclick="display_topic(event)"{% endif %}
+        {% if record.count == 0 %} onmouseover="topic_settings(event, true)" onmouseout="topic_settings(event, false)" {% endif %}
+        >{{record.name}}
+        {% if record.count == 0 %} <div class="topicicon_delete hidden" onclick="delete_topic('{{record.uid}}')"></div>{% endif %}
+        </div>
+
     {% endif %}
 {% endfor %}

@@ -465,9 +465,9 @@
                 var clickedtype = event.target;
                 var current_topic = '';
                 if (clickedtype.classList.contains('inner_topic')) {
-                    var topictext = clickedtype.textContent;
+                    var topictext = clickedtype.innerText;
                     for (let i of document.getElementsByClassName("rc_topic")) {
-                        if (i.textContent == topictext) {
+                        if (i.innerText == topictext) {
                             clickedtype = i;
                             break;
                         }
@@ -597,7 +597,9 @@
                     // включаем обратно цвет и функции у всех переключателей тем
                     for (let i of document.getElementsByClassName("rc_topic")) {
                         i.classList.remove('rc_inactive');
-                        i.setAttribute("onclick", "display_topic(event)");
+                        if (!(i.classList.contains('rc_empty'))) {
+                            i.setAttribute("onclick", "display_topic(event)");
+                        }
                     }
                     // включаем тэги в постах
                     for (let i of document.getElementsByClassName("inner_topic")) {
