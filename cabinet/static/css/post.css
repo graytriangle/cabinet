@@ -30,37 +30,37 @@ div .error {
 
 .source {
     font-size: 10pt;
-    color: #808080;
+    color: #707070;
     margin-top: 0;
     margin-bottom: 0
 }
 .source a {
-    color: #808080;
+    color: #707070;
     text-decoration: none;
 }
 .source a:hover {
-    color: #606060;
+    color: #404040;
     text-decoration: none;
 }
 .tags {
     font-size: 10pt;
-    color: #808080;
+    color: #707070;
     margin-top: 0;
     margin-bottom: 0
 }
 .inner_topic {
-    color: #808080;
+    color: #707070;
     text-decoration: none;
 }
 .inner_topic:hover {
-    color: #606060;
+    color: #404040;
     text-decoration: none;
 }
 .inner_topic_inact {
-    
+    color: #888888;
 }
 .inner_topic_inact:hover {
-    color: #808080;
+    color: #888888;
 }
 
 /*.edits {

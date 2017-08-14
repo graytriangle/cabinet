@@ -14,19 +14,32 @@ def topics_load():
     notetype = request.args.get('type')
     joinwhere = ''
     if (notetype and notetype != 'all'):
-        joinwhere = """ inner join notes_topics nt on t.uid = nt.topic
-            inner join notes n on n.uid = nt.note
-            inner join notetypes nty on n."type" = nty.uid
+        joinwhere = """ left join notes n on n.uid = nt.note
+            left join notetypes nty on n."type" = nty.uid
             where nty."name" = '%s' """ % notetype
     result = get_topics(joinwhere)
     return render_template('topics.html', topics=result)
 
+@topics.route('/topics/delete', methods=['GET'])
+def topics_delete():
+    uid = (request.args.get('uid', ''),)
+    cur = f.get_db().cursor()
+    try:
+        cur.execute("DELETE FROM topics WHERE uid = %s::uuid;", uid)
+        f.get_db().commit()
+    # no exception handling; simple alert about "500 server error"
+    finally:
+        cur.close()
+    return uid # getting uid back to delete post from page
+
 def get_topics(joinwhere=''):
     cur = f.get_db().cursor()
     sql = """\
-            select distinct t.uid, t.name 
+            select distinct t.uid, t.name, count(nt.uid) as count
             from topics t 
+            left join notes_topics nt on t.uid = nt.topic
             %s
+            group by t.uid, t.name, nt.uid
             order by t.name;""" % joinwhere
     try:
         cur.execute(sql)

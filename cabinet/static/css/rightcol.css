@@ -30,16 +30,15 @@
 }
 
 .rc_inactive.rc_topic {
-    color: #585858;
-    cursor: defa
-    ult;
+    color: #888888;
+    cursor: default;
 }
 
 .rc_inactive.rc_current_topic {
     border-left: 2px solid #c6c6c6;
     background-color: #fafafa;
     font-weight: bold;
-    color: #3a3a3a;
+    color: #6a6a6a;
 }
 
 .rc_error {

@@ -56,10 +56,8 @@ function intent_check(uid) {
         }
     };
 
-    // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
     var intcheck_cb_error = function(status){
-        // callback to execute on unsuccessful note loading
-
+        // callback to execute on unsuccessful intention checking
         if (status !== null) {
             alert("Ошибка сервера при смене статуса намерения: " + status);
         }
@@ -80,10 +78,8 @@ function intent_delete(uid) {
             el.parentNode.removeChild(el);
         };
 
-        // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
         var intdel_cb_error = function(status) {
-            // callback to execute on unsuccessful note loading
-
+            // callback to execute on unsuccessful intention deletion
             if (status !== null) {
                 alert("Ошибка сервера при удалении намерения: " + status);
             }

@@ -393,12 +393,10 @@
 
                     for (let i of document.getElementById(NEW_POST).getElementsByClassName("option")) {
                         if (i.getElementsByTagName("input")[0].hasAttribute("checked")) {
-                            console.log("removing checked");
                             i.getElementsByTagName("input")[0].checked = false;
                         }
                         if ((i.getElementsByTagName("input")[0].getAttribute("value") === typename) || 
                             (typename == 'all' && i.getElementsByTagName("input")[0].getAttribute("value") == 'draft')) {
-                            console.log("setting checked");
                             i.getElementsByTagName("input")[0].checked = true;
                         }
                     }
