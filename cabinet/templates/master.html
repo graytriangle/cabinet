@@ -524,7 +524,22 @@
 
                 var topiclist_callback_ok = function(response){
                     // callback to execute on successful topic loading
+                    var current_topic = document.getElementsByClassName("rc_current_topic")[0];
+                    if (!(current_topic === undefined && typeof current_topic === "undefined")) {
+                        current_topic = current_topic.innerText;
+                    } else {
+                        current_topic = '';
+                    }
                     replace_topics(response);
+
+                    if (!(current_topic === '')) {
+                        for (let i of document.getElementsByClassName("rc_topic")) {
+                            if (i.innerText == current_topic) {
+                                i.classList.add('rc_current_topic');
+                                break;
+                            }
+                        }
+                    }
                 };
 
                 // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
