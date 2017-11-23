@@ -243,7 +243,7 @@
                 var newtitle = template.getElementsByClassName("title")[0];
                 template.getElementsByTagName("form")[0].replaceChild(tmptitle, newtitle);
                 if (tmppost.getElementsByClassName("source").length > 0) {
-                    var tmpsrc = tmppost.getElementsByClassName("source")[0].getElementsByTagName("a")[0].innerHTML;
+                    var tmpsrc = tmppost.getElementsByClassName("source")[0].getElementsByTagName("a")[0].getAttribute("href");
                     template.getElementsByClassName("inputsrc")[0].setAttribute("value", tmpsrc);
                 }
                 if (tmppost.getElementsByClassName("tags").length > 0) {
