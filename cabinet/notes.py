@@ -34,17 +34,23 @@ def notes_load(post_id=None):
     join = " "
     showtypes = True
     # if we get a batch of notes through a type switch
-    if (notetype and notetype != 'all'):
-        where += " and nt.name = '%s' " % notetype
-        showtypes = False
-    if (notetopic):
-        join = """ left join notes_topics nto on nto.note = n.uid
-                left join topics t on nto.topic = t.uid """
-        where += " and t.name = '%s' " % notetopic.lower()
-    if (noteuid):
-        where += " and n.uid = '%s' " % noteuid
-    result = get_notes(join, where)
-    return render_template('notes.html', notes=result, showtypes=showtypes)
+    if (notetype and notetype == 'people'):
+        if (notetopic):
+            where += " and name = '%s' " % notetopic
+        result = get_people(where)
+        return render_template('people.html', notes=result)
+    else:
+        if (notetype and notetype != 'all'):
+            where += " and nt.name = '%s' " % notetype
+            showtypes = False
+        if (notetopic):
+            join = """ left join notes_topics nto on nto.note = n.uid
+                    left join topics t on nto.topic = t.uid """
+            where += " and t.name = '%s' " % notetopic.lower()
+        if (noteuid):
+            where += " and n.uid = '%s' " % noteuid
+        result = get_notes(join, where)
+        return render_template('notes.html', notes=result, showtypes=showtypes)
 
 ###################
 # OTHER FUNCTIONS #
@@ -65,6 +71,26 @@ def get_notes(join='', where=''):
             %s
             order by created desc;""" % (join, where)
     try:
+        cur.execute(sql)
+        result = f.dictfetchall(cur)
+        if not result:
+            result = [{'error': f.NO_NOTE, 'details': ''}]
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        result = [{'error': f.QUERY_ERR, 'details': str(e)}]
+    finally:
+        cur.close()
+    return result
+
+def get_people(where=''):
+    cur = f.get_db().cursor()
+    sql = """\
+            select *
+            from people
+            %s;
+            """ % (where)
+    try:
+        print sql
         cur.execute(sql)
         result = f.dictfetchall(cur)
         if not result:

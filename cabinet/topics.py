@@ -13,12 +13,16 @@ topics = Blueprint('topics', __name__, template_folder='templates')
 def topics_load():
     notetype = request.args.get('type')
     joinwhere = ''
-    if (notetype and notetype != 'all'):
-        joinwhere = """ left join notes n on n.uid = nt.note
-            left join notetypes nty on n."type" = nty.uid
-            where nty."name" = '%s' """ % notetype
-    result = get_topics(joinwhere)
-    return render_template('topics.html', topics=result)
+    if (notetype and notetype == 'people'):
+        result = get_peoplenames()
+        return render_template('topics.html', topics=result)
+    else:
+        if (notetype and notetype != 'all'):
+            joinwhere = """ left join notes n on n.uid = nt.note
+                left join notetypes nty on n."type" = nty.uid
+                where nty."name" = '%s' """ % notetype
+        result = get_topics(joinwhere)
+        return render_template('topics.html', topics=result)
 
 @topics.route('/topics/delete', methods=['GET'])
 def topics_delete():
@@ -41,6 +45,23 @@ def get_topics(joinwhere=''):
             %s
             group by t.uid, t.name, nt.uid
             order by t.name;""" % joinwhere
+    try:
+        cur.execute(sql)
+        result = f.dictfetchall(cur)
+        if not result:
+            result = [{'error': f.EMPTY_TOPIC_LIST, 'details': ''}]
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        result = [{'error': f.QUERY_ERR, 'details': str(e)}]
+    finally:
+        cur.close()
+    return result
+
+def get_peoplenames():
+    cur = f.get_db().cursor()
+    sql = """\
+            select uid, name, 1 as count
+            from people;"""
     try:
         cur.execute(sql)
         result = f.dictfetchall(cur)

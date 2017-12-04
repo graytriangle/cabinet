@@ -1,0 +1,19 @@
+{% for record in notes %}
+    {% if record.error %}
+        <div class="post error">
+            <h3>{{record.error}}</h3>
+            <p>{{record.details}}</p>
+            <a href="/">Вернуться на главную страницу</a>
+        </div>
+    {% else %}
+        <div class="post" id="{{record['uid']}}">
+            <div class="posticon deletepost" title="Удалить запись" onclick="deletePost('{{record['uid']}}')"></div>
+            <div class="posticon editpost" title="Редактировать запись" onclick="editPost('{{record['uid']}}')"></div>
+            <div class="title"><a href="/note/{{record['uid']}}">{{record['name']}}
+            </a></div>
+            <div class="posttext">
+                {{ record['description']|safe }}
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}

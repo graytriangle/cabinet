@@ -80,6 +80,7 @@ def mark():
     try:
         cur.execute("UPDATE notes SET important = %s WHERE uid = %s::uuid;", (status, uid))
         f.get_db().commit()
+        print 'mark set!'
     # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
