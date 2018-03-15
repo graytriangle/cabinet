@@ -1,0 +1,74 @@
+﻿https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-16-04
+
+tahau 123
+содержимое /home/tahau
+/etc/systemd/system/cabinet.service
+/etc/nginx/sites-available/cabinet
+
+sudo apt-get update
+sudo apt-get install python-pip python-dev nginx
+sudo apt-get install openssh-server
+sudo apt-get install openssh-client
+sudo apt-get install xdg-utils links
+sudo apt-get install uwsgi uwsgi-plugin-python
+sudo pip install virtualenv
+cd /home/tahau
+sudo mkdir cabinet
+cd cabinet
+virtualenv venv
+source venv/bin/activate
+pip install uwsgi flask psycopg2
+export FLASK_APP=cabinet
+cd ..
+python -m flask run --host=0.0.0.0 # при отключенном дебаге
+
+uwsgi --socket 0.0.0.0:5000 --protocol=http -w wsgi:app # запуск через uWSGI из той директории, где лежит wsgi.py
+deactivate
+
+фласк должен запуститься на 0.0.0.0, это важно. При хосте на 127.0.0.1 приложение не будет видно вне локалхоста.
+
+xdg-open http://127.0.0.1:5000 # проверка работы кабинета локально
+sudo nano /etc/systemd/system/cabinet.service
+[пишем в нано содержимое как в инструкции по первой ссылке. Сохранение Ctrl+O]
+sudo systemctl start myproject
+sudo systemctl enable myproject
+sudo nano /etc/nginx/sites-available/cabinet
+[пишем в нано содержимое как в инструкции по первой ссылке. Сохранение Ctrl+O]
+sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled
+sudo nginx -t # тест синтаксиса файла конфигурации
+sudo systemctl restart nginx
+sudo ufw delete allow 5000
+sudo ufw allow 'Nginx Full'
+
+дать файлу cabinet.sock права чтения и записи всем, включая группы!
+
+You have 3 solutions depending on your environment:
+A. Your Windows host is connected to a network
+
+1- Use "Bridge networking"
+And select the Windows network interface that is configured under Windows to have network access.
+Make sure you have no firewall on Ubuntu: sudo iptables -L should give you no rules.
+
+2- Use "NAT" with port-forwarding
+Select NAT and unflod the advanced settings of the NAT interface in VirtualBox settings. Then you click on the Port Forwarding button and create a new rule, you name it "telnet" (or whatever you prefer), protocol should be "TCP", leave the fields Host and Guest IP empty, but set the Host and Guest Port to 23.
+Check the external IP address of the VM to access it. This IP address is the same one as for the VirtualBox Host-only network, you can check the IP in Windows networking center by clicking on the interface and displaying its status/details. Or you can check in VirtualBox preferences (not the VM Settings, but the VirtualBox preferences) under network, check the IP address of the Host-only ethernet adpater (click on the Edit button of this interface).
+Make sure you have no firewall on Ubuntu: sudo iptables -L should give you no rules.
+
+B. Your Windows host has no network
+Use "Host-only" networking. Nothing else to configure.
+The IP address to use is the one given in Ubuntu when you run ifconfig.
+Make sure you have no firewall on Ubuntu: sudo iptables -L should give you no rules.
+
+
+ipconfig /all под Windows даёт порт виртуалки
+
+
+First of all - make sure that your HTTP server is listening on  192.168.50.101:5000 or everywhere (0.0.0.0:5000) by checking the output of:
+
+netstat -tupln | grep ':5000'
+If it isn't, consult Flask's documentation to bind to an address other than localhost.
+
+If it is, allow the traffic using iptables:
+
+iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
+
