@@ -1,0 +1,39 @@
+<html>
+    <head>
+    <title>Cabinet</title>
+     <meta charset="UTF-8"> 
+        <style>
+        </style>
+        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/login.css')}}>
+    </head>
+    <body>
+        <div class="logincontainer">
+
+            <div class="loginform">
+                <div>
+                    <p class="title">cabinet</p>
+                </div>
+                <form action="/login" method="POST">
+                    <div class="logininput">
+                        <input type="username" name="username" placeholder="Логин">
+                    </div>
+                    <div class="logininput">
+                        <input type="password" name="password" placeholder="Пароль">
+                    </div>
+                    <div class="loginbutton">
+                        <input type="submit" value="Войти">
+                    </div>
+                </form>
+
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    {% for message in messages %}
+                      <p>{{ message }}</p>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+            </div>
+        </div>
+    </body>
+</html>

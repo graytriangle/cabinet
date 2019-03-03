@@ -4,17 +4,20 @@ from flask import Flask
 from flask import g
 from flask import render_template
 from flask import request
+from flask import redirect, session, flash
 import uuid
 from cabinet import app
 from cabinet import intentions as i
 from cabinet import notes as n
 from cabinet import functions as f
 from cabinet import topics as t
+from cabinet import appsettings
 from datetime import datetime
 
 app.register_blueprint(i.intentions)
 app.register_blueprint(n.notes)
 app.register_blueprint(t.topics)
+app.secret_key = appsettings.secret_key
 
 @app.context_processor
 def inject_now():
@@ -22,7 +25,31 @@ def inject_now():
 
 @app.route('/')
 def main_page():
-    return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
+    if not session.get('logged_in'):
+        return redirect('/login')
+    else:
+        return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
+
+@app.route('/login')
+def login_page():
+    if session.get('logged_in'):
+        return redirect('/')
+    else:
+        return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    if  request.form['username'] == appsettings.admin_login and request.form['password'] == appsettings.admin_pw:
+        session['logged_in'] = True
+        return redirect('/')
+    else:
+        flash(u'Неверные логин/пароль!')
+        return login_page()
+
+@app.route("/logout")
+def logout():
+    session['logged_in'] = False
+    return redirect('/login')
 
 @app.route('/', methods=['POST'])
 def my_form_post():
