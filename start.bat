@@ -1,0 +1,1 @@
+cd cabinet/venv/Scripts && activate && cd .. && cd .. && SET FLASK_APP=cabinet&& SET FLASK_DEBUG=1&& python -m flask run
