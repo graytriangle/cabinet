@@ -17,8 +17,8 @@ intentions = Blueprint('intentions', __name__, template_folder='templates')
 def intent_check():
     uid = request.args.get('uid', '')
     status = request.args.get('status', '')
-    print uid
-    print status
+    print(uid)
+    print(status)
     cur = f.get_db().cursor()
     try:
         cur.execute("SELECT recurrent FROM intentions WHERE uid = %s::uuid;", (uid,))
@@ -41,7 +41,7 @@ def intent_check():
     # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
-    return uid 
+    return str(uid)
 
 @app.route('/intent/delete', methods=['GET'])
 def intent_delete():
@@ -53,7 +53,7 @@ def intent_delete():
     # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
-    return uid
+    return str(uid)
 
 @app.route('/intent/reload', methods=['GET'])
 def intent_reload():

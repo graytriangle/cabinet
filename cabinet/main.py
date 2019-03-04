@@ -58,9 +58,9 @@ def my_form_post():
     maintext = request.form['maintext']
     topic = request.form['topic']
     source = request.form['source']
-    print 'source'
+    print('source')
     notetype = request.form['notetype']
-    print 'notetype'
+    print('notetype')
     if postuid == '00000000-0000-0000-0000-000000000000':
         postuid = str(uuid.uuid4())
     if maintext == '<p><br></p>':
@@ -97,7 +97,7 @@ def delete():
     # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
-    return uid # getting uid back to delete post from page
+    return str(uid) # getting uid back to delete post from page
 
 @app.route('/mark', methods=['GET'])
 def mark():
@@ -107,11 +107,11 @@ def mark():
     try:
         cur.execute("UPDATE notes SET important = %s WHERE uid = %s::uuid;", (status, uid))
         f.get_db().commit()
-        print 'mark set!'
+        print('mark set!')
     # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
-    return uid 
+    return str(uid)
 
 # auxiliary finctions
 

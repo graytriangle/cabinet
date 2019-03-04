@@ -27,7 +27,7 @@ def notes_load(post_id=None):
     notetype = request.args.get('type')
     notetopic = request.args.get('topic')
     noteuid = request.args.get('uid')
-    print noteuid
+    print(noteuid)
     if not noteuid:
         noteuid = post_id # for getting a particular post after submitting
     where = "where 1=1 "
@@ -90,7 +90,7 @@ def get_people(where=''):
             %s;
             """ % (where)
     try:
-        print sql
+        print(sql)
         cur.execute(sql)
         result = f.dictfetchall(cur)
         if not result:

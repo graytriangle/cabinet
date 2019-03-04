@@ -34,7 +34,7 @@ def topics_delete():
     # no exception handling; simple alert about "500 server error"
     finally:
         cur.close()
-    return uid # getting uid back to delete post from page
+    return str(uid) # getting uid back to delete post from page
 
 def get_topics(joinwhere=''):
     cur = f.get_db().cursor()

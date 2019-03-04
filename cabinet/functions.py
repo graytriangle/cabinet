@@ -19,10 +19,11 @@ def dictfetchall(cursor):
     "Returns all rows from a cursor as a list of dicts"
     desc = cursor.description
     return [
-        dict(zip([col[0] for col in desc], decodesql(row)))
+        dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
 
+# unused since moving to python 3
 def decodesql(record):
     "Converts db record (tuple) to UTF-8"
     return tuple(
