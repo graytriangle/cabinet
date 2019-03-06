@@ -5,6 +5,7 @@ from flask import g
 from flask import render_template
 from flask import request
 from flask import redirect, session, flash
+from flask import url_for
 import uuid
 from cabinet import app
 from cabinet import intentions as i
@@ -23,12 +24,15 @@ app.secret_key = appsettings.secret_key
 def inject_now():
     return {'now': datetime.now()}
 
+@app.before_request
+def before_request():
+    print(request.endpoint)
+    if not session.get('logged_in') and request.endpoint != 'login_page' and request.endpoint != 'login' and request.endpoint != 'static':
+        return redirect(url_for('login_page'))
+
 @app.route('/')
 def main_page():
-    if not session.get('logged_in'):
-        return redirect('/login')
-    else:
-        return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
+    return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
 
 @app.route('/login')
 def login_page():
@@ -39,7 +43,7 @@ def login_page():
 
 @app.route('/login', methods=['POST'])
 def login():
-    if  request.form['username'] == appsettings.admin_login and request.form['password'] == appsettings.admin_pw:
+    if request.form['username'] == appsettings.admin_login and request.form['password'] == appsettings.admin_pw:
         session['logged_in'] = True
         return redirect('/')
     else:
