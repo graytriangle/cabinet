@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve cabinet
+After=network.target
+
+[Service]
+User=user
+Group=www-data
+WorkingDirectory=/home/user/web
+Environment="PATH=/home/user/web/cabinet/venv/bin"
+ExecStart=/home/user/web/cabinet/venv/bin/uwsgi --ini cabinet.ini
+
+[Install]
+WantedBy=multi-user.target
