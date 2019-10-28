@@ -34,8 +34,11 @@ def before_request():
 def main_page():
     return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
 
-@app.route('/login')
+@app.route('/login', methods=['GET'])
 def login_page():
+    if request.args.get('error'):
+        flash(u'Слишком много запросов!')
+        return render_template('login.html')
     if session.get('logged_in'):
         return redirect('/')
     else:

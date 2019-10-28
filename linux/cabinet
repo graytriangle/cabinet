@@ -1,21 +1,39 @@
+map $request_method $limit {
+	default		"";
+	POST		$binary_remote_addr;
+}
+
+limit_req_zone $limit zone=by_ip:10m rate=10r/m;
+limit_req_status 429;
+limit_conn_status 429;
+
 server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
 	include snippets/self-signed.conf;
 	include snippets/ssl-params.conf;
-	server_name 192.168.56.1;
+	server_name void.media 89.108.65.17;
+	error_page 429             /login?error=429;
 
 	location / {
 		include uwsgi_params;
-		uwsgi_pass unix:/home/user/web/cabinet.sock;
+		uwsgi_pass unix:/srv/web/cabinet.sock;
 	}
+
+
+	location /login {
+		include uwsgi_params;
+		uwsgi_pass unix:/srv/web/cabinet.sock;
+        	limit_req zone=by_ip;
+	}
+
 }
 
 server {
     listen 80;
     listen [::]:80;
 
-    server_name 192.168.56.1;
+    server_name void.media 89.108.65.17;
 
-    return 301 https://$server_name$request_uri;
+    return 301 https://void.media$request_uri;
 }
