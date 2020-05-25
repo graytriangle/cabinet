@@ -14,10 +14,12 @@ from cabinet import functions as f
 from cabinet import topics as t
 from cabinet import appsettings
 from datetime import datetime
+from cabinet.translations import translations as tr
 
 app.register_blueprint(i.intentions)
 app.register_blueprint(n.notes)
 app.register_blueprint(t.topics)
+app.register_blueprint(tr.translations, url_prefix='/')
 app.secret_key = appsettings.secret_key
 
 @app.context_processor

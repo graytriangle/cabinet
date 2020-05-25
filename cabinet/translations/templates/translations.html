@@ -1,0 +1,228 @@
+<html>
+    <head>
+    <title>Translations</title>
+     <meta charset="UTF-8"> 
+        <style>
+        </style>
+        <link rel='stylesheet' type='text/css' href= "{{url_for('translations.static', filename='css/translations.css')}}">
+    </head>
+    <body onload="show_tr(undefined, '{{linkname}}')">
+        <script>
+            function highlight(x, color) {
+                x.style.background=color;
+                i = index(x);
+                replacement = (x.parentNode.id == "original") ? "translation" : "original";
+                document.getElementById(replacement).getElementsByTagName("p")[i].style.background=color;
+            }
+
+            function index(el) {
+                if (!el) return -1;
+                var i = 0;
+                while (el = el.previousElementSibling) {
+                    i++;
+                };
+                return i;
+            }
+
+            function goto_tr(event) {
+
+                event.preventDefault();
+                show_tr(event.target);
+                window.history.pushState("", "", event.target.getAttribute("href"));
+
+            }
+
+            function show_tr(target, linkname) {
+
+                var targettr;
+
+                if (!(target === undefined)) {
+                    targettr = target;
+                } else if (linkname == '') {
+                    return;
+                } else {
+                    for (let i of document.getElementsByClassName("navlink")) {
+                        if (i.getAttribute("href") == "/" + linkname) {
+                            targettr = i;
+                        }
+                    }
+                }
+
+                var prevtr = document.getElementsByClassName("chosen")[0];
+
+                var insert_tr = function(data){
+                    var postsparent = document.getElementById("mainblock");
+                    postsparent.removeChild(document.getElementById("title"));
+                    postsparent.removeChild(document.getElementById("translation"));
+                    postsparent.removeChild(document.getElementById("original"));
+                    postsparent.innerHTML = data;
+                    for (let i of document.getElementById("translation").getElementsByTagName("p")) {
+                        i.setAttribute("onmouseover", "highlight(this, '#FFFFAF')");
+                        i.setAttribute("onmouseout", "highlight(this, null)");
+                    }
+                    for (let i of document.getElementById("original").getElementsByTagName("p")) {
+                        i.setAttribute("onmouseover", "highlight(this, '#FFFFAF')");
+                        i.setAttribute("onmouseout", "highlight(this, null)");
+                    }
+                };
+
+                if (!(prevtr === undefined && typeof prevtr === "undefined")) {
+                    // если было что-то выбрано, мы выключаем ему выделение
+                    prevtr.classList.remove('chosen');
+                }
+                // включаем подсветку кликнутому
+                targettr.classList.add('chosen');
+
+                fetch('/get' + targettr.getAttribute("href")).then(response => response.text()).then(data => insert_tr(data))
+
+            }
+
+        </script>
+
+        <div id="header">
+            <p>Header</p>
+        </div>
+
+        <div id="list">
+            <ul>
+                {% for record in list %}
+                    {% if record.error %} 
+                        <li>{{record.error}} {{record.details}}</li>
+                    {% else %}
+                        <li onclick="goto_tr(event)" ><a class="navlink" href="/{{record.link}}">{{record.engname}}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="mainblock">
+
+            <div id="title">
+                <p>The Undercover Man / Тайный человек</p>
+            </div>
+
+            <div class="maintext" id="translation">
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Привычный фарс, всё та же суета.</p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Твой неуверенный вопрос:</p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Как поступить?</p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Будто есть выбор, кроме как твердить</p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Всё ту же песню самому себе под нос,</p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Надеясь, что всё будет хорошо.</p>
+                <p></p>
+                <p style="background: '#FFFFAF';">Я в этот вечер всё столь странным нахожу –</p>
+                <p>Мой дух как в оковах, а тело – в бреду.</p>
+                <p>И в то же время, можно всё иначе толковать,</p>
+                <p>Нам ведь нет смысла друг от друга что-либо скрывать,</p>
+                <p>Мой верный спутник, друг навек –</p>
+                <p>Лишь ты и тайный человек.</p>
+                <p> </p>
+                <p>Я думаю сейчас:</p>
+                <p>«Попав вдруг в плен всех этих странных перемен,</p>
+                <p>Я потерял все нити смысла,</p>
+                <p>И лишь в контексте прошлых лет…»</p>
+                <p>Но нет! Так хочется махнуть на всё рукой!</p>
+                <p> </p>
+                <p>Это безумие – очередной прилив глубоких чувств?</p>
+                <p>Иль человека тайного личина?</p>
+                <p>Или молитва преданных и пылких уст?</p>
+                <p></p>
+                <p>Иль прорвало в конце концов плотину?</p>
+                <p> </p>
+                <p>Потоп! И вот тебя волной накрыло,</p>
+                <p>Ты не предвидел столь печального конца.</p>
+                <p>И в панике, вдыхая воду,</p>
+                <p>Ты тонешь, понимая сходу,</p>
+                <p>Что любишь только самого себя,</p>
+                <p>И отвергаешь даже эту руку,</p>
+                <p>Протянутую, чтоб тебе помочь.</p>
+                <p>Но разве брошу я тебя в твой час беды?</p>
+                <p></p>
+                <p>В том, что ты плачешь, нет моей вины.</p>
+                <p>Всем этим призрачным фигурам давно пора было сказать,</p>
+                <p>Ты уже должен был узнать,</p>
+                <p>Не попытайся ты всё сделать сам.</p>
+                <p></p>
+                <p>Но и теперь мы не пропали:</p>
+                <p>Достаточно всмотреться в ночь,</p>
+                <p>И ты увидишь яркие цвета:</p>
+                <p>Они как будто говорят,</p>
+                <p>Что люди рядом,</p>
+                <p>И только наше глупое упрямство</p>
+                <p>Нас держит здесь.</p>
+                <p>Когда безумие придёт,</p>
+                <p>Пусть на меня свой сладостный поток обрушит,</p>
+                <p>Пусть захлестнёт всё высшее и низшее во мне волной,</p>
+                <p>Пусть утоляет жизнь, захватит естество и душу,</p>
+                <p>Пусть станет мной.</p>
+                <p> </p>
+                <p>Пускай нет времени бежать бок о бок всеми вместе,</p>
+                <p>И к нам уже взывает горизонт,</p>
+                <p>Пускай не стоит за одно держаться вечно,</p>
+                <p></p>
+                <p>Есть время у тебя ещё.</p>
+                <p>Есть время у тебя ещё.</p>
+            </div>
+
+            <div class="maintext" id="original">
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Here at the glass - all the usual problems, all the habitual farce.</p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">You ask, in uncertain voice, </p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">what you should do,</p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">as if there were a choice but to carry on </p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">miming the song</p>
+                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">and hope that it all works out right.</p>
+                <p>         </p>
+                <p>Tonight it all seems so strange -</p>
+                <p> my spirit feels rigid, my body deranged;</p>
+                <p>still that's only from one point of view</p>
+                <p>and we can't have illusion between me and you,</p>
+                <p></p>
+                <p>my constant friend, ever close at hand -</p>
+                <p>you and the undercover man.</p>
+                <p>         </p>
+                <p>I reflect: </p>
+                <p>'It's very strange to be going through this change</p>
+                <p>with no idea of what it's all been about</p>
+                <p>except in the context of time....'</p>
+                <p>Oh, but I shirk it, I've half a mind not to work it all out.</p>
+                <p>Is this madness just the recurring wave of total emotion,</p>
+                <p>or a hide for the undercover man,</p>
+                <p>or a litany - all the signs are there of fervent devotion -</p>
+                <p>or the cracking of the dam?</p>
+                <p>         </p>
+                <p>It's cracked; smashed and bursting over you,</p>
+                <p>there was no reason to expect such disaster.</p>
+                <p>Now, panicking, you burst for air,</p>
+                <p>drowning, you know you care</p>
+                <p>for nothing and no-one but yourself</p>
+                <p>and would deny even this hand </p>
+                <p>which stretches out towards you to help.</p>
+                <p>But would I leave you in this moment of your trial?</p>
+                <p>Is it my fault that I'm here to see you crying?</p>
+                <p>These phantom figures all around you should have told you,</p>
+                <p>you should have found out by now,</p>
+                <p>if you hadn't gone and tried to do it all by yourself.</p>
+                <p>         </p>
+                <p>Even now we are not lost: </p>
+                <p>if you look out at the night</p>
+                <p>you'll see the colours and the lights </p>
+                <p>seem to say people are not far away, </p>
+                <p>at least in distance,</p>
+                <p>and it's only our own dumb resistance</p>
+                <p>that's making us stay.</p>
+                <p>When the madness comes </p>
+                <p>let it flood on down and over me sweetly,</p>
+                <p></p>
+                <p>let it drown the parts of me weak and blessed and damned,</p>
+                <p>let it slake my life, let it take my soul and living completely,</p>
+                <p>let it be who I am.</p>
+                <p>         </p>
+                <p>There may not be time for us all to run in tandem together -</p>
+                <p>the horizon calls with its parallel lines.</p>
+                <p>It may not be right for you to have and hold in one way forever</p>
+                <p>and yet you still have time,</p>
+                <p>you still have time.</p>
+            </div>
+        </div>
+
+    </body>
+</html>

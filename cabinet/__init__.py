@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_talisman import Talisman
-app = Flask(__name__)
+app = Flask(__name__, subdomain_matching=True)
+app.config['SERVER_NAME'] = 'void.media'
 csp = {
     'default-src': ['\'self\'', '\'unsafe-inline\'']
 }
