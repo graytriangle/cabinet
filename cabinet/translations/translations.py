@@ -6,6 +6,7 @@ from flask import render_template
 import psycopg2
 # from cabinet import app
 from cabinet import functions as f
+from flask_login import login_required, current_user
 
 translations = Blueprint('translations', __name__, template_folder='templates', static_folder='static', 
 	static_url_path='/translations/static', subdomain="translations")
@@ -15,14 +16,17 @@ translations = Blueprint('translations', __name__, template_folder='templates', 
 ##################
 
 @translations.route('/', methods=['GET'])
+@login_required
 def translations_mainpage():
     return render_template('translations.html', list=get_translations_list(), linkname='')
 
 @translations.route('/<string:link>', methods=['GET'])
+@login_required
 def translations_page(link):
     return render_template('translations.html', list=get_translations_list(), linkname=link)
 
 @translations.route('/get/<string:link>', methods=['GET'])
+@login_required
 def get_translation(link):
     # get translation by name
     cur = f.get_db().cursor()

@@ -11,7 +11,7 @@
                 <div>
                     <p class="title">cabinet</p>
                 </div>
-                <form action="/login" method="POST">
+                <form action="/signup" method="POST">
                     <div class="logininput">
                         <input type="username" name="username" placeholder="Логин">
                     </div>
@@ -23,7 +23,6 @@
                     </div>
                 </form>
 
-
                 {% with messages = get_flashed_messages() %}
                   {% if messages %}
                     {% for message in messages %}
@@ -34,11 +33,9 @@
 
             </div>
 
-            {% if config.REG_OPEN %}
-                <div class="linkdiv">
-                    <a href="/signup">Регистрация</a>
-                </div>
-            {% endif %}
+            <div class="linkdiv">
+                <a href="/login">Вход</a>
+            </div>
 
         </div>
     </body>

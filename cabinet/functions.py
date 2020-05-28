@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from flask import g
+from flask import g, current_app
 import psycopg2
-from cabinet import dbsettings
 
 QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
 NO_NOTE = u'Запись не существует!'
@@ -12,7 +11,8 @@ EMPTY_TOPIC_LIST = u'Список тем пуст!'
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = psycopg2.connect("host=%s dbname=%s user=%s password=%s" % (dbsettings.host, dbsettings.dbname, dbsettings.user, dbsettings.password))
+        db = g._database = psycopg2.connect("host=%s dbname=%s user=%s password=%s" 
+            % (current_app.config['DBHOST'], current_app.config['DBNAME'], current_app.config['DBUSER'], current_app.config['DBPASSWORD']))
     return db
 
 def dictfetchall(cursor):

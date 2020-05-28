@@ -6,10 +6,12 @@ from flask import render_template
 import psycopg2
 from cabinet import app
 from cabinet import functions as f
+from flask_login import login_required, current_user
 
 topics = Blueprint('topics', __name__, template_folder='templates')
 
 @topics.route('/topics', methods=['GET'])
+@login_required
 def topics_load():
     notetype = request.args.get('type')
     joinwhere = ''
@@ -25,6 +27,7 @@ def topics_load():
         return render_template('topics.html', topics=result)
 
 @topics.route('/topics/delete', methods=['GET'])
+@login_required
 def topics_delete():
     uid = (request.args.get('uid', ''),)
     cur = f.get_db().cursor()

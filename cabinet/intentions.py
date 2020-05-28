@@ -6,6 +6,7 @@ from flask import render_template
 import psycopg2
 from cabinet import app
 from cabinet import functions as f
+from flask_login import login_required, current_user
 
 intentions = Blueprint('intentions', __name__, template_folder='templates')
 
@@ -14,6 +15,7 @@ intentions = Blueprint('intentions', __name__, template_folder='templates')
 ##################
 
 @intentions.route('/intent/check', methods=['GET'])
+@login_required
 def intent_check():
     uid = request.args.get('uid', '')
     status = request.args.get('status', '')
@@ -44,6 +46,7 @@ def intent_check():
     return str(uid)
 
 @app.route('/intent/delete', methods=['GET'])
+@login_required
 def intent_delete():
     uid = (request.args.get('uid', ''),)
     cur = f.get_db().cursor()
@@ -56,6 +59,7 @@ def intent_delete():
     return str(uid)
 
 @app.route('/intent/reload', methods=['GET'])
+@login_required
 def intent_reload():
     # get the intentions tree
     all = request.args.get('all')

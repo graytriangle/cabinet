@@ -12,27 +12,30 @@ from cabinet import intentions as i
 from cabinet import notes as n
 from cabinet import functions as f
 from cabinet import topics as t
-from cabinet import appsettings
+from cabinet import auth as a
 from datetime import datetime
 from cabinet.translations import translations as tr
+from flask_login import login_user, logout_user, login_required, current_user
+from passlib.hash import pbkdf2_sha512
 
 app.register_blueprint(i.intentions)
 app.register_blueprint(n.notes)
 app.register_blueprint(t.topics)
 app.register_blueprint(tr.translations, url_prefix='/')
-app.secret_key = appsettings.secret_key
+app.config.from_pyfile('cabinet.cfg')
 
 @app.context_processor
 def inject_now():
     return {'now': datetime.now()}
 
-@app.before_request
-def before_request():
-    print(request.endpoint)
-    if not session.get('logged_in') and request.endpoint != 'login_page' and request.endpoint != 'login' and request.endpoint != 'static':
-        return redirect(url_for('login_page'))
+# @app.before_request
+# def before_request():
+#     print(request.endpoint)
+#     if not session.get('logged_in') and request.endpoint != 'login_page' and request.endpoint != 'login' and request.endpoint != 'static':
+#         return redirect(url_for('login_page'))
 
 @app.route('/')
+@login_required
 def main_page():
     return render_template('master.html', notes=n.get_notes(), showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
 
@@ -41,26 +44,57 @@ def login_page():
     if request.args.get('error'):
         flash(u'Слишком много запросов!')
         return render_template('login.html')
-    if session.get('logged_in'):
+    if current_user.is_authenticated:
         return redirect('/')
     else:
         return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def login():
-    if request.form['username'] == appsettings.admin_login and request.form['password'] == appsettings.admin_pw:
-        session['logged_in'] = True
+    user = a.CabinetUser.get_by_field("login", request.form['username'])
+    if (user and pbkdf2_sha512.verify(request.form['password'], user.password)):
+        login_user(user)
         return redirect('/')
     else:
         flash(u'Неверные логин/пароль!')
         return login_page()
 
+@app.route('/signup', methods=['GET'])
+def signup_page():
+    if app.config['REG_OPEN']: # если регистрация открыта
+        if request.args.get('error'):
+            flash(u'Слишком много запросов!')
+            return render_template('signup.html')
+        if current_user.is_authenticated:
+            return redirect('/')
+        else:
+            return render_template('signup.html')
+    else:
+        return redirect(url_for('login_page'))
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    if app.config['REG_OPEN']: # если регистрация открыта
+        user = a.CabinetUser.get_by_field("login", request.form['username'])
+        if (user):
+            flash(u'Этот пользователь уже существует!')
+            return signup_page()
+        else:
+            a.CabinetUser.create(request.form['username'], pbkdf2_sha512.hash(request.form['password']))
+            user = a.CabinetUser.get_by_field("login", request.form['username'])
+            login_user(user)
+            return redirect('/')
+    else:
+        return redirect(url_for('login_page'))
+
 @app.route("/logout")
+@login_required
 def logout():
-    session['logged_in'] = False
+    logout_user()
     return redirect('/login')
 
 @app.route('/', methods=['POST'])
+@login_required
 def my_form_post():
     postuid = request.form['uid']
     importance = request.form['importance']
@@ -97,6 +131,7 @@ def my_form_post():
     return n.notes_load(postuid)
 
 @app.route('/delete', methods=['GET'])
+@login_required
 def delete():
     uid = (request.args.get('uid', ''),)
     cur = f.get_db().cursor()
@@ -109,6 +144,7 @@ def delete():
     return str(uid) # getting uid back to delete post from page
 
 @app.route('/mark', methods=['GET'])
+@login_required
 def mark():
     uid = (request.args.get('uid', ''),)
     status = (request.args.get('status', ''),)
@@ -122,7 +158,7 @@ def mark():
         cur.close()
     return str(uid)
 
-# auxiliary finctions
+# auxiliary functions
 
 @app.teardown_appcontext
 def close_connection(exception):
