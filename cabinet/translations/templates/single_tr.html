@@ -2,6 +2,6 @@
     <p>{{content.engname}} / {{content.runame}}</p>
 </div>
 
-<div class="maintext" id="translation">{{content.translation | safe}}</div>
+<div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">{{content.translation | safe}}</div>
 
-<div class="maintext" id="original">{{content.original | safe}}</div>
+<div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">{{content.original | safe}}</div>

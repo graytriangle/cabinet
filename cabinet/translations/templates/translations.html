@@ -5,25 +5,10 @@
         <style>
         </style>
         <link rel='stylesheet' type='text/css' href= "{{url_for('translations.static', filename='css/translations.css')}}">
+        <script type="text/javascript" src={{url_for('translations.static', filename='js/translations.js')}}></script>
     </head>
     <body onload="show_tr(undefined, '{{linkname}}')">
         <script>
-            function highlight(x, color) {
-                x.style.background=color;
-                i = index(x);
-                replacement = (x.parentNode.id == "original") ? "translation" : "original";
-                document.getElementById(replacement).getElementsByTagName("p")[i].style.background=color;
-            }
-
-            function index(el) {
-                if (!el) return -1;
-                var i = 0;
-                while (el = el.previousElementSibling) {
-                    i++;
-                };
-                return i;
-            }
-
             function goto_tr(event) {
 
                 event.preventDefault();
@@ -56,14 +41,14 @@
                     postsparent.removeChild(document.getElementById("translation"));
                     postsparent.removeChild(document.getElementById("original"));
                     postsparent.innerHTML = data;
-                    for (let i of document.getElementById("translation").getElementsByTagName("p")) {
-                        i.setAttribute("onmouseover", "highlight(this, '#FFFFAF')");
-                        i.setAttribute("onmouseout", "highlight(this, null)");
-                    }
-                    for (let i of document.getElementById("original").getElementsByTagName("p")) {
-                        i.setAttribute("onmouseover", "highlight(this, '#FFFFAF')");
-                        i.setAttribute("onmouseout", "highlight(this, null)");
-                    }
+                    // for (let i of document.getElementById("translation").getElementsByTagName("p")) {
+                    //     i.setAttribute("onmouseover", "highlight(this, '#FFFFAF')");
+                    //     i.setAttribute("onmouseout", "highlight(this, null)");
+                    // }
+                    // for (let i of document.getElementById("original").getElementsByTagName("p")) {
+                    //     i.setAttribute("onmouseover", "highlight(this, '#FFFFAF')");
+                    //     i.setAttribute("onmouseout", "highlight(this, null)");
+                    // }
                 };
 
                 if (!(prevtr === undefined && typeof prevtr === "undefined")) {
@@ -84,6 +69,9 @@
         </div>
 
         <div id="list">
+
+            <div><a class="navlink" href="/add_translation">Добавить перевод</a></div>
+
             <ul>
                 {% for record in list %}
                     {% if record.error %} 
@@ -101,15 +89,15 @@
                 <p>The Undercover Man / Тайный человек</p>
             </div>
 
-            <div class="maintext" id="translation">
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Привычный фарс, всё та же суета.</p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Твой неуверенный вопрос:</p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Как поступить?</p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Будто есть выбор, кроме как твердить</p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Всё ту же песню самому себе под нос,</p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Надеясь, что всё будет хорошо.</p>
+            <div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+                <p>Привычный фарс, всё та же суета.</p>
+                <p>Твой неуверенный вопрос:</p>
+                <p>Как поступить?</p>
+                <p>Будто есть выбор, кроме как твердить</p>
+                <p>Всё ту же песню самому себе под нос,</p>
+                <p>Надеясь, что всё будет хорошо.</p>
                 <p></p>
-                <p style="background: '#FFFFAF';">Я в этот вечер всё столь странным нахожу –</p>
+                <p>Я в этот вечер всё столь странным нахожу –</p>
                 <p>Мой дух как в оковах, а тело – в бреду.</p>
                 <p>И в то же время, можно всё иначе толковать,</p>
                 <p>Нам ведь нет смысла друг от друга что-либо скрывать,</p>
@@ -163,13 +151,13 @@
                 <p>Есть время у тебя ещё.</p>
             </div>
 
-            <div class="maintext" id="original">
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">Here at the glass - all the usual problems, all the habitual farce.</p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">You ask, in uncertain voice, </p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">what you should do,</p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">as if there were a choice but to carry on </p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">miming the song</p>
-                <p onmouseover="highlight(this, '#FFFFAF')" onmouseout="highlight(this, null)">and hope that it all works out right.</p>
+            <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+                <p>Here at the glass - all the usual problems, all the habitual farce.</p>
+                <p>You ask, in uncertain voice, </p>
+                <p>what you should do,</p>
+                <p>as if there were a choice but to carry on </p>
+                <p>miming the song</p>
+                <p>and hope that it all works out right.</p>
                 <p>         </p>
                 <p>Tonight it all seems so strange -</p>
                 <p> my spirit feels rigid, my body deranged;</p>

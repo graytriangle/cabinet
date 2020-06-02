@@ -7,6 +7,7 @@ import psycopg2
 # from cabinet import app
 from cabinet import functions as f
 from flask_login import login_required, current_user
+from cabinet import auth
 
 translations = Blueprint('translations', __name__, template_folder='templates', static_folder='static', 
 	static_url_path='/translations/static', subdomain="translations")
@@ -17,8 +18,15 @@ translations = Blueprint('translations', __name__, template_folder='templates', 
 
 @translations.route('/', methods=['GET'])
 @login_required
+@auth.requires_permission('translator')
 def translations_mainpage():
     return render_template('translations.html', list=get_translations_list(), linkname='')
+
+@translations.route('/add_translation', methods=['GET'])
+@login_required
+@auth.requires_permission('translator')
+def translations_addpage():
+    return render_template('create_tr.html')
 
 @translations.route('/<string:link>', methods=['GET'])
 @login_required

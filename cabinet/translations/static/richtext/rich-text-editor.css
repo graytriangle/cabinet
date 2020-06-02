@@ -1,0 +1,59 @@
+img.rte-button {
+	cursor: pointer;
+	border: 0;
+	float: left;
+}
+
+div.rich-text-editor {
+	display: inline-block;
+	width: 100%;
+}
+
+div.rte-editbox {
+	background-color: white;
+	min-height: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    clear: both;
+    transition: height 0.5s, min-height 0.5s;
+
+	border-color: rgb(227, 227, 227);
+	border-style: inset;
+	border-width: 1px;
+}
+
+div.rte-editbox[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #555; 
+}
+
+div.rte-editbox > pre.rte-sourcetext {
+	padding: 0;
+	margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+div.rte-switchmode {
+	font-size: 12px;
+	text-align: right;
+	padding: 5px 0 0 2px;
+	display: flex;
+	align-items: center;
+	float: right;
+}
+
+div.rte-switchmode > label {
+	cursor: pointer;
+	padding: 2px 0 0 0;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+div.rte-switchmode > input {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
