@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from flask import Blueprint
-from flask import request
+from flask import request, redirect
 from flask import render_template
 import psycopg2
+import uuid
 # from cabinet import app
 from cabinet import functions as f
 from flask_login import login_required, current_user
@@ -28,6 +29,40 @@ def translations_mainpage():
 def translations_addpage():
     return render_template('create_tr.html')
 
+@translations.route('/save_translation', methods=['POST'])
+@login_required
+@auth.requires_permission('translator')
+def save_translation():
+    uid = request.form['uid']
+    engname = request.form['engname']
+    runame = request.form['runame']
+    original = request.form['original']
+    translation = request.form['translation']
+    link = engname.lower().replace(' ', '-')
+    footnotes = request.form['footnotes']
+
+    if (uid == ""):
+        uid = str(uuid.uuid4())
+
+    cur = f.get_db().cursor()
+    sql = """\
+            select link from translations.translations
+            where link = '%s' ;""" % (link)
+    try:
+        cur.execute(sql)
+        result = f.dictfetchall(cur)
+        if result:
+            # if we have a translation with identical name, just slap random uuid on the link to make it unique
+            link = link + str(uuid.uuid4())
+        cur.execute("INSERT INTO translations.translations (uid, engname, runame, original, translation, link, footnotes) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT (uid) DO UPDATE SET engname=excluded.engname, runame=excluded.runame, "
+            "original=excluded.original, translation=excluded.translation, link=excluded.link, footnotes=excluded.footnotes;", 
+            (uid, engname, runame, original, translation, link, footnotes))
+        f.get_db().commit()
+    finally:
+        cur.close()
+    return redirect('/' + link)
+
 @translations.route('/<string:link>', methods=['GET'])
 @login_required
 def translations_page(link):
@@ -39,7 +74,7 @@ def get_translation(link):
     # get translation by name
     cur = f.get_db().cursor()
     sql = """\
-            select tr.engname, tr.runame, tr.original, tr.translation 
+            select tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes 
             from translations.translations tr
             where link = '%s' ;""" % (link)
     try:

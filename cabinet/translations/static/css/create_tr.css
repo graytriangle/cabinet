@@ -23,7 +23,6 @@
     float: left;
     width: 47%;
     height: 100%;
-    counter-reset: footnotes;
 /*    padding-left: 50px;
     padding-right: 50px;*/
     /*background: #fcfce6;*/
@@ -34,10 +33,6 @@
     width: 47%;
     height: auto;
     /*background: #fafae0;*/
-}
-
-.refs {
-
 }
 
 .maintext p {
@@ -176,4 +171,9 @@
 
 .backarrow {
 	margin-left: 5px;
+}
+
+.savebutton {
+	float: right;
+	margin-top: 10px;
 }

@@ -2,6 +2,16 @@
     <p>{{content.engname}} / {{content.runame}}</p>
 </div>
 
-<div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">{{content.translation | safe}}</div>
+<div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+	{{content.translation | safe}}
+</div>
 
 <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">{{content.original | safe}}</div>
+
+{% if content.footnotes %} 
+<div class="refs" id="translation_refs">
+    {{content.footnotes | safe}}
+</div>
+{% endif %} 
+
+<div class="tooltip" ontransitionend="hideRefFinally(event)"></div>

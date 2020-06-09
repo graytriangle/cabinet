@@ -45,6 +45,7 @@
             })
 
             function createRef(event, mode) {
+                // showing addref/editref modal window
                 if (mode == 'add') {
                     // remember the caret position in the editor window
                     var editor = event.target.closest('.rich-text-editor').getElementsByClassName('rte-editbox')[0];
@@ -98,6 +99,7 @@
             }
 
             function submitRef() {
+                // inserting actual ref on button click in the modal
                 document.getElementById("addref").style.display = "none";
                 var tmptext = document.getElementById("reftext").value;
                 tmptext = tmptext.replace(/[\n\r]/g, '<br>');
@@ -124,6 +126,7 @@
             }
 
             function saveRef(target) {
+                // modifying the existing ref after editing it in the modal (on button click)
                 document.getElementById("addref").style.display = "none";
                 var textblock = document.getElementById("reftext");
                 var tmptext = textblock.value;
@@ -134,6 +137,25 @@
                 textblock.value = '';
             }
 
+            function submitTranslation() {
+                // let's submit our translation! executes on button click
+                var copyref = document.getElementById("translation_refs").cloneNode(true);
+                if (copyref.getElementsByTagName("li").length > 0) {
+                    for (let i = copyref.getElementsByTagName("img").length - 1; i>=0; i--) {
+                        copyref.getElementsByTagName("img")[i].remove();
+                    }
+                    document.getElementById("footnotes").value = copyref.innerHTML;
+                }
+                // remove highlight from lines in case it glitches
+                // seems like it doesn't work? potential todo
+                for (let i of document.getElementsByClassName("rich-text-editor")) {
+                    for (let j of i.getElementsByTagName("p")) {
+                        j.setAttribute("style", "");
+                    }
+                }
+                document.getElementsByTagName("form")[0].submit();
+            }
+
         </script>
 
         <div id="header">
@@ -141,21 +163,23 @@
         </div>
 
         <div id="mainblock">
-            <form>
+            <form action="/save_translation" method="post" target="/">
+                <input type="hidden" name="uid" value="">
                 <div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-                    <input class="tr_title" type="text" placeholder="Заголовок перевода">
-                    <textarea class="rich-text-editor"></textarea>
+                    <input class="tr_title" type="text" name="runame" placeholder="Заголовок перевода">
+                    <textarea class="rich-text-editor" name="translation"></textarea>
                     <div class="refs" id="translation_refs">
                         <ol></ol>
                     </div>
                 </div>
 
                 <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-                    <input class="tr_title" type="text" placeholder="Заголовок оригинала">
-                    <textarea class="rich-text-editor"></textarea>
+                    <input class="tr_title" type="text" name="engname" placeholder="Заголовок оригинала">
+                    <textarea class="rich-text-editor" name="original"></textarea>
+                    <input type="button" class="savebutton" onclick="submitTranslation()" value="Сохранить перевод">
                 </div>
               
-
+                <input id="footnotes" type="hidden" name="footnotes" value="">
 
             </form>
 

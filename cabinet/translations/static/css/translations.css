@@ -31,18 +31,20 @@
 #translation {
     float: left;
     width: 50%;
-    height: 100%;
+    margin-bottom: 15px;
+    /*height: 100%;*/
     /*background: #fcfce6;*/
 }
 
 #original {
     float: right;
     width: 50%;
-    height: 100%;
+    margin-bottom: 15px;
+    /*height: 100%;*/
     /*background: #fafae0;*/
 }
 
-li {
+.navlink-li {
     font-family: sans-serif;
     background: #f0f0f0;
     width: 300px;
@@ -51,7 +53,33 @@ li {
     /*padding: 5 5 5 5;*/
 }
 
-a {
+.navlink-add {
+    font-family: sans-serif;
+    background: #e0ffe0;
+    width: 300px;
+    list-style: none;
+    margin: 5 5 15 5;
+    text-align: center;
+    /*padding: 5 5 5 5;*/
+}
+
+a.addlink {
+    text-decoration: none;
+    display: block;
+    width: 295px;
+    padding: 5 0 5 5;
+    color: #007700;
+}
+
+a.addlink:hover {
+    color: #005500;
+}
+
+a.addlink:active {
+    color: #009900;
+}
+
+a.navlink {
     text-decoration: none;
     display: block;
     width: 295px;
@@ -59,11 +87,11 @@ a {
     color: #505050;
 }
 
-a:hover {
+a.navlink:hover {
     color: black;
 }
 
-a:active {
+a.navlink:active {
     color: red;
 }
 
@@ -79,4 +107,70 @@ a:active {
     font-size: 13pt;
     font-family: "Times New Roman", Times, serif;
     padding-left: 5px;
+}
+
+/* copy of styles from create_tr.css below */
+/* some of them should be moved into a separate shared file... maybe */
+
+.footnote {
+    vertical-align: super;
+    font-size: 0.5em;
+    margin-left: 2px;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.refs {
+    clear: right;
+    border-top: 1px;
+    border-top-style: solid;
+    border-top-color: black;
+}
+
+.refs :target {
+  background: #FFFFAF;
+}
+
+.refs li {
+    position: relative;
+    margin-bottom: 7px;
+}
+
+.tooltip {
+    display: none;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    max-width: 300px;
+    min-width: 60px;
+    background-color: #FFFFAF;
+    border-radius: 6px;
+    padding: 7px;
+    border-color: rgb(227, 227, 227);
+    border-width: 1px;
+    border-style: outset;
+    transform-style: preserve-3d;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* a little "tail" below the body of a tooltip */
+.tooltip::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    transform: rotate(-45deg);
+    transform-origin: 100% 100%;
+    bottom: 0;
+    left: 30px;
+    background-color: #FFFFAF;
+    border-style: solid;
+    border-color: rgb(227, 227, 227);
+    border-width: 0px 0px 1px 1px;
+    border-style: outset;
+}
+
+.backarrow {
+    margin-left: 5px;
 }

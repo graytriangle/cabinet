@@ -62,6 +62,37 @@
 
             }
 
+
+            // three fuctions below are copied from create_tr.html
+
+            function showRef(event) {
+                // show the tooltip when hovering over the little reflink
+                var anchorx = event.target.getBoundingClientRect().left;
+                var anchory = event.target.getBoundingClientRect().top;
+                var anchorw = event.target.clientWidth;
+                var tooltip = document.getElementsByClassName("tooltip")[0];
+                var text = document.getElementById(event.target.getAttribute("href").substring(1)).getElementsByTagName("span")[0].innerHTML;
+                tooltip.innerHTML = text;
+                // tooltip.removeChild(tooltip.getElementsByTagName("a")[0]);
+                tooltip.style.display = 'block';
+                tooltip.style.top = anchory - tooltip.clientHeight - 9;
+                tooltip.style.left = anchorx - 30;
+                tooltip.style.opacity = 1;
+            }
+
+            function hideRef(event) {
+                // hiding the tooltip, pt 1: gradual fade out
+                var tooltip = document.getElementsByClassName("tooltip")[0];
+                tooltip.style.opacity = 0;
+            }
+
+            function hideRefFinally(event) {
+                // hiding the tooltip, pt 2: set display to none so that div doesn't interfere with other elements
+                if (event.target.style.opacity == 0) {
+                    event.target.style.display = 'none';
+                }
+            }
+
         </script>
 
         <div id="header">
@@ -70,14 +101,13 @@
 
         <div id="list">
 
-            <div><a class="navlink" href="/add_translation">Добавить перевод</a></div>
-
             <ul>
+                <li class="navlink-add"><a class="addlink" href="/add_translation">Добавить перевод</a></li>
                 {% for record in list %}
                     {% if record.error %} 
-                        <li>{{record.error}} {{record.details}}</li>
+                        <li class="navlink-li">{{record.error}} {{record.details}}</li>
                     {% else %}
-                        <li onclick="goto_tr(event)" ><a class="navlink" href="/{{record.link}}">{{record.engname}}</a></li>
+                        <li class="navlink-li" onclick="goto_tr(event)" ><a class="navlink" href="/{{record.link}}">{{record.engname}}</a></li>
                     {% endif %}
                 {% endfor %}
             </ul>
