@@ -102,12 +102,16 @@
         <div id="list">
 
             <ul>
-                <li class="navlink-add"><a class="addlink" href="/add_translation">Добавить перевод</a></li>
+                <li class="navlink-add"><a class="addlink" href="/add">Добавить перевод</a></li>
                 {% for record in list %}
                     {% if record.error %} 
                         <li class="navlink-li">{{record.error}} {{record.details}}</li>
                     {% else %}
-                        <li class="navlink-li" onclick="goto_tr(event)" ><a class="navlink" href="/{{record.link}}">{{record.engname}}</a></li>
+                        <li class="navlink-li">
+                            <a class="navlink" href="/{{record.link}}" onclick="goto_tr(event)">{{record.engname}}</a>
+                            <a href="/delete/{{record.link}}" class="deletebutton"></a>
+                            <a href="/edit/{{record.link}}" class="editbutton"></a>
+                        </li>
                     {% endif %}
                 {% endfor %}
             </ul>

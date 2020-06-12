@@ -23,13 +23,34 @@ translations = Blueprint('translations', __name__, template_folder='templates', 
 def translations_mainpage():
     return render_template('translations.html', list=get_translations_list(), linkname='')
 
-@translations.route('/add_translation', methods=['GET'])
+@translations.route('/add', methods=['GET'])
 @login_required
 @auth.requires_permission('translator')
 def translations_addpage():
-    return render_template('create_tr.html')
+    return render_template('create_tr.html', content=None)
 
-@translations.route('/save_translation', methods=['POST'])
+@translations.route('/edit/<string:link>', methods=['GET'])
+@login_required
+def translations_editpage(link):
+    # get translation by name
+    cur = f.get_db().cursor()
+    sql = """\
+            select tr.uid, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes 
+            from translations.translations tr
+            where link = '%s' ;""" % (link)
+    try:
+        cur.execute(sql)
+        result = f.dictfetchall(cur)
+        if not result:
+            result = [{'error': 'Текст не найден!', 'details': ''}]
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        result = [{'error': f.QUERY_ERR, 'details': str(e)}]
+    finally:
+        cur.close()
+    return render_template('create_tr.html', content=result[0])
+
+@translations.route('/save', methods=['POST'])
 @login_required
 @auth.requires_permission('translator')
 def save_translation():

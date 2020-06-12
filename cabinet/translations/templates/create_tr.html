@@ -42,6 +42,28 @@
                 //
                 var tmpimg = '<img class="rte-button" onclick="createRef(event, \'add\')" id="createRef' + num + '" src="{{url_for('translations.static', filename='img/richtext/note.png')}}" title="Добавить сноску">';
                 editor.getElementsByClassName("rte-tools")[0].append(htmlToElement(tmpimg));
+
+                {% if content %}
+                    // put pre-loaded content of translation into contenteditables
+                    var tmptrans = document.getElementById("tmp-trans");
+                    var tmporig = document.getElementById("tmp-orig");
+                    document.getElementById("translation").getElementsByClassName("rte-editbox")[0].innerHTML = tmptrans.innerHTML;
+                    document.getElementsByName("translation")[0].value = tmptrans.innerHTML;
+                    document.getElementById("original").getElementsByClassName("rte-editbox")[0].innerHTML = tmporig.innerHTML;
+                    document.getElementsByName("original")[0].value = tmporig.innerHTML;
+
+                    // add edit/del buttons to every footnote
+                    if (copyref.getElementsByTagName("li").length > 0) {
+                        for (let i of copyref.getElementsByTagName("li")) {
+                            let delimg = elementFromText("<img class=\"deleteref\" onclick=\"deleteRef(event)\" src=\"{{url_for('translations.static', filename='img/delete_small.png')}}\" title=\"Удалить сноску\">");
+                            let editimg = elementFromText("<img class=\"editref\" onclick=\"createRef(event, \'edit\')\" src=\"{{url_for('translations.static', filename='img/edit_small.png')}}\" title=\"Редактировать сноску\">");
+                            i.insertBefore(delimg, i.getElementsByTagName("span")[0]);
+                            i.insertBefore(editimg, i.getElementsByTagName("span")[0]);
+                        }
+                    }
+
+                {% endif %}
+
             })
 
             function createRef(event, mode) {
@@ -107,7 +129,7 @@
                 tmpeditor.focus();
                 selection_restore(tmpeditor, current_selection);
                 richtext.formatDoc(tmpeditor, "insertHTML", '<a class="footnote" contenteditable="false" href="#' + footnotecounter + '-link" id="' + footnotecounter + '-ref" name="' + footnotecounter + '-ref" onmouseover="showRef(event)" onmouseout="hideRef(event)">' + richtext.getSelectionHtml() + '</a>');
-                var tmpref = '<li id="' + footnotecounter + '-link" name="' + footnotecounter + '-link"><img class="deleteref" onclick="deleteRef(event)" src="{{url_for('translations.static', filename='img/delete.png')}}" title="Удалить сноску"><img class="editref" onclick="createRef(event, \'edit\')" src="{{url_for('translations.static', filename='img/edit.png')}}" title="Редактировать сноску"><span>' + tmptext + '</span><a class="backarrow" href="#' + footnotecounter + '-ref">↩</a></li>';
+                var tmpref = '<li id="' + footnotecounter + '-link" name="' + footnotecounter + '-link"><img class="deleteref" onclick="deleteRef(event)" src="{{url_for('translations.static', filename='img/delete_small.png')}}" title="Удалить сноску"><img class="editref" onclick="createRef(event, \'edit\')" src="{{url_for('translations.static', filename='img/edit_small.png')}}" title="Редактировать сноску"><span>' + tmptext + '</span><a class="backarrow" href="#' + footnotecounter + '-ref">↩</a></li>';
                 var footnote_parent = document.getElementById("translation_refs");
                 var list = footnote_parent.getElementsByTagName("ol")[0];
                 list.innerHTML = list.innerHTML + tmpref;
@@ -163,18 +185,23 @@
         </div>
 
         <div id="mainblock">
-            <form action="/save_translation" method="post" target="/">
-                <input type="hidden" name="uid" value="">
+            <form action="/save" method="post" target="/">
+                <input type="hidden" name="uid" value="{{content.uid}}">
                 <div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-                    <input class="tr_title" type="text" name="runame" placeholder="Заголовок перевода">
+                    <input class="tr_title" type="text" name="runame" placeholder="Заголовок перевода" value="{{content.runame}}">
                     <textarea class="rich-text-editor" name="translation"></textarea>
                     <div class="refs" id="translation_refs">
+                        {% if content %}
+                            {{content.footnotes | safe}}
+                        {% else %}
                         <ol></ol>
+                        {% endif %} 
+                        
                     </div>
                 </div>
 
                 <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-                    <input class="tr_title" type="text" name="engname" placeholder="Заголовок оригинала">
+                    <input class="tr_title" type="text" name="engname" placeholder="Заголовок оригинала" value="{{content.engname}}">
                     <textarea class="rich-text-editor" name="original"></textarea>
                     <input type="button" class="savebutton" onclick="submitTranslation()" value="Сохранить перевод">
                 </div>
@@ -197,6 +224,13 @@
 
             <!-- Tooltip layer -->
             <div class="tooltip" ontransitionend="hideRefFinally(event)"></div>
+
+            <!-- Hidden elements to insert stuff from jinja -->
+            <!-- Needed for translation editing: first we insert content here -->
+            <!-- Then we move it into contenteditables when they've finished loading -->
+            <!-- Otherwise we have to do cumbersome quote escaping etc -->
+            <div class="hiddenaux" id="tmp-trans">{{content.translation | safe}}</div>
+            <div class="hiddenaux" id="tmp-orig">{{content.original | safe}}</div>
 
         </div>
 

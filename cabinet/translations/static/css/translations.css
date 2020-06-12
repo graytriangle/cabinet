@@ -46,7 +46,7 @@
 
 .navlink-li {
     font-family: sans-serif;
-    background: #f0f0f0;
+    /*background: #f0f0f0;*/
     width: 300px;
     list-style: none;
     margin: 5 5 5 5;
@@ -79,19 +79,20 @@ a.addlink:active {
     color: #009900;
 }
 
-a.navlink {
+.navlink {
     text-decoration: none;
-    display: block;
-    width: 295px;
+    display: inline-block;
+    width: 240px;
     padding: 5 0 5 5;
     color: #505050;
+    background: #f0f0f0;
 }
 
-a.navlink:hover {
+.navlink:hover {
     color: black;
 }
 
-a.navlink:active {
+.navlink:active {
     color: red;
 }
 
@@ -173,4 +174,42 @@ a.navlink:active {
 
 .backarrow {
     margin-left: 5px;
+}
+
+.editbutton {
+    margin-right: 12px;
+    background-image: url('../img/edit.png');
+    float: right;
+    width: 15px;
+    height: 15px;
+    margin-top: 6px;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-position: 0px 0px;
+    background-size: 15px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.deletebutton {
+    /*margin-right: 8px;*/
+    background-image: url('../img/delete.png');
+    float: right;
+    width: 15px;
+    height: 15px;
+    margin-top: 6px;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background-position: 0px 0px;
+    background-size: 15px;
+    background-repeat: no-repeat;
+    cursor: pointer;
 }

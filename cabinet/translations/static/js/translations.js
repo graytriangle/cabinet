@@ -21,6 +21,20 @@ function index(el) {
     return i;
 } 
 
+// copy of functions from master.html, merge? todo
+function elementFromText(text){
+    var wrapper= document.createElement('div');
+    wrapper.innerHTML = text;
+    return getFirstChild(wrapper);
+}
+
+function getFirstChild(el){
+    var firstChild = el.firstChild;
+    while (firstChild != null && firstChild.nodeType != 1) { // skip TextNodes, comments etc.
+        firstChild = firstChild.nextSibling;
+    }
+    return firstChild;
+}
 
 // Functions for saving/restoring the selection in contenteditable
 // Apparently it's ridiculously complicated task

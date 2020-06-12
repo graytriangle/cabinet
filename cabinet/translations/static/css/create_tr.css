@@ -177,3 +177,7 @@
 	float: right;
 	margin-top: 10px;
 }
+
+.hiddenaux {
+	display: none;
+}
