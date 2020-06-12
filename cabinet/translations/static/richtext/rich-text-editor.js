@@ -1,9 +1,7 @@
 var richtext = {
 
 	formatDoc: function(oDoc, sCmd, sValue) {
-		console.log('aaaa');
 		if (!richtext.validateMode(oDoc)) { return; }
-		console.log('bbbb');
 		document.execCommand(sCmd, false, sValue);
 		oDoc.focus();
 	},
@@ -190,6 +188,7 @@ var richtext = {
 				richtext.formatDoc(oDoc, "createlink", sLnk); 
 			}
 		},
+		// todo remove insertHTML crap and replace with range.insertNode (create_tr.html)
 		"blockquote": function (oDoc) {
 			var sLnk = prompt("Введите адрес ссылки:", "");
 			if (sLnk) { 

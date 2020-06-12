@@ -29,19 +29,19 @@
 }
 
 #translation {
-    float: left;
+    float: right;
     width: 50%;
-    margin-bottom: 15px;
-    /*height: 100%;*/
     /*background: #fcfce6;*/
 }
 
 #original {
-    float: right;
+    float: left;
     width: 50%;
-    margin-bottom: 15px;
-    /*height: 100%;*/
     /*background: #fafae0;*/
+}
+
+.maincontainer {
+    overflow: auto;
 }
 
 .navlink-li {
@@ -127,6 +127,7 @@ a.addlink:active {
     border-top: 1px;
     border-top-style: solid;
     border-top-color: black;
+    margin-top: 20px;
 }
 
 .refs :target {

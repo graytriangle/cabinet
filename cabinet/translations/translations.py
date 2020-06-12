@@ -90,7 +90,7 @@ def save_translation():
 def delete_translation(link):
     cur = f.get_db().cursor()
     try:
-        cur.execute("UPDATE translations.translations SET deleted = true WHERE link = %s; ", (link,))
+        cur.execute("UPDATE translations.translations SET deleted = true, datedel = now() WHERE link = %s; ", (link,))
         f.get_db().commit()
     except psycopg2.Error as e: 
         f.get_db().rollback()

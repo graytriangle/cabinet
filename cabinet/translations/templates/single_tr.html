@@ -1,12 +1,16 @@
 <div id="title">
-    <p>{{content.runame}} / {{content.engname}}</p>
+    <p>{{content.engname}} / {{content.runame}}</p>
 </div>
 
-<div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-	{{content.translation | safe}}
-</div>
+<div class="maincontainer">
+	<div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+		{{content.original | safe}}
+	</div>
 
-<div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">{{content.original | safe}}</div>
+	<div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+		{{content.translation | safe}}
+	</div>
+</div>
 
 {% if content.footnotes %} 
 <div class="refs" id="translation_refs">

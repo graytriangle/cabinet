@@ -17,10 +17,13 @@
     font-size: 24px;
     /*background:#ffd0f0;*/
     font-family: sans-serif;
+	border-color: rgb(227, 227, 227);
+	border-style: inset;
+	border-width: 1px;
 }
 
 #translation {
-    float: left;
+    float: right;
     width: 47%;
     height: 100%;
 /*    padding-left: 50px;
@@ -29,7 +32,7 @@
 }
 
 #original {
-    float: right;
+    float: left;
     width: 47%;
     height: auto;
     /*background: #fafae0;*/
@@ -174,7 +177,7 @@
 }
 
 .savebutton {
-	float: right;
+	float: left;
 	margin-top: 10px;
 }
 

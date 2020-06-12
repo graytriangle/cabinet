@@ -37,18 +37,7 @@
 
                 var insert_tr = function(data){
                     var postsparent = document.getElementById("mainblock");
-                    postsparent.removeChild(document.getElementById("title"));
-                    postsparent.removeChild(document.getElementById("translation"));
-                    postsparent.removeChild(document.getElementById("original"));
                     postsparent.innerHTML = data;
-                    // for (let i of document.getElementById("translation").getElementsByTagName("p")) {
-                    //     i.setAttribute("onmouseover", "highlight(this, '#FFFFAF')");
-                    //     i.setAttribute("onmouseout", "highlight(this, null)");
-                    // }
-                    // for (let i of document.getElementById("original").getElementsByTagName("p")) {
-                    //     i.setAttribute("onmouseover", "highlight(this, '#FFFFAF')");
-                    //     i.setAttribute("onmouseout", "highlight(this, null)");
-                    // }
                 };
 
                 if (!(prevtr === undefined && typeof prevtr === "undefined")) {
@@ -149,16 +138,6 @@
         </div>
 
         <div id="mainblock">
-
-            <div id="title">
-                <p></p>
-            </div>
-
-            <div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-            </div>
-
-            <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-            </div>
         </div>
 
     </body>

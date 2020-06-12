@@ -1,11 +1,10 @@
 function highlight(event, color) {
-    console.log(event.target.tagName);
     if (event.target.tagName == "P") {
         event.target.style.background=color;
         i = index(event.target);
         replacement = (document.getElementById("original").contains(event.target)) ? "translation" : "original";
         tmplist = document.getElementById(replacement).getElementsByTagName("p");
-        if (tmplist.length > i+1)
+        if (tmplist.length >= i+1)
         {
         	document.getElementById(replacement).getElementsByTagName("p")[i].style.background=color;
         }
