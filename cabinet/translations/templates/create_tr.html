@@ -53,6 +53,7 @@
                     document.getElementsByName("original")[0].value = tmporig.innerHTML;
 
                     // add edit/del buttons to every footnote
+                    var copyref = document.getElementById("translation_refs");
                     if (copyref.getElementsByTagName("li").length > 0) {
                         for (let i of copyref.getElementsByTagName("li")) {
                             let delimg = elementFromText("<img class=\"deleteref\" onclick=\"deleteRef(event)\" src=\"{{url_for('translations.static', filename='img/delete_small.png')}}\" title=\"Удалить сноску\">");

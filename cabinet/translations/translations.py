@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Blueprint
-from flask import request, redirect
+from flask import request, redirect, make_response, jsonify
 from flask import render_template
 import psycopg2
 import uuid
@@ -37,7 +37,8 @@ def translations_editpage(link):
     sql = """\
             select tr.uid, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes 
             from translations.translations tr
-            where link = '%s' ;""" % (link)
+            where tr.deleted = false
+            and link = '%s' ;""" % (link)
     try:
         cur.execute(sql)
         result = f.dictfetchall(cur)
@@ -84,6 +85,20 @@ def save_translation():
         cur.close()
     return redirect('/' + link)
 
+@translations.route('/delete/<string:link>', methods=['GET'])
+@login_required
+def delete_translation(link):
+    cur = f.get_db().cursor()
+    try:
+        cur.execute("UPDATE translations.translations SET deleted = true WHERE link = %s; ", (link,))
+        f.get_db().commit()
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        return make_response(jsonify({'error': f.QUERY_ERR, 'details': str(e)}), 500)
+    finally:
+        cur.close()
+    return '', 204 # the "it's done" response
+
 @translations.route('/<string:link>', methods=['GET'])
 @login_required
 def translations_page(link):
@@ -115,6 +130,7 @@ def get_translations_list():
     sql = """\
             select tr.uid, tr.engname, tr.runame, tr.link
             from translations.translations tr
+            where tr.deleted = false
             order by tr.engname;"""
     try:
         cur.execute(sql)

@@ -93,6 +93,37 @@
                 }
             }
 
+            function deleteTranslation(link) {
+                // deleting an existing translation
+                var result = confirm("Подтвердите удаление перевода!");
+                if (result) {
+                    var el = document.getElementById(link);
+                    // temporarily deactivate edit/del buttons
+                    el.getElementsByClassName("deletebutton")[0].removeAttribute("onclick");
+                    el.getElementsByClassName("editbutton")[0].removeAttribute("href");
+                    el.getElementsByClassName("deletebutton")[0].classList.toggle('grayed');
+                    el.getElementsByClassName("editbutton")[0].classList.toggle('grayed');
+
+                    fetch('/delete/' + link).then(response => {
+                        if (!response.ok) {
+                            // if something went wronf then we display an error and reactivate buttons
+                            response.json().then(data => alert(data.error + '\n' + data.details));
+                            el.getElementsByClassName("deletebutton")[0].setAttribute("onclick", "deleteTranslation('" + link + "')");
+                            el.getElementsByClassName("editbutton")[0].setAttribute("href", "/edit/" + link);
+                            el.getElementsByClassName("deletebutton")[0].classList.toggle('grayed');
+                            el.getElementsByClassName("editbutton")[0].classList.toggle('grayed');
+                        } else {
+                            el.parentNode.removeChild(el);
+                            // if we are on the page that was deleted then we go to the mainpage
+                            if (window.location.pathname == "/" + link) {
+                                window.location.href = "/";
+                            }
+                        }
+                    });
+
+                }
+            }
+
         </script>
 
         <div id="header">
@@ -107,9 +138,9 @@
                     {% if record.error %} 
                         <li class="navlink-li">{{record.error}} {{record.details}}</li>
                     {% else %}
-                        <li class="navlink-li">
+                        <li class="navlink-li" id="{{record.link}}">
                             <a class="navlink" href="/{{record.link}}" onclick="goto_tr(event)">{{record.engname}}</a>
-                            <a href="/delete/{{record.link}}" class="deletebutton"></a>
+                            <span class="deletebutton" onclick="deleteTranslation('{{record.link}}')"></span>
                             <a href="/edit/{{record.link}}" class="editbutton"></a>
                         </li>
                     {% endif %}
@@ -120,129 +151,13 @@
         <div id="mainblock">
 
             <div id="title">
-                <p>The Undercover Man / Тайный человек</p>
+                <p></p>
             </div>
 
             <div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-                <p>Привычный фарс, всё та же суета.</p>
-                <p>Твой неуверенный вопрос:</p>
-                <p>Как поступить?</p>
-                <p>Будто есть выбор, кроме как твердить</p>
-                <p>Всё ту же песню самому себе под нос,</p>
-                <p>Надеясь, что всё будет хорошо.</p>
-                <p></p>
-                <p>Я в этот вечер всё столь странным нахожу –</p>
-                <p>Мой дух как в оковах, а тело – в бреду.</p>
-                <p>И в то же время, можно всё иначе толковать,</p>
-                <p>Нам ведь нет смысла друг от друга что-либо скрывать,</p>
-                <p>Мой верный спутник, друг навек –</p>
-                <p>Лишь ты и тайный человек.</p>
-                <p> </p>
-                <p>Я думаю сейчас:</p>
-                <p>«Попав вдруг в плен всех этих странных перемен,</p>
-                <p>Я потерял все нити смысла,</p>
-                <p>И лишь в контексте прошлых лет…»</p>
-                <p>Но нет! Так хочется махнуть на всё рукой!</p>
-                <p> </p>
-                <p>Это безумие – очередной прилив глубоких чувств?</p>
-                <p>Иль человека тайного личина?</p>
-                <p>Или молитва преданных и пылких уст?</p>
-                <p></p>
-                <p>Иль прорвало в конце концов плотину?</p>
-                <p> </p>
-                <p>Потоп! И вот тебя волной накрыло,</p>
-                <p>Ты не предвидел столь печального конца.</p>
-                <p>И в панике, вдыхая воду,</p>
-                <p>Ты тонешь, понимая сходу,</p>
-                <p>Что любишь только самого себя,</p>
-                <p>И отвергаешь даже эту руку,</p>
-                <p>Протянутую, чтоб тебе помочь.</p>
-                <p>Но разве брошу я тебя в твой час беды?</p>
-                <p></p>
-                <p>В том, что ты плачешь, нет моей вины.</p>
-                <p>Всем этим призрачным фигурам давно пора было сказать,</p>
-                <p>Ты уже должен был узнать,</p>
-                <p>Не попытайся ты всё сделать сам.</p>
-                <p></p>
-                <p>Но и теперь мы не пропали:</p>
-                <p>Достаточно всмотреться в ночь,</p>
-                <p>И ты увидишь яркие цвета:</p>
-                <p>Они как будто говорят,</p>
-                <p>Что люди рядом,</p>
-                <p>И только наше глупое упрямство</p>
-                <p>Нас держит здесь.</p>
-                <p>Когда безумие придёт,</p>
-                <p>Пусть на меня свой сладостный поток обрушит,</p>
-                <p>Пусть захлестнёт всё высшее и низшее во мне волной,</p>
-                <p>Пусть утоляет жизнь, захватит естество и душу,</p>
-                <p>Пусть станет мной.</p>
-                <p> </p>
-                <p>Пускай нет времени бежать бок о бок всеми вместе,</p>
-                <p>И к нам уже взывает горизонт,</p>
-                <p>Пускай не стоит за одно держаться вечно,</p>
-                <p></p>
-                <p>Есть время у тебя ещё.</p>
-                <p>Есть время у тебя ещё.</p>
             </div>
 
             <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-                <p>Here at the glass - all the usual problems, all the habitual farce.</p>
-                <p>You ask, in uncertain voice, </p>
-                <p>what you should do,</p>
-                <p>as if there were a choice but to carry on </p>
-                <p>miming the song</p>
-                <p>and hope that it all works out right.</p>
-                <p>         </p>
-                <p>Tonight it all seems so strange -</p>
-                <p> my spirit feels rigid, my body deranged;</p>
-                <p>still that's only from one point of view</p>
-                <p>and we can't have illusion between me and you,</p>
-                <p></p>
-                <p>my constant friend, ever close at hand -</p>
-                <p>you and the undercover man.</p>
-                <p>         </p>
-                <p>I reflect: </p>
-                <p>'It's very strange to be going through this change</p>
-                <p>with no idea of what it's all been about</p>
-                <p>except in the context of time....'</p>
-                <p>Oh, but I shirk it, I've half a mind not to work it all out.</p>
-                <p>Is this madness just the recurring wave of total emotion,</p>
-                <p>or a hide for the undercover man,</p>
-                <p>or a litany - all the signs are there of fervent devotion -</p>
-                <p>or the cracking of the dam?</p>
-                <p>         </p>
-                <p>It's cracked; smashed and bursting over you,</p>
-                <p>there was no reason to expect such disaster.</p>
-                <p>Now, panicking, you burst for air,</p>
-                <p>drowning, you know you care</p>
-                <p>for nothing and no-one but yourself</p>
-                <p>and would deny even this hand </p>
-                <p>which stretches out towards you to help.</p>
-                <p>But would I leave you in this moment of your trial?</p>
-                <p>Is it my fault that I'm here to see you crying?</p>
-                <p>These phantom figures all around you should have told you,</p>
-                <p>you should have found out by now,</p>
-                <p>if you hadn't gone and tried to do it all by yourself.</p>
-                <p>         </p>
-                <p>Even now we are not lost: </p>
-                <p>if you look out at the night</p>
-                <p>you'll see the colours and the lights </p>
-                <p>seem to say people are not far away, </p>
-                <p>at least in distance,</p>
-                <p>and it's only our own dumb resistance</p>
-                <p>that's making us stay.</p>
-                <p>When the madness comes </p>
-                <p>let it flood on down and over me sweetly,</p>
-                <p></p>
-                <p>let it drown the parts of me weak and blessed and damned,</p>
-                <p>let it slake my life, let it take my soul and living completely,</p>
-                <p>let it be who I am.</p>
-                <p>         </p>
-                <p>There may not be time for us all to run in tandem together -</p>
-                <p>the horizon calls with its parallel lines.</p>
-                <p>It may not be right for you to have and hold in one way forever</p>
-                <p>and yet you still have time,</p>
-                <p>you still have time.</p>
             </div>
         </div>
 
