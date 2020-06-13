@@ -175,21 +175,27 @@
 
             function submitTranslation() {
                 // let's submit our translation! executes on button click
-                var copyref = document.getElementById("translation_refs").cloneNode(true);
-                if (copyref.getElementsByTagName("li").length > 0) {
-                    for (let i = copyref.getElementsByTagName("img").length - 1; i>=0; i--) {
-                        copyref.getElementsByTagName("img")[i].remove();
+                var engval = document.getElementsByName("engname")[0].value;
+                var ruval = document.getElementsByName("runame")[0].value;
+                if (engval && ruval) { // titles shouldn't be empty
+                    var copyref = document.getElementById("translation_refs").cloneNode(true);
+                    if (copyref.getElementsByTagName("li").length > 0) {
+                        for (let i = copyref.getElementsByTagName("img").length - 1; i>=0; i--) {
+                            copyref.getElementsByTagName("img")[i].remove();
+                        }
+                        document.getElementById("footnotes").value = copyref.innerHTML;
                     }
-                    document.getElementById("footnotes").value = copyref.innerHTML;
-                }
-                // remove highlight from lines in case it glitches
-                // seems like it doesn't work? potential todo
-                for (let i of document.getElementsByClassName("rich-text-editor")) {
-                    for (let j of i.getElementsByTagName("p")) {
-                        j.setAttribute("style", "");
+                    // remove highlight from lines in case it glitches
+                    // seems like it doesn't work? potential todo
+                    for (let i of document.getElementsByClassName("rich-text-editor")) {
+                        for (let j of i.getElementsByTagName("p")) {
+                            j.setAttribute("style", "");
+                        }
                     }
+                    document.getElementsByTagName("form")[0].submit();
+                } else {
+                    alert("Заполните поля заголовков!")
                 }
-                document.getElementsByTagName("form")[0].submit();
             }
 
         </script>
