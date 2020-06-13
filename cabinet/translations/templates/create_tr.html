@@ -130,9 +130,7 @@
                 tmpeditor.focus();
                 selection_restore(tmpeditor, current_selection);
 
-
                 var tmplink = elementFromText('<a class="footnote" contenteditable="false" href="#' + footnotecounter + '-link" id="' + footnotecounter + '-ref" name="' + footnotecounter + '-ref" onmouseover="showRef(event)" onmouseout="hideRef(event)"></a>');
-
 
                 var sel, range;
                 if (window.getSelection && (sel = window.getSelection()).rangeCount) {
@@ -214,7 +212,7 @@
                     <input class="tr_title" type="text" name="runame" placeholder="Заголовок перевода" value="{{content.runame}}">
                     <textarea class="rich-text-editor" name="translation"></textarea>
                     <div class="refs" id="translation_refs">
-                        {% if content %}
+                        {% if content.footnotes %}
                             {{content.footnotes | safe}}
                         {% else %}
                         <ol></ol>
