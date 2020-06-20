@@ -188,6 +188,7 @@ var richtext = {
 				richtext.formatDoc(oDoc, "createlink", sLnk); 
 			}
 		},
+		// todo remove insertHTML crap and replace with range.insertNode (create_tr.html)
 		"blockquote": function (oDoc) {
 			var sLnk = prompt("Введите адрес ссылки:", "");
 			if (sLnk) { 
@@ -198,12 +199,13 @@ var richtext = {
 		},
 		"preformat": function (oDoc) {
 			richtext.formatDoc(oDoc, "insertHTML", '<pre>' + richtext.getSelectionHtml() + '</pre>');
-		}
+		},
+
 	},
 
 	richTextStart: function() {
 		this.oToolsReq.onload = this.toolsReady;
-		this.oToolsReq.open("GET", "/static/richtext/rich-text-tools.json", true);
+		this.oToolsReq.open("GET", "/atw/static/richtext/rich-text-tools.json", true);
 		this.oToolsReq.send(null);
 		window.addEventListener ? addEventListener("load", this.documentReady, false) : window.attachEvent ? attachEvent("onload", this.documentReady) : window.onload = this.documentReady;
 	},

@@ -4,11 +4,11 @@
      <meta charset="UTF-8"> 
         <style>
         </style>
-        <!-- <link rel='stylesheet' type='text/css' href= "{{url_for('translations.static', filename='css/translations.css')}}"> -->
-        <link rel='stylesheet' type='text/css' href= "{{url_for('translations.static', filename='css/create_tr.css')}}">
-        <script type="text/javascript" src={{url_for('translations.static', filename='js/translations.js')}}></script>
-        <script type="text/javascript" src={{url_for('translations.static', filename='richtext/rich-text-editor.js')}}></script>
-        <link rel="stylesheet" type="text/css" href={{url_for('translations.static', filename='richtext/rich-text-editor.css')}}>
+        <!-- <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/translations.css')}}"> -->
+        <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/create_tr.css')}}">
+        <script type="text/javascript" src={{url_for('atw.static', filename='js/translations.js')}}></script>
+        <script type="text/javascript" src={{url_for('atw.static', filename='richtext/rich-text-editor.js')}}></script>
+        <link rel="stylesheet" type="text/css" href={{url_for('atw.static', filename='richtext/rich-text-editor.css')}}>
     </head>
     <body>
         <script>
@@ -40,7 +40,7 @@
                 var editor = document.getElementById("translation").getElementsByClassName("rich-text-editor")[0];
                 var num = editor.id.substring(editor.id.length - 1);
                 //
-                var tmpimg = '<img class="rte-button" onclick="createRef(event, \'add\')" id="createRef' + num + '" src="{{url_for('translations.static', filename='img/richtext/note.png')}}" title="Добавить сноску">';
+                var tmpimg = '<img class="rte-button" onclick="createRef(event, \'add\')" id="createRef' + num + '" src="{{url_for('atw.static', filename='img/richtext/note.png')}}" title="Добавить сноску">';
                 editor.getElementsByClassName("rte-tools")[0].append(htmlToElement(tmpimg));
 
                 {% if content %}
@@ -56,8 +56,8 @@
                     var copyref = document.getElementById("translation_refs");
                     if (copyref.getElementsByTagName("li").length > 0) {
                         for (let i of copyref.getElementsByTagName("li")) {
-                            let delimg = elementFromText("<img class=\"deleteref\" onclick=\"deleteRef(event)\" src=\"{{url_for('translations.static', filename='img/delete_small.png')}}\" title=\"Удалить сноску\">");
-                            let editimg = elementFromText("<img class=\"editref\" onclick=\"createRef(event, \'edit\')\" src=\"{{url_for('translations.static', filename='img/edit_small.png')}}\" title=\"Редактировать сноску\">");
+                            let delimg = elementFromText("<img class=\"deleteref\" onclick=\"deleteRef(event)\" src=\"{{url_for('atw.static', filename='img/delete_small.png')}}\" title=\"Удалить сноску\">");
+                            let editimg = elementFromText("<img class=\"editref\" onclick=\"createRef(event, \'edit\')\" src=\"{{url_for('atw.static', filename='img/edit_small.png')}}\" title=\"Редактировать сноску\">");
                             i.insertBefore(delimg, i.getElementsByTagName("span")[0]);
                             i.insertBefore(editimg, i.getElementsByTagName("span")[0]);
                         }
@@ -144,7 +144,7 @@
                     sel.addRange(range);
                 }
 
-                var tmpref = '<li id="' + footnotecounter + '-link" name="' + footnotecounter + '-link"><img class="deleteref" onclick="deleteRef(event)" src="{{url_for('translations.static', filename='img/delete_small.png')}}" title="Удалить сноску"><img class="editref" onclick="createRef(event, \'edit\')" src="{{url_for('translations.static', filename='img/edit_small.png')}}" title="Редактировать сноску"><span>' + tmptext + '</span><a class="backarrow" href="#' + footnotecounter + '-ref">↩</a></li>';
+                var tmpref = '<li id="' + footnotecounter + '-link" name="' + footnotecounter + '-link"><img class="deleteref" onclick="deleteRef(event)" src="{{url_for('atw.static', filename='img/delete_small.png')}}" title="Удалить сноску"><img class="editref" onclick="createRef(event, \'edit\')" src="{{url_for('atw.static', filename='img/edit_small.png')}}" title="Редактировать сноску"><span>' + tmptext + '</span><a class="backarrow" href="#' + footnotecounter + '-ref">↩</a></li>';
                 var footnote_parent = document.getElementById("translation_refs");
                 var list = footnote_parent.getElementsByTagName("ol")[0];
                 list.innerHTML = list.innerHTML + tmpref;

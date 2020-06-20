@@ -4,20 +4,27 @@ from flask import Blueprint
 from flask import request
 from flask import render_template
 import psycopg2
-from cabinet import app
 from cabinet import functions as f
-from cabinet import intentions as i
-from cabinet import topics as t
-from flask_login import login_required, current_user
+from cabinet import auth as a
+from cabinet.cab import intentions as i
+from cabinet.cab import topics as t
+from flask_login import login_required
 
-notes = Blueprint('notes', __name__, template_folder='templates')
+notes = Blueprint('notes', __name__, template_folder='templates', static_folder='static', 
+    static_url_path='/cab/static', subdomain="cabinet")
+
+@notes.before_request
+@login_required
+@a.requires_permission('admin')
+# protecting all endpoints
+def before_request():
+    pass
 
 ##################
 # VIEW FUNCTIONS #
 ##################
 
 @notes.route('/note/<string:post_id>') # TODO: switch to uuids; it fails for some reason
-@login_required
 def show_post(post_id):
     # show the post with the given id, the id is an uuid
     # you can also return single post with ajax, see below
@@ -25,7 +32,6 @@ def show_post(post_id):
     return render_template('master.html', notes=result, showtypes=True, todo=i.get_current_intentions(), topics=t.get_topics())
 
 @notes.route('/notes', methods=['GET'])
-@login_required
 def notes_load(post_id=None):
     notetype = request.args.get('type')
     notetopic = request.args.get('topic')

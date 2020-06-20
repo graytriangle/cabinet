@@ -4,14 +4,21 @@ from flask import Blueprint
 from flask import request
 from flask import render_template
 import psycopg2
-from cabinet import app
 from cabinet import functions as f
-from flask_login import login_required, current_user
+from cabinet import auth as a
+from flask_login import login_required
 
-topics = Blueprint('topics', __name__, template_folder='templates')
+topics = Blueprint('topics', __name__, template_folder='templates', static_folder='static', 
+    static_url_path='/cab/static', subdomain="cabinet")
+
+@topics.before_request
+@login_required
+@a.requires_permission('admin')
+# protecting all endpoints
+def before_request():
+    pass
 
 @topics.route('/topics', methods=['GET'])
-@login_required
 def topics_load():
     notetype = request.args.get('type')
     joinwhere = ''
@@ -27,7 +34,6 @@ def topics_load():
         return render_template('topics.html', topics=result)
 
 @topics.route('/topics/delete', methods=['GET'])
-@login_required
 def topics_delete():
     uid = (request.args.get('uid', ''),)
     cur = f.get_db().cursor()

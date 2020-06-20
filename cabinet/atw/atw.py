@@ -10,27 +10,28 @@ from cabinet import functions as f
 from flask_login import login_required, current_user
 from cabinet import auth
 
-translations = Blueprint('translations', __name__, template_folder='templates', static_folder='static', 
-	static_url_path='/translations/static', subdomain="translations")
+atw = Blueprint('atw', __name__, template_folder='templates', static_folder='static', 
+	static_url_path='/atw/static', subdomain="almosttheword")
 
 ##################
 # VIEW FUNCTIONS #
 ##################
 
-@translations.route('/', methods=['GET'])
+@atw.route('/', methods=['GET'])
 @login_required
 @auth.requires_permission('translator')
 def translations_mainpage():
     return render_template('translations.html', list=get_translations_list(), linkname='')
 
-@translations.route('/add', methods=['GET'])
+@atw.route('/add', methods=['GET'])
 @login_required
 @auth.requires_permission('translator')
 def translations_addpage():
     return render_template('create_tr.html', content=None)
 
-@translations.route('/edit/<string:link>', methods=['GET'])
+@atw.route('/edit/<string:link>', methods=['GET'])
 @login_required
+@auth.requires_permission('translator')
 def translations_editpage(link):
     # get translation by name
     cur = f.get_db().cursor()
@@ -51,7 +52,7 @@ def translations_editpage(link):
         cur.close()
     return render_template('create_tr.html', content=result[0])
 
-@translations.route('/save', methods=['POST'])
+@atw.route('/save', methods=['POST'])
 @login_required
 @auth.requires_permission('translator')
 def save_translation():
@@ -85,8 +86,9 @@ def save_translation():
         cur.close()
     return redirect('/' + link)
 
-@translations.route('/delete/<string:link>', methods=['GET'])
+@atw.route('/delete/<string:link>', methods=['GET'])
 @login_required
+@auth.requires_permission('translator')
 def delete_translation(link):
     cur = f.get_db().cursor()
     try:
@@ -99,13 +101,15 @@ def delete_translation(link):
         cur.close()
     return '', 204 # the "it's done" response
 
-@translations.route('/<string:link>', methods=['GET'])
+@atw.route('/<string:link>', methods=['GET'])
 @login_required
+@auth.requires_permission('translator')
 def translations_page(link):
     return render_template('translations.html', list=get_translations_list(), linkname=link)
 
-@translations.route('/get/<string:link>', methods=['GET'])
+@atw.route('/get/<string:link>', methods=['GET'])
 @login_required
+@auth.requires_permission('translator')
 def get_translation(link):
     # get translation by name
     cur = f.get_db().cursor()

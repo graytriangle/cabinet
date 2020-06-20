@@ -4,18 +4,25 @@ from flask import Blueprint
 from flask import request
 from flask import render_template
 import psycopg2
-from cabinet import app
 from cabinet import functions as f
-from flask_login import login_required, current_user
+from cabinet import auth as a
+from flask_login import login_required
 
-intentions = Blueprint('intentions', __name__, template_folder='templates')
+intentions = Blueprint('intentions', __name__, template_folder='templates', static_folder='static', 
+    static_url_path='/cab/static', subdomain="cabinet")
+
+@intentions.before_request
+@login_required
+@a.requires_permission('admin')
+# protecting all endpoints
+def before_request():
+    pass
 
 ##################
 # VIEW FUNCTIONS #
 ##################
 
 @intentions.route('/intent/check', methods=['GET'])
-@login_required
 def intent_check():
     uid = request.args.get('uid', '')
     status = request.args.get('status', '')
@@ -45,8 +52,7 @@ def intent_check():
         cur.close()
     return str(uid)
 
-@app.route('/intent/delete', methods=['GET'])
-@login_required
+@intentions.route('/intent/delete', methods=['GET'])
 def intent_delete():
     uid = (request.args.get('uid', ''),)
     cur = f.get_db().cursor()
@@ -58,8 +64,7 @@ def intent_delete():
         cur.close()
     return str(uid)
 
-@app.route('/intent/reload', methods=['GET'])
-@login_required
+@intentions.route('/intent/reload', methods=['GET'])
 def intent_reload():
     # get the intentions tree
     all = request.args.get('all')

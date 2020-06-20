@@ -1,0 +1,46 @@
+<html>
+    <head>
+    <title>Void media</title>
+     <meta charset="UTF-8"> 
+        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/lobby.css')}}>
+    </head>
+    <body>
+        <div class="logincontainer">
+            <div class="linkdiv">
+                {% if not current_user.is_authenticated %}
+                    {% if config.REG_OPEN %}
+                        <a href="/login">Вход</a> / <a href="/signup">регистрация</a>
+                    {% else %}
+                        <a href="/login">Вход</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/logout">Выход</a>
+                {% endif %}
+            </div>
+            <a href="https://cabinet.void.media">
+                <div class="domain" id="cabinet">
+                    <div>
+                        <p class="title cabtitle">cabinet</p>
+                        <p class="subtitle cabtitle">• заметки •</p>
+                    </div>
+                </div>
+            </a>
+<!--             <a href="https://rimworld.void.media">
+                <div class="domain" id="rimworld">
+                    <div>
+                        <p class="title rimtitle">rimworld</p>
+                        <p class="subtitle rimtitle">• инфографика •</p>
+                    </div>
+                </div>
+            </a> -->
+            <a href="https://almosttheword.void.media">
+                <div class="domain" id="almosttheword">
+                    <div>
+                        <p class="title atwtitle">almost the word</p>
+                        <p class="subtitle atwtitle">• переводы •</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </body>
+</html>

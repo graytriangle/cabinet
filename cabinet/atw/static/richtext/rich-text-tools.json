@@ -3,19 +3,19 @@
 		{
 			"text": "Очистить форматирование",
 			"command": "removeFormat",
-			"image": "\/translations\/static\/img\/richtext\/regular.png"
+			"image": "\/atw\/static\/img\/richtext\/regular.png"
 		}, {
 			"text": "Выделить жирным",
 			"command": "bold",
-			"image": "\/translations\/static\/img\/richtext\/bold.png"
+			"image": "\/atw\/static\/img\/richtext\/bold.png"
 		}, {
 			"text": "Выделить курсивом",
 			"command": "italic",
-			"image": "\/translations\/static\/img\/richtext\/italic.png"
+			"image": "\/atw\/static\/img\/richtext\/italic.png"
 		}, {
 			"text": "Подчеркнуть",
 			"command": "underline",
-			"image": "\/translations\/static\/img\/richtext\/underline.png"
+			"image": "\/atw\/static\/img\/richtext\/underline.png"
 		}
 	]
 }

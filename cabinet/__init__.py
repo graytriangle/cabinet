@@ -3,7 +3,7 @@ from flask_talisman import Talisman
 from flask_login import LoginManager
 
 app = Flask(__name__, subdomain_matching=True)
-app.config['SERVER_NAME'] = 'void.media'
+# app.config['SERVER_NAME'] = 'void.media'
 csp = {
     'default-src': ['\'self\'', '\'unsafe-inline\'']
 }
@@ -15,4 +15,3 @@ login_manager.login_message = None
 login_manager.init_app(app)
 
 import cabinet.main
-import cabinet.intentions

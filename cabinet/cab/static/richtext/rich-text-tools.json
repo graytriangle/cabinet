@@ -3,35 +3,35 @@
 		{
 			"text": "Очистить форматирование",
 			"command": "removeFormat",
-			"image": "\/static\/img\/richtext\/regular.png"
+			"image": "\/cab\/static\/img\/richtext\/regular.png"
 		}, {
 			"text": "Выделить жирным",
 			"command": "bold",
-			"image": "\/static\/img\/richtext\/bold.png"
+			"image": "\/cab\/static\/img\/richtext\/bold.png"
 		}, {
 			"text": "Выделить курсивом",
 			"command": "italic",
-			"image": "\/static\/img\/richtext\/italic.png"
+			"image": "\/cab\/static\/img\/richtext\/italic.png"
 		}, {
 			"text": "Подчеркнуть",
 			"command": "underline",
-			"image": "\/static\/img\/richtext\/underline.png"
+			"image": "\/cab\/static\/img\/richtext\/underline.png"
 		}, {
 			"text": "Выделить как цитату",
 			"command": "blockquote",
-			"image": "\/static\/img\/richtext\/blockquote.png"
+			"image": "\/cab\/static\/img\/richtext\/blockquote.png"
 		}, {
 			"text": "Выделить моноширинным шрифтом",
 			"command": "preformat",
-			"image": "\/static\/img\/richtext\/pre.png"
+			"image": "\/cab\/static\/img\/richtext\/pre.png"
 		}, {
 			"text": "Оформить как маркированный список",
 			"command": "insertUnorderedList",
-			"image": "\/static\/img\/richtext\/dottedlist.png"
+			"image": "\/cab\/static\/img\/richtext\/dottedlist.png"
 		}, {
 			"text": "Добавить ссылку",
 			"command": "createLink",
-			"image": "\/static\/img\/richtext\/hyperlink.png"
+			"image": "\/cab\/static\/img\/richtext\/hyperlink.png"
 		}
 	]
 }

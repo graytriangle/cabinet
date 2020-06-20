@@ -4,13 +4,13 @@
      <meta charset="UTF-8"> 
         <style>
         </style>
-        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/main.css')}}>
-        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/post.css')}}>
-        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/newpost.css')}}>
-        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/todo.css')}}>
-        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/rightcol.css')}}>
-        <script type="text/javascript" src={{url_for('static', filename='richtext/rich-text-editor.js')}}></script>
-        <link rel="stylesheet" type="text/css" href={{url_for('static', filename='richtext/rich-text-editor.css')}}>
+        <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/main.css')}}>
+        <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/post.css')}}>
+        <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/newpost.css')}}>
+        <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/todo.css')}}>
+        <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/rightcol.css')}}>
+        <script type="text/javascript" src={{url_for('main.static', filename='richtext/rich-text-editor.js')}}></script>
+        <link rel="stylesheet" type="text/css" href={{url_for('main.static', filename='richtext/rich-text-editor.css')}}>
     </head>
     <body onclick="hideForm(event)">
         <script>
@@ -745,31 +745,31 @@
                             <div class="option">
                               <input type="radio" name="notetype" value="note" id="note"/>
                               <label for="note">
-                                <img src="../static/img/note_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/note_small.png')}}/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="diary" id="diary" />
                               <label for="diary">
-                                <img src="../static/img/diary_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/diary_small.png')}}/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="draft" id="draft" checked />
                               <label for="draft">
-                                <img src="../static/img/draft_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/draft_small.png')}}/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="people" id="people" />
                               <label for="people">
-                                <img src="../static/img/people_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/people_small.png')}}/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="fun" id="fun" />
                               <label for="fun">
-                                <img src="../static/img/fun_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/fun_small.png')}}/>
                               </label>
                             </div>
                           </div>
@@ -798,31 +798,31 @@
                             <div class="option">
                               <input type="radio" name="notetype" value="note" id="note-"/>
                               <label for="note-">
-                                <img src="../static/img/note_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/note_small.png')}}/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="diary" id="diary-" />
                               <label for="diary-">
-                                <img src="../static/img/diary_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/diary_small.png')}}/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="draft" id="draft-" />
                               <label for="draft-">
-                                <img src="../static/img/draft_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/draft_small.png')}}/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="people" id="people-" />
                               <label for="people-">
-                                <img src="../static/img/people_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/people_small.png')}}/>
                               </label>
                             </div>
                             <div class="option">
                               <input type="radio" name="notetype" value="fun" id="fun-" />
                               <label for="fun-">
-                                <img src="../static/img/fun_small.png"/>
+                                <img src= {{url_for('main.static', filename='img/fun_small.png')}}/>
                               </label>
                             </div>
                           </div>
@@ -848,7 +848,7 @@
             </div>
 
             <div id="rightcol">
-                <div class="logout"><a href="/logout">Выйти</a></div>
+                <div class="logout"><a href="https://{{config.SERVER_NAME}}/logout">Выйти</a></div>
                 <!-- <div class="searchbar"></div> -->
                 <div id = "topiclist">
                     {% include "topics.html" %}
