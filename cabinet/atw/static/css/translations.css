@@ -51,6 +51,7 @@
     list-style: none;
     margin: 5 5 5 5;
     /*padding: 5 5 5 5;*/
+    display: flex;
 }
 
 .navlink-add {
@@ -81,8 +82,7 @@ a.addlink:active {
 
 .navlink {
     text-decoration: none;
-    display: inline-block;
-    width: 240px;
+    flex-grow: 1;
     padding: 5 0 5 5;
     color: #505050;
     background: #f0f0f0;
@@ -178,14 +178,12 @@ a.addlink:active {
 }
 
 .editbutton {
-    margin-right: 12px;
     background-image: url('../img/edit.png');
-    float: right;
     width: 15px;
     height: 15px;
     margin-top: 6px;
     margin-bottom: 0;
-    margin-left: 0;
+    margin-left: 15px;
     padding-top: 0;
     padding-bottom: 0;
     padding-left: 0;
@@ -197,14 +195,12 @@ a.addlink:active {
 }
 
 .deletebutton {
-    /*margin-right: 8px;*/
     background-image: url('../img/delete.png');
-    float: right;
     width: 15px;
     height: 15px;
     margin-top: 6px;
     margin-bottom: 0;
-    margin-left: 0;
+    margin-left: 15px;
     padding-top: 0;
     padding-bottom: 0;
     padding-left: 0;

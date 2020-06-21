@@ -5,7 +5,6 @@ from flask import request, redirect, make_response, jsonify
 from flask import render_template
 import psycopg2
 import uuid
-# from cabinet import app
 from cabinet import functions as f
 from flask_login import login_required, current_user
 from cabinet import auth
@@ -18,8 +17,6 @@ atw = Blueprint('atw', __name__, template_folder='templates', static_folder='sta
 ##################
 
 @atw.route('/', methods=['GET'])
-@login_required
-@auth.requires_permission('translator')
 def translations_mainpage():
     return render_template('translations.html', list=get_translations_list(), linkname='')
 
@@ -102,14 +99,10 @@ def delete_translation(link):
     return '', 204 # the "it's done" response
 
 @atw.route('/<string:link>', methods=['GET'])
-@login_required
-@auth.requires_permission('translator')
 def translations_page(link):
     return render_template('translations.html', list=get_translations_list(), linkname=link)
 
 @atw.route('/get/<string:link>', methods=['GET'])
-@login_required
-@auth.requires_permission('translator')
 def get_translation(link):
     # get translation by name
     cur = f.get_db().cursor()

@@ -122,15 +122,19 @@
         <div id="list">
 
             <ul>
-                <li class="navlink-add"><a class="addlink" href="/add">Добавить перевод</a></li>
+                {% if current_user.permissions and "translator" in current_user.permissions %}
+                    <li class="navlink-add"><a class="addlink" href="/add">Добавить перевод</a></li>
+                {% endif %}
                 {% for record in list %}
                     {% if record.error %} 
                         <li class="navlink-li">{{record.error}} {{record.details}}</li>
                     {% else %}
                         <li class="navlink-li" id="{{record.link}}">
                             <a class="navlink" href="/{{record.link}}" onclick="goto_tr(event)">{{record.engname}}</a>
-                            <span class="deletebutton" onclick="deleteTranslation('{{record.link}}')"></span>
-                            <a href="/edit/{{record.link}}" class="editbutton"></a>
+                            {% if current_user.permissions and "translator" in current_user.permissions %}
+                                <a href="/edit/{{record.link}}" class="editbutton"></a>
+                                <span class="deletebutton" onclick="deleteTranslation('{{record.link}}')"></span>
+                            {% endif %}
                         </li>
                     {% endif %}
                 {% endfor %}
