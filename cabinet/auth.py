@@ -4,8 +4,9 @@ from flask_login import UserMixin
 from . import login_manager
 import functools
 from flask_login import current_user
-from flask import current_app
+from flask import current_app, redirect, url_for, flash, request
 import uuid
+from werkzeug.exceptions import Forbidden
 
 users = {}
 
@@ -49,6 +50,14 @@ def load_user(user_id):
         return users[user_id]
     else:
         return CabinetUser.get_by_field("uid", user_id)
+
+@login_manager.unauthorized_handler
+def unauth_handler():
+    if current_user.is_authenticated:
+        raise Forbidden
+    else:
+        flash(u'Для просмотра страницы необходимо войти!')
+        return redirect(url_for('login_page', next=request.url))
 
 def requires_permission(permission):
     def decorator_perm(func):

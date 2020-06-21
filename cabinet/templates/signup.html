@@ -1,11 +1,15 @@
 <html>
     <head>
-    <title>Cabinet</title>
+    <title>Void media</title>
      <meta charset="UTF-8"> 
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/login.css')}}>
     </head>
     <body>
         <div class="logincontainer">
+
+            <div class="logindiv">
+                <a href="/login">Вход</a>
+            </div>
 
             <div class="loginform">
                 <div>
@@ -34,7 +38,7 @@
             </div>
 
             <div class="linkdiv">
-                <a href="/login">Вход</a>
+                <a href="https://{{config.SERVER_NAME}}">Вернуться на главную</a>
             </div>
 
         </div>

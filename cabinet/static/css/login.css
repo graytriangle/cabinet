@@ -10,6 +10,7 @@
     padding: 20px; 
     margin-left: auto;
     margin-right: auto;
+    margin-top: 30px;
     background-color: #f7fbff;
 }
 
@@ -82,4 +83,19 @@ a {
     margin-left: auto;
     margin-right: auto;
     margin-top: 5px;
+}
+
+/* container for login/logout link */
+.logindiv {
+    width: 18%;
+    margin-left: auto;
+    margin-right: auto;
+    float: right;
+    font-size: 10pt;
+    font-weight: bold;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.logindiv a {
+    display: inline;
 }

@@ -1,0 +1,12 @@
+.code {
+    color: red;
+    font-size: 30pt;
+    font-weight: bold;
+    margin-top: -18px;
+}
+
+.message {
+    font-size: 12pt;
+    color: #606080;
+    font-weight: bold;
+}

@@ -6,7 +6,7 @@
     </head>
     <body>
         <div class="logincontainer">
-            <div class="linkdiv">
+            <div class="logindiv">
                 {% if not current_user.is_authenticated %}
                     {% if config.REG_OPEN %}
                         <a href="/login">Вход</a> / <a href="/signup">регистрация</a>

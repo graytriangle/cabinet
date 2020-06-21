@@ -1,17 +1,23 @@
 <html>
     <head>
-    <title>Cabinet</title>
+    <title>Void media</title>
      <meta charset="UTF-8"> 
         <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/login.css')}}>
     </head>
     <body>
         <div class="logincontainer">
 
+            <div class="logindiv">
+                {% if config.REG_OPEN %}
+                    <a href="/signup">Регистрация</a>
+                {% endif %}
+            </div>
+
             <div class="loginform">
                 <div>
                     <p class="title">void media</p>
                 </div>
-                <form action="/login" method="POST">
+                <form method="POST">
                     <div class="logininput">
                         <input type="username" name="username" placeholder="Логин">
                     </div>
@@ -34,11 +40,9 @@
 
             </div>
 
-            {% if config.REG_OPEN %}
-                <div class="linkdiv">
-                    <a href="/signup">Регистрация</a>
-                </div>
-            {% endif %}
+            <div class="linkdiv">
+                <a href="https://{{config.SERVER_NAME}}">Вернуться на главную</a>
+            </div>
 
         </div>
     </body>

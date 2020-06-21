@@ -1,0 +1,26 @@
+<html>
+    <head>
+    <title>Void media</title>
+     <meta charset="UTF-8"> 
+        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/login.css')}}>
+        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/error.css')}}>
+    </head>
+    <body>
+        <div class="logincontainer">
+
+            <div class="loginform">
+                <div>
+                    <p class="title">void media</p>
+                    <p class="code">{{code}}</p>
+                    <p class="message">{{message}}</p>
+                </div>
+
+            </div>
+
+            <div class="linkdiv">
+                <a href="{{origin}}">Вернуться</a>
+            </div>
+
+        </div>
+    </body>
+</html>
