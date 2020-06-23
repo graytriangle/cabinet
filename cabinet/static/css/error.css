@@ -2,11 +2,14 @@
     color: red;
     font-size: 30pt;
     font-weight: bold;
-    margin-top: -18px;
+	margin-top: -15px;
+	margin-bottom: 10px;
 }
 
 .message {
     font-size: 12pt;
     color: #606080;
     font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
 }

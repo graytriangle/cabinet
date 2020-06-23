@@ -3,6 +3,10 @@
     top: 30%;
 }
 
+.logincontainer a {
+    text-decoration: none;
+}
+
 .domain {
     width: 450px;
     border-radius: 20px;
@@ -10,6 +14,8 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 30px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    text-align: center;
 }
 
 #cabinet {
@@ -27,21 +33,12 @@
     background-color: #fff8fb;
 }
 
-p {
-    text-align: center;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 10pt;
-    margin-top: 7px;
-    margin-bottom: 0px;
-}
-
 .title {
     font-size: 36pt;
     margin-top: 10px;
     margin-bottom: 24px;
     text-decoration: none;
     font-weight: bold;
-    /*font-style: italic;*/
     line-height: 20px;
 }
 
@@ -61,32 +58,4 @@ p {
 
 .atwtitle {
     color: rgb(157, 76, 76);
-}
-
-div {
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-}
-
-a {
-    text-align: center;
-    display: block;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    color: #606080;
-    padding-bottom: 2px;
-    text-decoration: none;
-}
-
-/* container for login/logout link */
-.logindiv {
-    width: 18%;
-    margin-left: auto;
-    margin-right: auto;
-    float: right;
-    font-size: 10pt;
-    font-weight: bold;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-}
-
-.logindiv a {
-    display: inline;
 }

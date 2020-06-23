@@ -1,6 +1,9 @@
 .logincontainer {
     position: relative;
     top: 30%;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    text-align: center;
+    font-size: 10pt;
 }
 
 .loginform {
@@ -44,10 +47,7 @@ form {
     margin-bottom: 15px;
 }
 
-p {
-    text-align: center;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 10pt;
+.flash {
     margin-top: 7px;
     margin-bottom: 0px;
 }
@@ -59,22 +59,13 @@ p {
     margin-bottom: 35px;
     text-decoration: none;
     font-weight: bold;
-    /*font-style: italic;*/
     line-height: 20px;
 }
 
-div {
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-}
-
-a {
-    text-align: center;
+.linkdiv a {
     display: block;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 10pt;
     font-weight: bold;
     color: #606080;
-    padding-bottom: 2px;
     text-decoration: none;
 }
 
@@ -83,19 +74,4 @@ a {
     margin-left: auto;
     margin-right: auto;
     margin-top: 5px;
-}
-
-/* container for login/logout link */
-.logindiv {
-    width: 18%;
-    margin-left: auto;
-    margin-right: auto;
-    float: right;
-    font-size: 10pt;
-    font-weight: bold;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-}
-
-.logindiv a {
-    display: inline;
 }

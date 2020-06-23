@@ -3,26 +3,6 @@
     margin-bottom: 10px;
 }
 
-.logout {
-    text-align: right;
-    padding: 10px;
-}
-
-.logout a {
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 10pt;
-    font-weight: bold;
-    color: #606080;
-    padding-bottom: 2px;
-    border: solid;
-    border-width: 0 0 1px 0;
-    border-color: #606080;
-}
-
-.logout a:hover {
-    color: #303080;
-}
-
 #topiclist {
     display: flex;
     flex-direction: column; 

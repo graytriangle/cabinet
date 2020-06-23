@@ -1,9 +1,10 @@
-<html>
-    <head>
-    <title>Cabinet</title>
-     <meta charset="UTF-8"> 
-        <style>
-        </style>
+{% extends "wrapper.html" %}
+
+{% block title %}
+    Cabinet
+{% endblock %}
+
+{% block meta %}
         <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/main.css')}}>
         <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/post.css')}}>
         <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/newpost.css')}}>
@@ -11,850 +12,852 @@
         <link rel='stylesheet' type='text/css' href= {{url_for('main.static', filename='css/rightcol.css')}}>
         <script type="text/javascript" src={{url_for('main.static', filename='richtext/rich-text-editor.js')}}></script>
         <link rel="stylesheet" type="text/css" href={{url_for('main.static', filename='richtext/rich-text-editor.css')}}>
-    </head>
-    <body onclick="hideForm(event)">
-        <script>
+{% endblock %}
 
-            const NEW_POST = "00000000-0000-0000-0000-000000000000";
+{% block script %}
+    <script>
 
-            //minimize the new post form when the rich text editor finishes executing
-            document.addEventListener("rteReadyEvent", function(e) {
-                // adds "showForm()" trigger to the new post field
-                document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].setAttribute("onfocus", "showForm()");
-                hideForm(e); 
-            });
+        document.onclick = function() {hideForm(event)};
 
-            // start the rich text editor module (transforms text fields into richtext)
-            richtext.richTextStart();
+        const NEW_POST = "00000000-0000-0000-0000-000000000000";
 
-            function showForm() {
-                // maximizing the "new post" form
-                for (let i of document.getElementsByClassName("np")) {
-                    i.classList.remove('np_hidden');
-                }
-                document.getElementById(NEW_POST).getElementsByClassName("select-sim")[0].classList.remove('hidden');
-                document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].style["min-height"] = "200px";
+        //minimize the new post form when the rich text editor finishes executing
+        document.addEventListener("rteReadyEvent", function(e) {
+            // adds "showForm()" trigger to the new post field
+            document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].setAttribute("onfocus", "showForm()");
+            hideForm(e); 
+        });
 
+        // start the rich text editor module (transforms text fields into richtext)
+        richtext.richTextStart();
 
+        function showForm() {
+            // maximizing the "new post" form
+            for (let i of document.getElementsByClassName("np")) {
+                i.classList.remove('np_hidden');
             }
+            document.getElementById(NEW_POST).getElementsByClassName("select-sim")[0].classList.remove('hidden');
+            document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].style["min-height"] = "200px";
 
-            function hideForm(event) {
-                // minimizing the "new post" form
-                var execute = 0;
-                // alert(event.target.getAttribute("id"));
-                if (event.type == 'rteReadyEvent') {
-                    execute = 1;
-                } else if (!((event.target.getAttribute("id") == NEW_POST) || 
-                    (document.getElementById(NEW_POST).contains(event.target)))) {
-                    execute = 1;
+
+        }
+
+        function hideForm(event) {
+            // minimizing the "new post" form
+            var execute = 0;
+            // alert(event.target.getAttribute("id"));
+            if (event.type == 'rteReadyEvent') {
+                execute = 1;
+            } else if (!((event.target.getAttribute("id") == NEW_POST) || 
+                (document.getElementById(NEW_POST).contains(event.target)))) {
+                execute = 1;
+            }
+            if (execute == 1) {
+            // var formelements = ["np_maintext", "np_source", "np_topic"];
+            // var selected = document.activeElement;
+            // if (formelements.indexOf(selected.id) == -1) { /* проверка на вхождение в массив */
+                if ((document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].innerHTML == "<p><br></p>") &&
+                    (document.getElementsByClassName("np_source")[0].value == "") &&
+                    (document.getElementsByClassName("np_topic")[0].value == "")) {
+                    for (let i of document.getElementsByClassName("np")) {
+                        i.classList.add('np_hidden');
+                    }
+                    document.getElementById(NEW_POST).getElementsByClassName("select-sim")[0].classList.add('hidden');
+                    document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].style["min-height"] = "50px";
+
                 }
-                if (execute == 1) {
-                // var formelements = ["np_maintext", "np_source", "np_topic"];
-                // var selected = document.activeElement;
-                // if (formelements.indexOf(selected.id) == -1) { /* проверка на вхождение в массив */
-                    if ((document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].innerHTML == "<p><br></p>") &&
-                        (document.getElementsByClassName("np_source")[0].value == "") &&
-                        (document.getElementsByClassName("np_topic")[0].value == "")) {
-                        for (let i of document.getElementsByClassName("np")) {
-                            i.classList.add('np_hidden');
-                        }
-                        document.getElementById(NEW_POST).getElementsByClassName("select-sim")[0].classList.add('hidden');
-                        document.getElementById(NEW_POST).getElementsByClassName("rte-editbox")[0].style["min-height"] = "50px";
+            }
+        }
 
+        /******************/
+        /* AJAX functions */
+        /******************/
+
+        function deletePost(uid) {
+            // AJAX deleting the existing post
+            var result = confirm("Подтвердите удаление записи!");
+            if (result) {
+                var el = document.getElementById(uid);
+                el.getElementsByClassName("deletepost")[0].removeAttribute("onclick");
+                el.getElementsByClassName("editpost")[0].removeAttribute("onclick");
+                el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+                el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
+
+                var delpost_cb_ok = function(response) {
+                    el.parentNode.removeChild(el);
+                    let current_type = document.getElementById("current_type").getAttribute("value");
+                    reload_topiclist(current_type);
+                }
+
+                var delpost_cb_error = function(status) {
+                    if (status !== null) {
+                        alert("Ошибка сервера при удалении записи: " + status);
                     }
                 }
-            }
 
-            /******************/
-            /* AJAX functions */
-            /******************/
-
-            function deletePost(uid) {
-                // AJAX deleting the existing post
-                var result = confirm("Подтвердите удаление записи!");
-                if (result) {
-                    var el = document.getElementById(uid);
-                    el.getElementsByClassName("deletepost")[0].removeAttribute("onclick");
-                    el.getElementsByClassName("editpost")[0].removeAttribute("onclick");
+                var delpost_cb_finally = function() {
+                    el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "deletePost('" + uid + "')");
+                    el.getElementsByClassName("editpost")[0].setAttribute("onclick", "editPost('" + uid + "')");
                     el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
                     el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
-
-                    var delpost_cb_ok = function(response) {
-                        el.parentNode.removeChild(el);
-                        let current_type = document.getElementById("current_type").getAttribute("value");
-                        reload_topiclist(current_type);
-                    }
-
-                    var delpost_cb_error = function(status) {
-                        if (status !== null) {
-                            alert("Ошибка сервера при удалении записи: " + status);
-                        }
-                    }
-
-                    var delpost_cb_finally = function() {
-                        el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "deletePost('" + uid + "')");
-                        el.getElementsByClassName("editpost")[0].setAttribute("onclick", "editPost('" + uid + "')");
-                        el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
-                        el.getElementsByClassName("editpost")[0].classList.toggle('posticon_gray');
-                    }
-
-                    var address = '/delete?uid=' + uid;
-                    ajax('GET', address, delpost_cb_ok, delpost_cb_error, delpost_cb_finally);
                 }
+
+                var address = '/delete?uid=' + uid;
+                ajax('GET', address, delpost_cb_ok, delpost_cb_error, delpost_cb_finally);
+            }
+        }
+
+        function markPost(uid) {
+            // AJAX toggling the "important" star in posts
+            var el = document.getElementById(uid);
+            var status = "true";
+            if (el.getElementsByClassName("star")[0].classList.contains('staron')) {
+                status = "false";
             }
 
-            function markPost(uid) {
-                // AJAX toggling the "important" star in posts
-                var el = document.getElementById(uid);
-                var status = "true";
-                if (el.getElementsByClassName("star")[0].classList.contains('staron')) {
-                    status = "false";
-                }
-
-                var markpost_cb_ok = function(response) {
-                    el.getElementsByClassName("star")[0].classList.toggle('staron');
-                    if (status == "false") {
-                        el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
-                    } else {
-                        el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
-                    }
-                }
-
-                var markpost_cb_error = function(status) {
-                    if (status !== null) {
-                        alert("Ошибка сервера при установке отметки: " + status);
-                    }
-                }
-
-                var address = '/mark?uid=' + uid + '&status=' + status;
-                ajax('GET', address, markpost_cb_ok, markpost_cb_error);
-            }
-
-            function updatePost(uid) {
-                // AJAX updating of an existing post
-                var el = document.getElementById(uid);
-                // disable save/cancel buttons
-                el.getElementsByClassName("canceledit")[0].removeAttribute("onclick");
-                el.getElementsByClassName("savepost")[0].removeAttribute("onclick");
-                el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
-                el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
-
-                var formData = new FormData(el.getElementsByTagName("form")[0]);
-
-                var updpost_cb_ok = function(response) {
-                    cancelEdit(uid);
-                    let oldel = document.getElementById(uid);
-                    oldel.parentNode.replaceChild(elementFromText(response), oldel);
-                    let current_type = document.getElementById("current_type").getAttribute("value");
-                    reload_topiclist(current_type);
-                }
-
-                var updpost_cb_error = function(status) {
-                    if (status !== null) {
-                        alert("Ошибка сервера при обновлении записи: " + status);
-                    }
-                }
-
-                var updpost_cb_finally = function() {
-                    el.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
-                    el.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
-                    el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
-                    el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
-                }
-
-                ajax('POST', '/', updpost_cb_ok, updpost_cb_error, updpost_cb_finally, formData);
-            }
-
-            function addPost() {
-                // AJAX adding of a new post
-                // here goes disabling
-                var el = document.getElementById(NEW_POST);
-                el.getElementsByClassName("deletepost")[0].removeAttribute("onclick");
-                el.getElementsByClassName("savepost")[0].removeAttribute("onclick");
-                el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
-                el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
-                var formData = new FormData(el.getElementsByTagName("form")[0]);
-
-                var addpost_cb_ok = function(response) {
-                    let parentnode = document.getElementById("notes_content");
-                    parentnode.insertBefore(elementFromText(response), parentnode.firstChild);
-                    clearNewPost(true); // silent clearing of the newpost form
-                    let current_type = document.getElementById("current_type").getAttribute("value");
-                    reload_topiclist(current_type);
-                }
-
-                var addpost_cb_error = function(status) {
-                    if (status !== null) {
-                        alert("Ошибка сервера при добавлении записи: " + status);
-                    }
-                }
-
-                var addpost_cb_finally = function() {
-                    el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "clearNewPost()");
-                    el.getElementsByClassName("savepost")[0].setAttribute("onclick", "addPost()");
-                    el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
-                    el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
-                }
-
-                ajax('POST', '/', addpost_cb_ok, addpost_cb_error, addpost_cb_finally, formData);
-            }
-
-            /*************************/
-            /* End of AJAX functions */
-            /*************************/
-
-            function editPost(uid) {
-                // turning the "edit post" mode on
-
-                // hiding the original post
-                var tmppost = document.getElementById(uid);
-                tmppost.setAttribute("id", uid + '_tmp');
-                tmppost.style["display"] = "none";
-
-                // copying the template and filling it with post content
-                var template = document.getElementById("00000000-0000-0000-0000-000000000001").cloneNode(true);
-                template.setAttribute("id", uid);
-                template.getElementsByClassName("uid_field")[0].setAttribute("value", uid);
-                var tmpimportance = tmppost.getElementsByClassName("star")[0].cloneNode(true);
-                var newimportance = template.getElementsByClassName("star")[0];
-                template.getElementsByTagName("form")[0].setAttribute("name", uid);
-                template.getElementsByTagName("form")[0].replaceChild(tmpimportance, newimportance);
-                template.getElementsByClassName("star")[0].setAttribute("onclick", "np_toggleImportant('" + uid + "')");
-                if (template.getElementsByClassName("star")[0].classList.contains('staron')) {
-                    template.getElementsByClassName("star_field")[0].setAttribute("value", "true");
-                } else {
-                    template.getElementsByClassName("star_field")[0].setAttribute("value", "false");
-                }
-                var tmpnotetype = tmppost.getElementsByClassName("notetype_small")[0].getAttribute("data-notetype");
-                template.getElementsByClassName("select-sim")[0].setAttribute("id", "select-notetype-" + uid);
-                for (let i of template.getElementsByClassName("option")) {
-                    let tmpselid = i.getElementsByTagName("input")[0].getAttribute("id") + uid;
-                    // i.getElementsByTagName("input")[0].setAttribute("name", "notetype-" + uid);
-                    i.getElementsByTagName("input")[0].setAttribute("id", tmpselid);
-                    i.getElementsByTagName("label")[0].setAttribute("for", tmpselid);
-                    if (i.getElementsByTagName("input")[0].getAttribute("value") == tmpnotetype) {
-                        i.getElementsByTagName("input")[0].checked = true;
-                    }
-                }
-
-                template.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
-                template.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
-                var tmptitle = tmppost.getElementsByClassName("title")[0].cloneNode(true);
-                var newtitle = template.getElementsByClassName("title")[0];
-                template.getElementsByTagName("form")[0].replaceChild(tmptitle, newtitle);
-                if (tmppost.getElementsByClassName("source").length > 0) {
-                    var tmpsrc = tmppost.getElementsByClassName("source")[0].getElementsByTagName("a")[0].getAttribute("href");
-                    template.getElementsByClassName("inputsrc")[0].setAttribute("value", tmpsrc);
-                }
-                if (tmppost.getElementsByClassName("tags").length > 0) {
-                    var tmptags = '';
-                    var tmptagsarray = tmppost.getElementsByClassName("tags")[0].getElementsByTagName("a");
-                    for (var i = 0; i < tmptagsarray.length; i++) {
-                        tmptags += tmptagsarray[i].innerHTML;
-                        if (i < (tmptagsarray.length - 1)) {
-                            tmptags += ', ';
-                        }
-                    }
-                    template.getElementsByClassName("inputtopic")[0].setAttribute("value", tmptags);
-                }
-                var tmpposttext = tmppost.getElementsByClassName("posttext")[0].innerHTML;
-                template.getElementsByTagName("textarea")[0].innerHTML = tmpposttext;
-                richtext.createEditor(template.getElementsByTagName("textarea")[0]);
-
-                // displaying the template in place of a post
-                template.style["display"] = "block";
-                insertAfter(template, tmppost);
-            }
-
-            function cancelEdit(uid) {
-                // removes an "edit post" form and retrieves the original post
-                var todelete = document.getElementById(uid);
-                todelete.parentNode.removeChild(todelete);
-                document.getElementById(uid + '_tmp').style["display"] = "block";
-                document.getElementById(uid + '_tmp').setAttribute("id", uid);
-            }
-
-            function clearNewPost(confirmed=false) {
-                // clears all fields of the "new post" form
-                var el = document.getElementById(NEW_POST);
-                if (el.getElementsByClassName("star_field")[0].getAttribute("value") === "true") {
-                    np_toggleImportant(NEW_POST);
-                }
-                document.getElementsByClassName("np_source")[0].value = "";
-                document.getElementsByClassName("np_topic")[0].value = "";
-                richtext.customCommands['cleanDoc'](el.getElementsByClassName("rte-editbox")[0], confirmed);
-                //document.getElementById("np_maintext").value = "";
-            }
-
-
-            function np_toggleImportant(uid) {
-                // toggles "important" star in "new post" and "edit post" forms
-                var el = document.getElementById(uid);
+            var markpost_cb_ok = function(response) {
                 el.getElementsByClassName("star")[0].classList.toggle('staron');
-                var attr = el.getElementsByClassName("star_field")[0].getAttribute("value");
-                if (attr == "false") {
-                    el.getElementsByClassName("star_field")[0].setAttribute("value", "true");
+                if (status == "false") {
                     el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
                 } else {
-                    el.getElementsByClassName("star_field")[0].setAttribute("value", "false");
                     el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
                 }
             }
 
-            function intent_load(all) {
-                // AJAX reloading of the intentions tree
-                var checkbox = document.getElementById("intent_showall");
-                var todoparent = document.getElementsByClassName("todo")[0];
-                var oldlist = document.getElementById("todo_content");
-                checkbox.disabled = true;
-
-                var intent_cb_ok = function(response) {
-                    todoparent.removeChild(oldlist);
-                    var wrapper = document.createElement('div');
-                    wrapper.id = 'todo_content';
-                    wrapper.innerHTML = response;
-                    todoparent.appendChild(wrapper);
-                    checkbox.disabled = false; // не стал писать finally ради одной общей строчки
+            var markpost_cb_error = function(status) {
+                if (status !== null) {
+                    alert("Ошибка сервера при установке отметки: " + status);
                 }
-
-                var intent_cb_error = function(status) {
-                    checkbox.disabled = false; // не стал писать finally ради одной общей строчки
-                    if (status !== null) {
-                        alert("Ошибка сервера при обновлении списка намерений: " + status);
-                    }
-                }
-
-                ajax('GET', '/intent/reload?all=' + all, intent_cb_ok, intent_cb_error);
             }
 
-            function display_type(event) {
-                // wrapper for switching displayed note types
-                var prevtype = document.getElementsByClassName("section_selected")[0];
-                var clickedtype = event.target.parentElement;
+            var address = '/mark?uid=' + uid + '&status=' + status;
+            ajax('GET', address, markpost_cb_ok, markpost_cb_error);
+        }
+
+        function updatePost(uid) {
+            // AJAX updating of an existing post
+            var el = document.getElementById(uid);
+            // disable save/cancel buttons
+            el.getElementsByClassName("canceledit")[0].removeAttribute("onclick");
+            el.getElementsByClassName("savepost")[0].removeAttribute("onclick");
+            el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
+            el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
+
+            var formData = new FormData(el.getElementsByTagName("form")[0]);
+
+            var updpost_cb_ok = function(response) {
+                cancelEdit(uid);
+                let oldel = document.getElementById(uid);
+                oldel.parentNode.replaceChild(elementFromText(response), oldel);
+                let current_type = document.getElementById("current_type").getAttribute("value");
+                reload_topiclist(current_type);
+            }
+
+            var updpost_cb_error = function(status) {
+                if (status !== null) {
+                    alert("Ошибка сервера при обновлении записи: " + status);
+                }
+            }
+
+            var updpost_cb_finally = function() {
+                el.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
+                el.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
+                el.getElementsByClassName("canceledit")[0].classList.toggle('posticon_gray');
+                el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
+            }
+
+            ajax('POST', '/', updpost_cb_ok, updpost_cb_error, updpost_cb_finally, formData);
+        }
+
+        function addPost() {
+            // AJAX adding of a new post
+            // here goes disabling
+            var el = document.getElementById(NEW_POST);
+            el.getElementsByClassName("deletepost")[0].removeAttribute("onclick");
+            el.getElementsByClassName("savepost")[0].removeAttribute("onclick");
+            el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+            el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
+            var formData = new FormData(el.getElementsByTagName("form")[0]);
+
+            var addpost_cb_ok = function(response) {
+                let parentnode = document.getElementById("notes_content");
+                parentnode.insertBefore(elementFromText(response), parentnode.firstChild);
+                clearNewPost(true); // silent clearing of the newpost form
+                let current_type = document.getElementById("current_type").getAttribute("value");
+                reload_topiclist(current_type);
+            }
+
+            var addpost_cb_error = function(status) {
+                if (status !== null) {
+                    alert("Ошибка сервера при добавлении записи: " + status);
+                }
+            }
+
+            var addpost_cb_finally = function() {
+                el.getElementsByClassName("deletepost")[0].setAttribute("onclick", "clearNewPost()");
+                el.getElementsByClassName("savepost")[0].setAttribute("onclick", "addPost()");
+                el.getElementsByClassName("deletepost")[0].classList.toggle('posticon_gray');
+                el.getElementsByClassName("savepost")[0].classList.toggle('posticon_gray');
+            }
+
+            ajax('POST', '/', addpost_cb_ok, addpost_cb_error, addpost_cb_finally, formData);
+        }
+
+        /*************************/
+        /* End of AJAX functions */
+        /*************************/
+
+        function editPost(uid) {
+            // turning the "edit post" mode on
+
+            // hiding the original post
+            var tmppost = document.getElementById(uid);
+            tmppost.setAttribute("id", uid + '_tmp');
+            tmppost.style["display"] = "none";
+
+            // copying the template and filling it with post content
+            var template = document.getElementById("00000000-0000-0000-0000-000000000001").cloneNode(true);
+            template.setAttribute("id", uid);
+            template.getElementsByClassName("uid_field")[0].setAttribute("value", uid);
+            var tmpimportance = tmppost.getElementsByClassName("star")[0].cloneNode(true);
+            var newimportance = template.getElementsByClassName("star")[0];
+            template.getElementsByTagName("form")[0].setAttribute("name", uid);
+            template.getElementsByTagName("form")[0].replaceChild(tmpimportance, newimportance);
+            template.getElementsByClassName("star")[0].setAttribute("onclick", "np_toggleImportant('" + uid + "')");
+            if (template.getElementsByClassName("star")[0].classList.contains('staron')) {
+                template.getElementsByClassName("star_field")[0].setAttribute("value", "true");
+            } else {
+                template.getElementsByClassName("star_field")[0].setAttribute("value", "false");
+            }
+            var tmpnotetype = tmppost.getElementsByClassName("notetype_small")[0].getAttribute("data-notetype");
+            template.getElementsByClassName("select-sim")[0].setAttribute("id", "select-notetype-" + uid);
+            for (let i of template.getElementsByClassName("option")) {
+                let tmpselid = i.getElementsByTagName("input")[0].getAttribute("id") + uid;
+                // i.getElementsByTagName("input")[0].setAttribute("name", "notetype-" + uid);
+                i.getElementsByTagName("input")[0].setAttribute("id", tmpselid);
+                i.getElementsByTagName("label")[0].setAttribute("for", tmpselid);
+                if (i.getElementsByTagName("input")[0].getAttribute("value") == tmpnotetype) {
+                    i.getElementsByTagName("input")[0].checked = true;
+                }
+            }
+
+            template.getElementsByClassName("canceledit")[0].setAttribute("onclick", "cancelEdit('" + uid + "')");
+            template.getElementsByClassName("savepost")[0].setAttribute("onclick", "updatePost('" + uid + "')");
+            var tmptitle = tmppost.getElementsByClassName("title")[0].cloneNode(true);
+            var newtitle = template.getElementsByClassName("title")[0];
+            template.getElementsByTagName("form")[0].replaceChild(tmptitle, newtitle);
+            if (tmppost.getElementsByClassName("source").length > 0) {
+                var tmpsrc = tmppost.getElementsByClassName("source")[0].getElementsByTagName("a")[0].getAttribute("href");
+                template.getElementsByClassName("inputsrc")[0].setAttribute("value", tmpsrc);
+            }
+            if (tmppost.getElementsByClassName("tags").length > 0) {
+                var tmptags = '';
+                var tmptagsarray = tmppost.getElementsByClassName("tags")[0].getElementsByTagName("a");
+                for (var i = 0; i < tmptagsarray.length; i++) {
+                    tmptags += tmptagsarray[i].innerHTML;
+                    if (i < (tmptagsarray.length - 1)) {
+                        tmptags += ', ';
+                    }
+                }
+                template.getElementsByClassName("inputtopic")[0].setAttribute("value", tmptags);
+            }
+            var tmpposttext = tmppost.getElementsByClassName("posttext")[0].innerHTML;
+            template.getElementsByTagName("textarea")[0].innerHTML = tmpposttext;
+            richtext.createEditor(template.getElementsByTagName("textarea")[0]);
+
+            // displaying the template in place of a post
+            template.style["display"] = "block";
+            insertAfter(template, tmppost);
+        }
+
+        function cancelEdit(uid) {
+            // removes an "edit post" form and retrieves the original post
+            var todelete = document.getElementById(uid);
+            todelete.parentNode.removeChild(todelete);
+            document.getElementById(uid + '_tmp').style["display"] = "block";
+            document.getElementById(uid + '_tmp').setAttribute("id", uid);
+        }
+
+        function clearNewPost(confirmed=false) {
+            // clears all fields of the "new post" form
+            var el = document.getElementById(NEW_POST);
+            if (el.getElementsByClassName("star_field")[0].getAttribute("value") === "true") {
+                np_toggleImportant(NEW_POST);
+            }
+            document.getElementsByClassName("np_source")[0].value = "";
+            document.getElementsByClassName("np_topic")[0].value = "";
+            richtext.customCommands['cleanDoc'](el.getElementsByClassName("rte-editbox")[0], confirmed);
+            //document.getElementById("np_maintext").value = "";
+        }
+
+
+        function np_toggleImportant(uid) {
+            // toggles "important" star in "new post" and "edit post" forms
+            var el = document.getElementById(uid);
+            el.getElementsByClassName("star")[0].classList.toggle('staron');
+            var attr = el.getElementsByClassName("star_field")[0].getAttribute("value");
+            if (attr == "false") {
+                el.getElementsByClassName("star_field")[0].setAttribute("value", "true");
+                el.getElementsByClassName("star")[0].setAttribute("title", "Убрать отметку важности");
+            } else {
+                el.getElementsByClassName("star_field")[0].setAttribute("value", "false");
+                el.getElementsByClassName("star")[0].setAttribute("title", "Отметить запись как важную");
+            }
+        }
+
+        function intent_load(all) {
+            // AJAX reloading of the intentions tree
+            var checkbox = document.getElementById("intent_showall");
+            var todoparent = document.getElementsByClassName("todo")[0];
+            var oldlist = document.getElementById("todo_content");
+            checkbox.disabled = true;
+
+            var intent_cb_ok = function(response) {
+                todoparent.removeChild(oldlist);
+                var wrapper = document.createElement('div');
+                wrapper.id = 'todo_content';
+                wrapper.innerHTML = response;
+                todoparent.appendChild(wrapper);
+                checkbox.disabled = false; // не стал писать finally ради одной общей строчки
+            }
+
+            var intent_cb_error = function(status) {
+                checkbox.disabled = false; // не стал писать finally ради одной общей строчки
+                if (status !== null) {
+                    alert("Ошибка сервера при обновлении списка намерений: " + status);
+                }
+            }
+
+            ajax('GET', '/intent/reload?all=' + all, intent_cb_ok, intent_cb_error);
+        }
+
+        function display_type(event) {
+            // wrapper for switching displayed note types
+            var prevtype = document.getElementsByClassName("section_selected")[0];
+            var clickedtype = event.target.parentElement;
+            if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                // если было что-то выбрано, мы выключаем ему кружок
+                prevtype.classList.remove('section_selected');
+            }
+            if (prevtype != clickedtype) {
+                // включаем кружок кликнутому, если только оно уже не было выбрано
+                clickedtype.classList.add('section_suspended');
+            }
+            suspend_switches(true);
+
+            var typename;
+            switch (clickedtype.getAttribute("id")) {
+                case 'switch_type_note':
+                    typename = 'note';
+                    break;
+                case 'switch_type_diary':
+                    typename = 'diary';
+                    break;
+                case 'switch_type_draft':
+                    typename = 'draft';
+                    break;
+                case 'switch_type_people':
+                    typename = 'people';
+                    break;
+                case 'switch_type_fun':
+                    typename = 'fun';
+                    break;
+            }
+            var current_typename = document.getElementById("current_type").getAttribute("value");
+            if (typename == current_typename) {
+                typename = 'all';
+            }
+            document.getElementById("current_type").setAttribute("value", typename);
+
+            var current_topic = document.getElementsByClassName("rc_current_topic")[0];
+            if (!(current_topic === undefined && typeof current_topic === "undefined")) {
+                current_topic = current_topic.textContent;
+            } else {
+                current_topic = '';
+            }
+
+            var success_counter = 0;
+            var error_counter = 0;
+            var finally_counter = 0;
+            var topicresponse;
+            var notesresponse;
+
+            var notetype_callback_ok = function(response){
+                // callback to execute on successful note loading
+                success_counter += 1;
+                notesresponse = response;
+            };
+
+            var topiclist_callback_ok = function(response){
+                // callback to execute on successful note loading
+                success_counter += 1;
+                topicresponse = response;
+            };
+
+            // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+            var notetype_callback_error = function(status){
+                // callback to execute on unsuccessful note loading
+                error_counter += 1;
+                if (status !== null) {
+                    alert("Ошибка сервера при обновлении списка записей: " + status);
+                }
+            };
+
+            // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+            var topiclist_callback_error = function(status){
+                // callback to execute on unsuccessful topiclist loading
+                error_counter += 1;
+                if (status !== null) {
+                    alert("Ошибка сервера при обновлении списка тем: " + status);
+                }
+            };
+
+            var common_callback_finally = function(){
+                // callback to execute after both ajaxes finished loading
+                finally_counter += 1;
+                if (error_counter > 0 && finally_counter === 2) {
+                    // если ранее был выбран раздел, включаем ему кружок обратно
+                    if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                        prevtype.classList.add('section_selected');
+                    }
+                } else if (success_counter === 2) {
+                    // если ранее был выбран раздел, сносим его иконке "активный" стиль
+                    if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                        prevtype.getElementsByClassName("section_icon")[0].classList.remove('section_icon_active');
+                    }
+                    // если включился новый раздел, активируем ему иконку и кружок
+                    if (clickedtype.classList.contains('section_suspended')) {
+                        clickedtype.classList.add('section_selected');
+                        clickedtype.getElementsByClassName("section_icon")[0].classList.add('section_icon_active');
+                    }
+
+                    // заменяем контент заметок и тем
+                    replace_notes(notesresponse);
+                    replace_topics(topicresponse);
+
+                    // ставим новому посту определённый раздел
+                    for (let i of document.getElementById(NEW_POST).getElementsByClassName("option")) {
+                        if (i.getElementsByTagName("input")[0].hasAttribute("checked")) {
+                            i.getElementsByTagName("input")[0].checked = false;
+                        }
+                        if ((i.getElementsByTagName("input")[0].getAttribute("value") === typename) || 
+                            (typename == 'all' && i.getElementsByTagName("input")[0].getAttribute("value") == 'draft')) {
+                            i.getElementsByTagName("input")[0].checked = true;
+                        }
+                    }
+
+                    suspend_switches(false);
+                    // если пытались включить новый раздел, выключаем ему заморозку
+                    if (clickedtype.classList.contains('section_suspended')) {
+                        clickedtype.classList.remove('section_suspended');
+                    }
+                }
+            };
+
+            var address = '/notes?type=' + typename;
+            // var address = '/notes?type=' + typename + '&topic=' + current_topic;
+            ajax('GET', address, notetype_callback_ok, notetype_callback_error, common_callback_finally);
+
+            var address = '/topics?type=' + typename;
+            ajax('GET', address, topiclist_callback_ok, topiclist_callback_error, common_callback_finally);
+        }
+
+        function display_topic(event) {
+            // wrapper for switching displayed topics
+            var prevtype = document.getElementsByClassName("rc_current_topic")[0];
+            var clickedtype = event.target;
+            var current_topic = '';
+            if (clickedtype.classList.contains('inner_topic')) {
+                var topictext = clickedtype.innerText;
+                for (let i of document.getElementsByClassName("rc_topic")) {
+                    if (i.innerText == topictext) {
+                        clickedtype = i;
+                        break;
+                    }
+                }
+            }
+
+            if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+                // если было что-то выбрано, мы выключаем ему выделение
+                prevtype.classList.remove('rc_current_topic');
+            }
+            if (prevtype != clickedtype) {
+                // включаем подсветку кликнутому, если только оно уже не было выбрано
+                clickedtype.classList.add('rc_current_topic');
+                current_topic = clickedtype.textContent;
+            }
+            suspend_switches(true);
+
+            var topic_callback_ok = function(response){
+                // callback to execute on successful note loading
+                replace_notes(response);
+            };
+
+            // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+            var topic_callback_error = function(status){
+                // callback to execute on unsuccessful note loading
+
+                // если ранее была выбрана тема, включаем ей выделение обратно
                 if (!(prevtype === undefined && typeof prevtype === "undefined")) {
-                    // если было что-то выбрано, мы выключаем ему кружок
-                    prevtype.classList.remove('section_selected');
+                    prevtype.classList.add('rc_current_topic');
                 }
-                if (prevtype != clickedtype) {
-                    // включаем кружок кликнутому, если только оно уже не было выбрано
-                    clickedtype.classList.add('section_suspended');
+                // если пытались включить новую тему, выключаем её
+                if (clickedtype.classList.contains('rc_current_topic')) {
+                    clickedtype.classList.remove('rc_current_topic');
                 }
-                suspend_switches(true);
 
-                var typename;
-                switch (clickedtype.getAttribute("id")) {
-                    case 'switch_type_note':
-                        typename = 'note';
-                        break;
-                    case 'switch_type_diary':
-                        typename = 'diary';
-                        break;
-                    case 'switch_type_draft':
-                        typename = 'draft';
-                        break;
-                    case 'switch_type_people':
-                        typename = 'people';
-                        break;
-                    case 'switch_type_fun':
-                        typename = 'fun';
-                        break;
+                if (status !== null) {
+                    alert("Ошибка сервера при обновлении списка записей: " + status);
                 }
-                var current_typename = document.getElementById("current_type").getAttribute("value");
-                if (typename == current_typename) {
-                    typename = 'all';
-                }
-                document.getElementById("current_type").setAttribute("value", typename);
+            };
 
+            var topic_callback_finally = function(){
+                // callback to execute in all cases
+                suspend_switches(false);
+            };
+
+            var current_typename = document.getElementById("current_type").getAttribute("value");
+
+            var address = '/notes?type=' + current_typename + '&topic=' + current_topic;
+            ajax('GET', address, topic_callback_ok, topic_callback_error, topic_callback_finally);
+        }
+
+        function reload_topiclist(type = 'all') {
+            // reloads list of topics when adding/updating/deleting notes
+            suspend_switches(true);
+
+            var topiclist_callback_ok = function(response){
+                // callback to execute on successful topic loading
                 var current_topic = document.getElementsByClassName("rc_current_topic")[0];
                 if (!(current_topic === undefined && typeof current_topic === "undefined")) {
-                    current_topic = current_topic.textContent;
+                    current_topic = current_topic.innerText;
                 } else {
                     current_topic = '';
                 }
+                replace_topics(response);
 
-                var success_counter = 0;
-                var error_counter = 0;
-                var finally_counter = 0;
-                var topicresponse;
-                var notesresponse;
-
-                var notetype_callback_ok = function(response){
-                    // callback to execute on successful note loading
-                    success_counter += 1;
-                    notesresponse = response;
-                };
-
-                var topiclist_callback_ok = function(response){
-                    // callback to execute on successful note loading
-                    success_counter += 1;
-                    topicresponse = response;
-                };
-
-                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
-                var notetype_callback_error = function(status){
-                    // callback to execute on unsuccessful note loading
-                    error_counter += 1;
-                    if (status !== null) {
-                        alert("Ошибка сервера при обновлении списка записей: " + status);
-                    }
-                };
-
-                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
-                var topiclist_callback_error = function(status){
-                    // callback to execute on unsuccessful topiclist loading
-                    error_counter += 1;
-                    if (status !== null) {
-                        alert("Ошибка сервера при обновлении списка тем: " + status);
-                    }
-                };
-
-                var common_callback_finally = function(){
-                    // callback to execute after both ajaxes finished loading
-                    finally_counter += 1;
-                    if (error_counter > 0 && finally_counter === 2) {
-                        // если ранее был выбран раздел, включаем ему кружок обратно
-                        if (!(prevtype === undefined && typeof prevtype === "undefined")) {
-                            prevtype.classList.add('section_selected');
-                        }
-                    } else if (success_counter === 2) {
-                        // если ранее был выбран раздел, сносим его иконке "активный" стиль
-                        if (!(prevtype === undefined && typeof prevtype === "undefined")) {
-                            prevtype.getElementsByClassName("section_icon")[0].classList.remove('section_icon_active');
-                        }
-                        // если включился новый раздел, активируем ему иконку и кружок
-                        if (clickedtype.classList.contains('section_suspended')) {
-                            clickedtype.classList.add('section_selected');
-                            clickedtype.getElementsByClassName("section_icon")[0].classList.add('section_icon_active');
-                        }
-
-                        // заменяем контент заметок и тем
-                        replace_notes(notesresponse);
-                        replace_topics(topicresponse);
-
-                        // ставим новому посту определённый раздел
-                        for (let i of document.getElementById(NEW_POST).getElementsByClassName("option")) {
-                            if (i.getElementsByTagName("input")[0].hasAttribute("checked")) {
-                                i.getElementsByTagName("input")[0].checked = false;
-                            }
-                            if ((i.getElementsByTagName("input")[0].getAttribute("value") === typename) || 
-                                (typename == 'all' && i.getElementsByTagName("input")[0].getAttribute("value") == 'draft')) {
-                                i.getElementsByTagName("input")[0].checked = true;
-                            }
-                        }
-
-                        suspend_switches(false);
-                        // если пытались включить новый раздел, выключаем ему заморозку
-                        if (clickedtype.classList.contains('section_suspended')) {
-                            clickedtype.classList.remove('section_suspended');
-                        }
-                    }
-                };
-
-                var address = '/notes?type=' + typename;
-                // var address = '/notes?type=' + typename + '&topic=' + current_topic;
-                ajax('GET', address, notetype_callback_ok, notetype_callback_error, common_callback_finally);
-
-                var address = '/topics?type=' + typename;
-                ajax('GET', address, topiclist_callback_ok, topiclist_callback_error, common_callback_finally);
-            }
-
-            function display_topic(event) {
-                // wrapper for switching displayed topics
-                var prevtype = document.getElementsByClassName("rc_current_topic")[0];
-                var clickedtype = event.target;
-                var current_topic = '';
-                if (clickedtype.classList.contains('inner_topic')) {
-                    var topictext = clickedtype.innerText;
+                if (!(current_topic === '')) {
                     for (let i of document.getElementsByClassName("rc_topic")) {
-                        if (i.innerText == topictext) {
-                            clickedtype = i;
+                        if (i.innerText == current_topic) {
+                            i.classList.add('rc_current_topic');
                             break;
                         }
                     }
                 }
+            };
 
-                if (!(prevtype === undefined && typeof prevtype === "undefined")) {
+            // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+            var topiclist_callback_error = function(status){
+                // callback to execute on unsuccessful topic loading
+                if (status !== null) {
+                    alert("Ошибка сервера при обновлении списка записей: " + status);
+                }
+            };
+
+            var topiclist_callback_finally = function(){
+                // callback to execute in all cases
+                suspend_switches(false);
+            };
+
+            var address = '/topics?type=' + type;
+            ajax('GET', address, topiclist_callback_ok, topiclist_callback_error, topiclist_callback_finally);
+        }
+
+        function replace_notes(content) {
+            var postsparent = document.getElementById("maincol");
+            var oldlist = document.getElementById("notes_content");
+            postsparent.removeChild(oldlist);
+            var wrapper = document.createElement('div');
+            wrapper.id = 'notes_content';
+            wrapper.innerHTML = content;
+            postsparent.appendChild(wrapper);
+        }
+
+        function replace_topics(content) {
+            var postsparent = document.getElementById("rightcol");
+            var oldlist = document.getElementById("topiclist");
+            postsparent.removeChild(oldlist);
+            var wrapper = document.createElement('div');
+            wrapper.id = 'topiclist';
+            wrapper.innerHTML = content;
+            postsparent.appendChild(wrapper);
+        }
+
+        function suspend_switches(on=true) {
+            if (on) {
+                // перекрываем иконки переключения типов "выключающим" стилем
+                for (let i of document.getElementsByClassName("section_icon")) {
+                    i.classList.add('section_icon_inactive');
+                }
+                // выключаем функции у всех переключателей типов
+                for (let i of document.getElementsByClassName("section")) {
+                    i.removeAttribute("onclick");
+                }
+                // перекрываем все ссылки на темы "выключающим" стилем и вырубаем им функции
+                for (let i of document.getElementsByClassName("rc_topic")) {
+                    i.classList.add('rc_inactive');
+                    i.removeAttribute("onclick");
+                }
+                // выключаем тэги в постах
+                for (let i of document.getElementsByClassName("inner_topic")) {
+                    i.classList.add('inner_topic_inact');
+                    i.removeAttribute("onclick");
+                }
+                // деактивируем кружок выбранного типа
+                var seltype = document.getElementsByClassName("section_selected")[0];
+                if (!(seltype === undefined && typeof prevtype === "undefined")) {
                     // если было что-то выбрано, мы выключаем ему выделение
-                    prevtype.classList.remove('rc_current_topic');
+                    seltype.classList.add('section_suspended');
                 }
-                if (prevtype != clickedtype) {
-                    // включаем подсветку кликнутому, если только оно уже не было выбрано
-                    clickedtype.classList.add('rc_current_topic');
-                    current_topic = clickedtype.textContent;
+
+            } else {
+                // включаем все иконки типов обратно
+                for (let i of document.getElementsByClassName("section_icon")) {
+                    i.classList.remove('section_icon_inactive');
                 }
-                suspend_switches(true);
-
-                var topic_callback_ok = function(response){
-                    // callback to execute on successful note loading
-                    replace_notes(response);
-                };
-
-                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
-                var topic_callback_error = function(status){
-                    // callback to execute on unsuccessful note loading
-
-                    // если ранее была выбрана тема, включаем ей выделение обратно
-                    if (!(prevtype === undefined && typeof prevtype === "undefined")) {
-                        prevtype.classList.add('rc_current_topic');
-                    }
-                    // если пытались включить новую тему, выключаем её
-                    if (clickedtype.classList.contains('rc_current_topic')) {
-                        clickedtype.classList.remove('rc_current_topic');
-                    }
-
-                    if (status !== null) {
-                        alert("Ошибка сервера при обновлении списка записей: " + status);
-                    }
-                };
-
-                var topic_callback_finally = function(){
-                    // callback to execute in all cases
-                    suspend_switches(false);
-                };
-
-                var current_typename = document.getElementById("current_type").getAttribute("value");
-
-                var address = '/notes?type=' + current_typename + '&topic=' + current_topic;
-                ajax('GET', address, topic_callback_ok, topic_callback_error, topic_callback_finally);
-            }
-
-            function reload_topiclist(type = 'all') {
-                // reloads list of topics when adding/updating/deleting notes
-                suspend_switches(true);
-
-                var topiclist_callback_ok = function(response){
-                    // callback to execute on successful topic loading
-                    var current_topic = document.getElementsByClassName("rc_current_topic")[0];
-                    if (!(current_topic === undefined && typeof current_topic === "undefined")) {
-                        current_topic = current_topic.innerText;
-                    } else {
-                        current_topic = '';
-                    }
-                    replace_topics(response);
-
-                    if (!(current_topic === '')) {
-                        for (let i of document.getElementsByClassName("rc_topic")) {
-                            if (i.innerText == current_topic) {
-                                i.classList.add('rc_current_topic');
-                                break;
-                            }
-                        }
-                    }
-                };
-
-                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
-                var topiclist_callback_error = function(status){
-                    // callback to execute on unsuccessful topic loading
-                    if (status !== null) {
-                        alert("Ошибка сервера при обновлении списка записей: " + status);
-                    }
-                };
-
-                var topiclist_callback_finally = function(){
-                    // callback to execute in all cases
-                    suspend_switches(false);
-                };
-
-                var address = '/topics?type=' + type;
-                ajax('GET', address, topiclist_callback_ok, topiclist_callback_error, topiclist_callback_finally);
-            }
-
-            function replace_notes(content) {
-                var postsparent = document.getElementById("maincol");
-                var oldlist = document.getElementById("notes_content");
-                postsparent.removeChild(oldlist);
-                var wrapper = document.createElement('div');
-                wrapper.id = 'notes_content';
-                wrapper.innerHTML = content;
-                postsparent.appendChild(wrapper);
-            }
-
-            function replace_topics(content) {
-                var postsparent = document.getElementById("rightcol");
-                var oldlist = document.getElementById("topiclist");
-                postsparent.removeChild(oldlist);
-                var wrapper = document.createElement('div');
-                wrapper.id = 'topiclist';
-                wrapper.innerHTML = content;
-                postsparent.appendChild(wrapper);
-            }
-
-            function suspend_switches(on=true) {
-                if (on) {
-                    // перекрываем иконки переключения типов "выключающим" стилем
-                    for (let i of document.getElementsByClassName("section_icon")) {
-                        i.classList.add('section_icon_inactive');
-                    }
-                    // выключаем функции у всех переключателей типов
-                    for (let i of document.getElementsByClassName("section")) {
-                        i.removeAttribute("onclick");
-                    }
-                    // перекрываем все ссылки на темы "выключающим" стилем и вырубаем им функции
-                    for (let i of document.getElementsByClassName("rc_topic")) {
-                        i.classList.add('rc_inactive');
-                        i.removeAttribute("onclick");
-                    }
-                    // выключаем тэги в постах
-                    for (let i of document.getElementsByClassName("inner_topic")) {
-                        i.classList.add('inner_topic_inact');
-                        i.removeAttribute("onclick");
-                    }
-                    // деактивируем кружок выбранного типа
-                    var seltype = document.getElementsByClassName("section_selected")[0];
-                    if (!(seltype === undefined && typeof prevtype === "undefined")) {
-                        // если было что-то выбрано, мы выключаем ему выделение
-                        seltype.classList.add('section_suspended');
-                    }
-
-                } else {
-                    // включаем все иконки типов обратно
-                    for (let i of document.getElementsByClassName("section_icon")) {
-                        i.classList.remove('section_icon_inactive');
-                    }
-                    // включаем обратно функции у всех переключателей типов
-                    for (let i of document.getElementsByClassName("section")) {
-                        i.setAttribute("onclick", "display_type(event)");
-                    }
-                    // включаем обратно цвет и функции у всех переключателей тем
-                    for (let i of document.getElementsByClassName("rc_topic")) {
-                        i.classList.remove('rc_inactive');
-                        if (!(i.classList.contains('rc_empty'))) {
-                            i.setAttribute("onclick", "display_topic(event)");
-                        }
-                    }
-                    // включаем тэги в постах
-                    for (let i of document.getElementsByClassName("inner_topic")) {
-                        i.classList.remove('inner_topic_inact');
+                // включаем обратно функции у всех переключателей типов
+                for (let i of document.getElementsByClassName("section")) {
+                    i.setAttribute("onclick", "display_type(event)");
+                }
+                // включаем обратно цвет и функции у всех переключателей тем
+                for (let i of document.getElementsByClassName("rc_topic")) {
+                    i.classList.remove('rc_inactive');
+                    if (!(i.classList.contains('rc_empty'))) {
                         i.setAttribute("onclick", "display_topic(event)");
                     }
-                    // активируем кружок выбранного типа
-                    var seltype = document.getElementsByClassName("section_selected")[0];
-                    if (!(seltype === undefined && typeof prevtype === "undefined")) {
-                        // если было что-то выбрано, мы выключаем ему выделение
-                        seltype.classList.remove('section_suspended');
+                }
+                // включаем тэги в постах
+                for (let i of document.getElementsByClassName("inner_topic")) {
+                    i.classList.remove('inner_topic_inact');
+                    i.setAttribute("onclick", "display_topic(event)");
+                }
+                // активируем кружок выбранного типа
+                var seltype = document.getElementsByClassName("section_selected")[0];
+                if (!(seltype === undefined && typeof prevtype === "undefined")) {
+                    // если было что-то выбрано, мы выключаем ему выделение
+                    seltype.classList.remove('section_suspended');
+                }
+            }
+        }
+
+        /*************************/
+        /* Aux functions */
+        /*************************/
+
+        function ajax(type, address, success, error, cleanup=function(){}, post_data=null) {
+            let httpRequest = new XMLHttpRequest(); 
+            // we need let for multiple ajax calls to read onreadystatechange correctly
+            if (!httpRequest) {
+                alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
+                error(null);
+                cleanup();
+                return false;
+            }
+            httpRequest.open(type, address);
+            httpRequest.onreadystatechange = function() {
+                if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                    if (httpRequest.status === 200) {
+                        success(httpRequest.responseText);
+                        cleanup();
+                    } else {
+                        error(httpRequest.status);
+                        cleanup();
                     }
                 }
+            };
+            if (type == 'GET') {
+                httpRequest.send();
+            } else if (type == 'POST') {
+                httpRequest.send(post_data);
+            } else {
+                alert('Неизвестный тип запроса');
+                error();
+                cleanup();
+                return false;
             }
+        }
 
-            /*************************/
-            /* Aux functions */
-            /*************************/
+        function findAncestor(el, cls) {
+            // returns first ancestor with a certain class
+            while ((el = el.parentElement) && !el.classList.contains(cls));
+            return el;
+        }
 
-            function ajax(type, address, success, error, cleanup=function(){}, post_data=null) {
-                let httpRequest = new XMLHttpRequest(); 
-                // we need let for multiple ajax calls to read onreadystatechange correctly
-                if (!httpRequest) {
-                    alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-                    error(null);
-                    cleanup();
-                    return false;
-                }
-                httpRequest.open(type, address);
-                httpRequest.onreadystatechange = function() {
-                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                        if (httpRequest.status === 200) {
-                            success(httpRequest.responseText);
-                            cleanup();
-                        } else {
-                            error(httpRequest.status);
-                            cleanup();
-                        }
-                    }
-                };
-                if (type == 'GET') {
-                    httpRequest.send();
-                } else if (type == 'POST') {
-                    httpRequest.send(post_data);
-                } else {
-                    alert('Неизвестный тип запроса');
-                    error();
-                    cleanup();
-                    return false;
-                }
+        function insertAfter(newNode, referenceNode) {
+            // inserts new node after a referenceNode
+            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+        }
+
+        function getFirstChild(el){
+            var firstChild = el.firstChild;
+            while (firstChild != null && firstChild.nodeType != 1) { // skip TextNodes, comments etc.
+                firstChild = firstChild.nextSibling;
             }
+            return firstChild;
+        }
 
-            function findAncestor(el, cls) {
-                // returns first ancestor with a certain class
-                while ((el = el.parentElement) && !el.classList.contains(cls));
-                return el;
-            }
+        function elementFromText(text){
+            var wrapper= document.createElement('div');
+            wrapper.innerHTML = text;
+            return getFirstChild(wrapper);
+        }
 
-            function insertAfter(newNode, referenceNode) {
-                // inserts new node after a referenceNode
-                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-            }
+    </script>
+{% endblock %}
 
-            function getFirstChild(el){
-                var firstChild = el.firstChild;
-                while (firstChild != null && firstChild.nodeType != 1) { // skip TextNodes, comments etc.
-                    firstChild = firstChild.nextSibling;
-                }
-                return firstChild;
-            }
-
-            function elementFromText(text){
-                var wrapper= document.createElement('div');
-                wrapper.innerHTML = text;
-                return getFirstChild(wrapper);
-            }
-
-        </script>
-
-        <div id="main">
-            <div id="leftcol">
-                <div class="todo">
-                    <div class="todo_title">Намерения</div>
-                    <div class="intent_showall_container">
-                        <input type="checkbox" class="intent_showall_checkbox" id="intent_showall" onchange="intent_load(this.checked)">
-                        <label class="intent_showall_label" for="intent_showall">Показать всё</label>
-                    </div>
-                    <div id="todo_content">
-                        {% include "todo.html" %}
-                    </div>
+{% block content %}
+    <div id="main">
+        <div id="leftcol">
+            <div class="todo">
+                <div class="todo_title">Намерения</div>
+                <div class="intent_showall_container">
+                    <input type="checkbox" class="intent_showall_checkbox" id="intent_showall" onchange="intent_load(this.checked)">
+                    <label class="intent_showall_label" for="intent_showall">Показать всё</label>
                 </div>
-            </div>
-
-            <div id="maincol">
-
-                <div class="sections">
-                    <input id="current_type" type="hidden" value="all">
-                    <div class="section" id="switch_type_note" onclick="display_type(event)">
-                        <div class="section_icon note" title="Показать только заметки"></div>
-                    </div>
-                    <div class="section" id="switch_type_diary" onclick="display_type(event)">
-                        <div class="section_icon diary" title="Показать только дневник"></div>
-                    </div>
-                    <div class="section" id="switch_type_draft" onclick="display_type(event)">
-                        <div class="section_icon draft" title="Показать только черновики"></div>
-                    </div>
-                    <div class="section" id="switch_type_people" onclick="display_type(event)">
-                        <div class="section_icon people" title="Показать только людей"></div>
-                    </div>
-                    <div class="section" id="switch_type_fun" onclick="display_type(event)">
-                        <div class="section_icon fun" title="Показать только смешное"></div>
-                    </div>
-                </div>
-            <!-- "new post" window -->
-                <div class="post" id="00000000-0000-0000-0000-000000000000">
-                    <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
-                        <input class="uid_field" type="hidden" name="uid" value="00000000-0000-0000-0000-000000000000">
-                        <div class="star np np_star np_hidden" title="Отметить запись как важную" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
-
-                        <div class="select-sim hidden" id="select-notetype">
-                          <div class="options">
-                            <div class="option">
-                              <input type="radio" name="notetype" value="note" id="note"/>
-                              <label for="note">
-                                <img src= {{url_for('main.static', filename='img/note_small.png')}}/>
-                              </label>
-                            </div>
-                            <div class="option">
-                              <input type="radio" name="notetype" value="diary" id="diary" />
-                              <label for="diary">
-                                <img src= {{url_for('main.static', filename='img/diary_small.png')}}/>
-                              </label>
-                            </div>
-                            <div class="option">
-                              <input type="radio" name="notetype" value="draft" id="draft" checked />
-                              <label for="draft">
-                                <img src= {{url_for('main.static', filename='img/draft_small.png')}}/>
-                              </label>
-                            </div>
-                            <div class="option">
-                              <input type="radio" name="notetype" value="people" id="people" />
-                              <label for="people">
-                                <img src= {{url_for('main.static', filename='img/people_small.png')}}/>
-                              </label>
-                            </div>
-                            <div class="option">
-                              <input type="radio" name="notetype" value="fun" id="fun" />
-                              <label for="fun">
-                                <img src= {{url_for('main.static', filename='img/fun_small.png')}}/>
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <input class="star_field" type="hidden" name="importance" value="false">
-                        <div class="posticon deletepost np np_delete np_hidden" title="Удалить запись" onclick="clearNewPost()"></div>
-                        <div class="posticon savepost np np_save np_hidden" title="Сохранить запись" onclick="addPost()"></div>
-                        <div class="np title np_title np_hidden" title="{{now.strftime("%d.%m.%Y %H:%M")}}">{{ now.strftime('%d.%m.%Y') }}</div>
-                        <div class="smallicon extlink np np_source_icon np_hidden" title="Основной источник"></div>
-                        <input class="inputfield np np_source np_hidden" name="source" type="text" onfocus="showForm()">
-                        <div class="smallicon topic np np_topic_icon np_hidden" title="Темы"></div>
-                        <input class="inputfield np np_topic np_hidden" name="topic" type="text" onfocus="showForm()">
-                        <textarea class="rich-text-editor" style="margin-bottom: 0px; margin-top: 0px;" name="maintext" onfocus="showForm()"></textarea>
-                    </form>
-                </div>
-
-                <!-- template for "edit post" mode -->
-                <div class="post" id="00000000-0000-0000-0000-000000000001" style="display: none;">
-                    <form action="." method="POST" style="margin-bottom: 0px;">
-                        <input class="uid_field" type="hidden" name="uid">
-                        <div class="star"></div>
-
-                        <div class="select-sim" id="select-notetype-00000000-0000-0000-0000-000000000001">
-                          <div class="options">
-                            <div class="option">
-                              <input type="radio" name="notetype" value="note" id="note-"/>
-                              <label for="note-">
-                                <img src= {{url_for('main.static', filename='img/note_small.png')}}/>
-                              </label>
-                            </div>
-                            <div class="option">
-                              <input type="radio" name="notetype" value="diary" id="diary-" />
-                              <label for="diary-">
-                                <img src= {{url_for('main.static', filename='img/diary_small.png')}}/>
-                              </label>
-                            </div>
-                            <div class="option">
-                              <input type="radio" name="notetype" value="draft" id="draft-" />
-                              <label for="draft-">
-                                <img src= {{url_for('main.static', filename='img/draft_small.png')}}/>
-                              </label>
-                            </div>
-                            <div class="option">
-                              <input type="radio" name="notetype" value="people" id="people-" />
-                              <label for="people-">
-                                <img src= {{url_for('main.static', filename='img/people_small.png')}}/>
-                              </label>
-                            </div>
-                            <div class="option">
-                              <input type="radio" name="notetype" value="fun" id="fun-" />
-                              <label for="fun-">
-                                <img src= {{url_for('main.static', filename='img/fun_small.png')}}/>
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-
-                        <input class="star_field" type="hidden" name="importance">
-                        <div class="posticon canceledit" title="Отменить редактирование"></div>
-                        <div class="posticon savepost" title="Сохранить запись"></div>
-                        <div class="title"></div>
-                        <div class="smallicon extlink" title="Основной источник"></div>
-                        <input class="inputfield inputsrc" name="source" type="text">
-                        <div class="smallicon topic" title="Темы" ></div>
-                        <input class="inputfield inputtopic" name="topic" type="text">
-                        <textarea name="maintext" placeholder="Место для новой записи"></textarea>
-                    </form>
-                </div>
-
-                <div id="notes_content">
-                <!-- actual posts -->
-                    {% include "notes.html" %}
-                </div>
-
-            </div>
-
-            <div id="rightcol">
-                <div class="logout"><a href="https://{{config.SERVER_NAME}}/logout">Выйти</a></div>
-                <!-- <div class="searchbar"></div> -->
-                <div id = "topiclist">
-                    {% include "topics.html" %}
+                <div id="todo_content">
+                    {% include "todo.html" %}
                 </div>
             </div>
         </div>
 
-    </body>
-</html>
+        <div id="maincol">
+
+            <div class="sections">
+                <input id="current_type" type="hidden" value="all">
+                <div class="section" id="switch_type_note" onclick="display_type(event)">
+                    <div class="section_icon note" title="Показать только заметки"></div>
+                </div>
+                <div class="section" id="switch_type_diary" onclick="display_type(event)">
+                    <div class="section_icon diary" title="Показать только дневник"></div>
+                </div>
+                <div class="section" id="switch_type_draft" onclick="display_type(event)">
+                    <div class="section_icon draft" title="Показать только черновики"></div>
+                </div>
+                <div class="section" id="switch_type_people" onclick="display_type(event)">
+                    <div class="section_icon people" title="Показать только людей"></div>
+                </div>
+                <div class="section" id="switch_type_fun" onclick="display_type(event)">
+                    <div class="section_icon fun" title="Показать только смешное"></div>
+                </div>
+            </div>
+        <!-- "new post" window -->
+            <div class="post" id="00000000-0000-0000-0000-000000000000">
+                <form action="." method="POST" style="margin-bottom: 0px;" id="post_form">
+                    <input class="uid_field" type="hidden" name="uid" value="00000000-0000-0000-0000-000000000000">
+                    <div class="star np np_star np_hidden" title="Отметить запись как важную" onclick="np_toggleImportant('00000000-0000-0000-0000-000000000000')"></div>
+
+                    <div class="select-sim hidden" id="select-notetype">
+                      <div class="options">
+                        <div class="option">
+                          <input type="radio" name="notetype" value="note" id="note"/>
+                          <label for="note">
+                            <img src= {{url_for('main.static', filename='img/note_small.png')}}/>
+                          </label>
+                        </div>
+                        <div class="option">
+                          <input type="radio" name="notetype" value="diary" id="diary" />
+                          <label for="diary">
+                            <img src= {{url_for('main.static', filename='img/diary_small.png')}}/>
+                          </label>
+                        </div>
+                        <div class="option">
+                          <input type="radio" name="notetype" value="draft" id="draft" checked />
+                          <label for="draft">
+                            <img src= {{url_for('main.static', filename='img/draft_small.png')}}/>
+                          </label>
+                        </div>
+                        <div class="option">
+                          <input type="radio" name="notetype" value="people" id="people" />
+                          <label for="people">
+                            <img src= {{url_for('main.static', filename='img/people_small.png')}}/>
+                          </label>
+                        </div>
+                        <div class="option">
+                          <input type="radio" name="notetype" value="fun" id="fun" />
+                          <label for="fun">
+                            <img src= {{url_for('main.static', filename='img/fun_small.png')}}/>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <input class="star_field" type="hidden" name="importance" value="false">
+                    <div class="posticon deletepost np np_delete np_hidden" title="Удалить запись" onclick="clearNewPost()"></div>
+                    <div class="posticon savepost np np_save np_hidden" title="Сохранить запись" onclick="addPost()"></div>
+                    <div class="np title np_title np_hidden" title="{{now.strftime("%d.%m.%Y %H:%M")}}">{{ now.strftime('%d.%m.%Y') }}</div>
+                    <div class="smallicon extlink np np_source_icon np_hidden" title="Основной источник"></div>
+                    <input class="inputfield np np_source np_hidden" name="source" type="text" onfocus="showForm()">
+                    <div class="smallicon topic np np_topic_icon np_hidden" title="Темы"></div>
+                    <input class="inputfield np np_topic np_hidden" name="topic" type="text" onfocus="showForm()">
+                    <textarea class="rich-text-editor" style="margin-bottom: 0px; margin-top: 0px;" name="maintext" onfocus="showForm()"></textarea>
+                </form>
+            </div>
+
+            <!-- template for "edit post" mode -->
+            <div class="post" id="00000000-0000-0000-0000-000000000001" style="display: none;">
+                <form action="." method="POST" style="margin-bottom: 0px;">
+                    <input class="uid_field" type="hidden" name="uid">
+                    <div class="star"></div>
+
+                    <div class="select-sim" id="select-notetype-00000000-0000-0000-0000-000000000001">
+                      <div class="options">
+                        <div class="option">
+                          <input type="radio" name="notetype" value="note" id="note-"/>
+                          <label for="note-">
+                            <img src= {{url_for('main.static', filename='img/note_small.png')}}/>
+                          </label>
+                        </div>
+                        <div class="option">
+                          <input type="radio" name="notetype" value="diary" id="diary-" />
+                          <label for="diary-">
+                            <img src= {{url_for('main.static', filename='img/diary_small.png')}}/>
+                          </label>
+                        </div>
+                        <div class="option">
+                          <input type="radio" name="notetype" value="draft" id="draft-" />
+                          <label for="draft-">
+                            <img src= {{url_for('main.static', filename='img/draft_small.png')}}/>
+                          </label>
+                        </div>
+                        <div class="option">
+                          <input type="radio" name="notetype" value="people" id="people-" />
+                          <label for="people-">
+                            <img src= {{url_for('main.static', filename='img/people_small.png')}}/>
+                          </label>
+                        </div>
+                        <div class="option">
+                          <input type="radio" name="notetype" value="fun" id="fun-" />
+                          <label for="fun-">
+                            <img src= {{url_for('main.static', filename='img/fun_small.png')}}/>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <input class="star_field" type="hidden" name="importance">
+                    <div class="posticon canceledit" title="Отменить редактирование"></div>
+                    <div class="posticon savepost" title="Сохранить запись"></div>
+                    <div class="title"></div>
+                    <div class="smallicon extlink" title="Основной источник"></div>
+                    <input class="inputfield inputsrc" name="source" type="text">
+                    <div class="smallicon topic" title="Темы" ></div>
+                    <input class="inputfield inputtopic" name="topic" type="text">
+                    <textarea name="maintext" placeholder="Место для новой записи"></textarea>
+                </form>
+            </div>
+
+            <div id="notes_content">
+            <!-- actual posts -->
+                {% include "notes.html" %}
+            </div>
+
+        </div>
+
+        <div id="rightcol">
+            <!-- <div class="searchbar"></div> -->
+            <div id = "topiclist">
+                {% include "topics.html" %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

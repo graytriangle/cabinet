@@ -1,26 +1,28 @@
-<html>
-    <head>
-    <title>Void media</title>
-     <meta charset="UTF-8"> 
-        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/login.css')}}>
-        <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/error.css')}}>
-    </head>
-    <body>
-        <div class="logincontainer">
+{% extends "wrapper.html" %}
 
-            <div class="loginform">
-                <div>
-                    <p class="title">void media</p>
-                    <p class="code">{{code}}</p>
-                    <p class="message">{{message}}</p>
-                </div>
+{% block title %}
+    Ошибка!
+{% endblock %}
 
+{% block meta %}
+    <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/login.css')}}>
+    <link rel='stylesheet' type='text/css' href= {{url_for('static', filename='css/error.css')}}>
+{% endblock %}
+
+{% block content %}
+    <div class="logincontainer">
+
+        <div class="loginform">
+            <div>
+                <p class="title">void media</p>
+                <p class="code">{{code}}</p>
+                <p class="message">{{message}}</p>
             </div>
-
-            <div class="linkdiv">
-                <a href="{{origin}}">Вернуться</a>
-            </div>
-
         </div>
-    </body>
-</html>
+
+        <div class="linkdiv">
+            <a href="{{origin}}">Вернуться</a>
+        </div>
+
+    </div>
+{% endblock %}

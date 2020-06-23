@@ -26,7 +26,6 @@ app.register_blueprint(i.intentions, url_prefix='/')
 app.register_blueprint(n.notes, url_prefix='/')
 app.register_blueprint(t.topics, url_prefix='/')
 app.register_blueprint(atw.atw, url_prefix='/')
-app.config.from_pyfile('cabinet.cfg')
 
 @app.context_processor
 def inject_now():
@@ -124,7 +123,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect('/')
+    return redirect(request.referrer)
 
 # auxiliary functions
 

@@ -1,0 +1,38 @@
+.logindiv {
+	display: flex;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-right: 30px;
+	padding-left: 30px;
+	border-bottom-color: rgb(166, 202, 240);
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	background-color: #f7fbff;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 10pt;
+	font-weight: bold;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+} 
+
+.logindiv a {
+	align-self: center;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    color: #606080;
+    text-decoration: none;
+}
+
+.logindiv p {
+	align-self: center;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.homelink {
+	font-size: 14pt;
+}
+
+.filler {
+	flex: auto;
+}
+

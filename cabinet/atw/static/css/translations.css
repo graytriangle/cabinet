@@ -81,6 +81,7 @@ a.addlink:active {
 }
 
 .navlink {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
     text-decoration: none;
     flex-grow: 1;
     padding: 5 0 5 5;

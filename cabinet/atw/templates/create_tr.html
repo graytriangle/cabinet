@@ -1,259 +1,260 @@
-<html>
-    <head>
-    <title>Translations</title>
-     <meta charset="UTF-8"> 
-        <style>
-        </style>
-        <!-- <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/translations.css')}}"> -->
-        <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/create_tr.css')}}">
-        <script type="text/javascript" src={{url_for('atw.static', filename='js/translations.js')}}></script>
-        <script type="text/javascript" src={{url_for('atw.static', filename='richtext/rich-text-editor.js')}}></script>
-        <link rel="stylesheet" type="text/css" href={{url_for('atw.static', filename='richtext/rich-text-editor.css')}}>
-    </head>
-    <body>
-        <script>
+{% extends "wrapper.html" %}
 
-            richtext.richTextStart();
+{% block title %}
+    Almost the word
+{% endblock %}
 
-            var footnotecounter = 0; // needed for unique numeration of refs
-            var current_selection = null; // for saving and restoring contenteditable selection
+{% block meta %}
+    <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/create_tr.css')}}">
+    <script type="text/javascript" src={{url_for('atw.static', filename='js/translations.js')}}></script>
+    <script type="text/javascript" src={{url_for('atw.static', filename='richtext/rich-text-editor.js')}}></script>
+    <link rel="stylesheet" type="text/css" href={{url_for('atw.static', filename='richtext/rich-text-editor.css')}}>
+{% endblock %}
 
-            // When the user clicks on <span> (x), close the modal
-            function closeModal() {
-                var modal = document.getElementById("addref");
+{% block script %}
+    <script>
+
+        richtext.richTextStart();
+
+        var footnotecounter = 0; // needed for unique numeration of refs
+        var current_selection = null; // for saving and restoring contenteditable selection
+
+        // When the user clicks on <span> (x), close the modal
+        function closeModal() {
+            var modal = document.getElementById("addref");
+            modal.style.display = "none";
+            document.getElementById("reftext").value = '';
+
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            var modal = document.getElementById("addref");
+            if (event.target == modal) {
                 modal.style.display = "none";
                 document.getElementById("reftext").value = '';
-
             }
+        } 
 
-            // When the user clicks anywhere outside of the modal, close it
-            window.onclick = function(event) {
-                var modal = document.getElementById("addref");
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                    document.getElementById("reftext").value = '';
-                }
-            } 
+        document.addEventListener('rteReadyEvent', function() {
+            // adding "add-ref" button to translation editor
+            var editor = document.getElementById("translation").getElementsByClassName("rich-text-editor")[0];
+            var num = editor.id.substring(editor.id.length - 1);
+            //
+            var tmpimg = '<img class="rte-button" onclick="createRef(event, \'add\')" id="createRef' + num + '" src="{{url_for('atw.static', filename='img/richtext/note.png')}}" title="Добавить сноску">';
+            editor.getElementsByClassName("rte-tools")[0].append(htmlToElement(tmpimg));
 
-            document.addEventListener('rteReadyEvent', function() {
-                // adding "add-ref" button to translation editor
-                var editor = document.getElementById("translation").getElementsByClassName("rich-text-editor")[0];
-                var num = editor.id.substring(editor.id.length - 1);
-                //
-                var tmpimg = '<img class="rte-button" onclick="createRef(event, \'add\')" id="createRef' + num + '" src="{{url_for('atw.static', filename='img/richtext/note.png')}}" title="Добавить сноску">';
-                editor.getElementsByClassName("rte-tools")[0].append(htmlToElement(tmpimg));
+            {% if content %}
+                // put pre-loaded content of translation into contenteditables
+                var tmptrans = document.getElementById("tmp-trans");
+                var tmporig = document.getElementById("tmp-orig");
+                document.getElementById("translation").getElementsByClassName("rte-editbox")[0].innerHTML = tmptrans.innerHTML;
+                document.getElementsByName("translation")[0].value = tmptrans.innerHTML;
+                document.getElementById("original").getElementsByClassName("rte-editbox")[0].innerHTML = tmporig.innerHTML;
+                document.getElementsByName("original")[0].value = tmporig.innerHTML;
 
-                {% if content %}
-                    // put pre-loaded content of translation into contenteditables
-                    var tmptrans = document.getElementById("tmp-trans");
-                    var tmporig = document.getElementById("tmp-orig");
-                    document.getElementById("translation").getElementsByClassName("rte-editbox")[0].innerHTML = tmptrans.innerHTML;
-                    document.getElementsByName("translation")[0].value = tmptrans.innerHTML;
-                    document.getElementById("original").getElementsByClassName("rte-editbox")[0].innerHTML = tmporig.innerHTML;
-                    document.getElementsByName("original")[0].value = tmporig.innerHTML;
-
-                    // add edit/del buttons to every footnote
-                    var copyref = document.getElementById("translation_refs");
-                    if (copyref.getElementsByTagName("li").length > 0) {
-                        for (let i of copyref.getElementsByTagName("li")) {
-                            let delimg = elementFromText("<img class=\"deleteref\" onclick=\"deleteRef(event)\" src=\"{{url_for('atw.static', filename='img/delete_small.png')}}\" title=\"Удалить сноску\">");
-                            let editimg = elementFromText("<img class=\"editref\" onclick=\"createRef(event, \'edit\')\" src=\"{{url_for('atw.static', filename='img/edit_small.png')}}\" title=\"Редактировать сноску\">");
-                            i.insertBefore(delimg, i.getElementsByTagName("span")[0]);
-                            i.insertBefore(editimg, i.getElementsByTagName("span")[0]);
-                        }
+                // add edit/del buttons to every footnote
+                var copyref = document.getElementById("translation_refs");
+                if (copyref.getElementsByTagName("li").length > 0) {
+                    for (let i of copyref.getElementsByTagName("li")) {
+                        let delimg = elementFromText("<img class=\"deleteref\" onclick=\"deleteRef(event)\" src=\"{{url_for('atw.static', filename='img/delete_small.png')}}\" title=\"Удалить сноску\">");
+                        let editimg = elementFromText("<img class=\"editref\" onclick=\"createRef(event, \'edit\')\" src=\"{{url_for('atw.static', filename='img/edit_small.png')}}\" title=\"Редактировать сноску\">");
+                        i.insertBefore(delimg, i.getElementsByTagName("span")[0]);
+                        i.insertBefore(editimg, i.getElementsByTagName("span")[0]);
                     }
-
-                {% endif %}
-
-            })
-
-            function createRef(event, mode) {
-                // showing addref/editref modal window
-                if (mode == 'add') {
-                    // remember the caret position in the editor window
-                    var editor = event.target.closest('.rich-text-editor').getElementsByClassName('rte-editbox')[0];
-                    current_selection = selection_save(editor);
-                    // show modal window for adding new ref
-                    document.getElementById("addref").style.display = "block";
-                    // set necessary saving function
-                    document.getElementById("refsubmit").setAttribute('onclick', 'submitRef()')
-                } else if (mode == 'edit') {
-                    // on edit omit the caret part and use a different function
-                    document.getElementById("addref").style.display = "block";
-                    document.getElementById("refsubmit").onclick = function(){saveRef(event.target.parentNode)};
-                    document.getElementById("reftext").value = event.target.parentNode.getElementsByTagName("span")[0].innerHTML.replace(/<br>/g, '\n');
-                }
-            }
-
-            function showRef(event) {
-                // show the tooltip when hovering over the little reflink
-                var anchorx = event.target.getBoundingClientRect().left;
-                var anchory = event.target.getBoundingClientRect().top;
-                var anchorw = event.target.clientWidth;
-                var tooltip = document.getElementsByClassName("tooltip")[0];
-                var text = document.getElementById(event.target.getAttribute("href").substring(1)).getElementsByTagName("span")[0].innerHTML;
-                tooltip.innerHTML = text;
-                // tooltip.removeChild(tooltip.getElementsByTagName("a")[0]);
-                tooltip.style.display = 'block';
-                tooltip.style.top = anchory - tooltip.clientHeight - 9;
-                tooltip.style.left = anchorx - 30;
-                tooltip.style.opacity = 1;
-            }
-
-            function hideRef(event) {
-                // hiding the tooltip, pt 1: gradual fade out
-                var tooltip = document.getElementsByClassName("tooltip")[0];
-                tooltip.style.opacity = 0;
-            }
-
-            function hideRefFinally(event) {
-                // hiding the tooltip, pt 2: set display to none so that div doesn't interfere with other elements
-                if (event.target.style.opacity == 0) {
-                    event.target.style.display = 'none';
-                }
-            }
-
-            function deleteRef(event) {
-                // removing ref and reflink
-                var li = event.target.parentNode;
-                var link = document.getElementById(li.getElementsByTagName("a")[0].getAttribute("href").substring(1));
-                li.parentNode.removeChild(li);
-                link.parentNode.removeChild(link);
-            }
-
-            function submitRef() {
-                // inserting actual ref on button click in the modal
-                document.getElementById("addref").style.display = "none";
-                var tmptext = document.getElementById("reftext").value;
-                tmptext = tmptext.replace(/[\n\r]/g, '<br>');
-                var tmpeditor = document.getElementById("translation").getElementsByClassName("rte-editbox")[0];
-                tmpeditor.focus();
-                selection_restore(tmpeditor, current_selection);
-
-                var tmplink = elementFromText('<a class="footnote" contenteditable="false" href="#' + footnotecounter + '-link" id="' + footnotecounter + '-ref" name="' + footnotecounter + '-ref" onmouseover="showRef(event)" onmouseout="hideRef(event)"></a>');
-
-                var sel, range;
-                if (window.getSelection && (sel = window.getSelection()).rangeCount) {
-                    range = sel.getRangeAt(0);
-                    range.collapse(true);
-                    range.insertNode(tmplink);
-                    // Move the caret immediately after the inserted span
-                    range.setStartAfter(tmplink);
-                    range.collapse(true);
-                    sel.removeAllRanges();
-                    sel.addRange(range);
                 }
 
-                var tmpref = '<li id="' + footnotecounter + '-link" name="' + footnotecounter + '-link"><img class="deleteref" onclick="deleteRef(event)" src="{{url_for('atw.static', filename='img/delete_small.png')}}" title="Удалить сноску"><img class="editref" onclick="createRef(event, \'edit\')" src="{{url_for('atw.static', filename='img/edit_small.png')}}" title="Редактировать сноску"><span>' + tmptext + '</span><a class="backarrow" href="#' + footnotecounter + '-ref">↩</a></li>';
-                var footnote_parent = document.getElementById("translation_refs");
-                var list = footnote_parent.getElementsByTagName("ol")[0];
-                list.innerHTML = list.innerHTML + tmpref;
-                var newlist = document.createElement('ol');
-                var refs = document.getElementsByClassName("footnote");
-                for (let i = 1; i<=refs.length; i++){
-                    refs[i-1].textContent = '[' + i + ']'; // reset numbering on ref link
-                    tmplink = document.getElementById(refs[i-1].getAttribute("href").substring(1)); // re-add actual footnotes in new order
-                    newlist.appendChild(tmplink);
-                }
-                footnote_parent.removeChild(list);
-                footnote_parent.appendChild(newlist);
-                footnotecounter += 1;
-                document.getElementById("reftext").value = '';
+            {% endif %}
+
+        })
+
+        function createRef(event, mode) {
+            // showing addref/editref modal window
+            if (mode == 'add') {
+                // remember the caret position in the editor window
+                var editor = event.target.closest('.rich-text-editor').getElementsByClassName('rte-editbox')[0];
+                current_selection = selection_save(editor);
+                // show modal window for adding new ref
+                document.getElementById("addref").style.display = "block";
+                // set necessary saving function
+                document.getElementById("refsubmit").setAttribute('onclick', 'submitRef()')
+            } else if (mode == 'edit') {
+                // on edit omit the caret part and use a different function
+                document.getElementById("addref").style.display = "block";
+                document.getElementById("refsubmit").onclick = function(){saveRef(event.target.parentNode)};
+                document.getElementById("reftext").value = event.target.parentNode.getElementsByTagName("span")[0].innerHTML.replace(/<br>/g, '\n');
+            }
+        }
+
+        function showRef(event) {
+            // show the tooltip when hovering over the little reflink
+            var anchorx = event.target.getBoundingClientRect().left;
+            var anchory = event.target.getBoundingClientRect().top;
+            var anchorw = event.target.clientWidth;
+            var tooltip = document.getElementsByClassName("tooltip")[0];
+            var text = document.getElementById(event.target.getAttribute("href").substring(1)).getElementsByTagName("span")[0].innerHTML;
+            tooltip.innerHTML = text;
+            // tooltip.removeChild(tooltip.getElementsByTagName("a")[0]);
+            tooltip.style.display = 'block';
+            tooltip.style.top = anchory - tooltip.clientHeight - 9;
+            tooltip.style.left = anchorx - 30;
+            tooltip.style.opacity = 1;
+        }
+
+        function hideRef(event) {
+            // hiding the tooltip, pt 1: gradual fade out
+            var tooltip = document.getElementsByClassName("tooltip")[0];
+            tooltip.style.opacity = 0;
+        }
+
+        function hideRefFinally(event) {
+            // hiding the tooltip, pt 2: set display to none so that div doesn't interfere with other elements
+            if (event.target.style.opacity == 0) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        function deleteRef(event) {
+            // removing ref and reflink
+            var li = event.target.parentNode;
+            var link = document.getElementById(li.getElementsByTagName("a")[0].getAttribute("href").substring(1));
+            li.parentNode.removeChild(li);
+            link.parentNode.removeChild(link);
+        }
+
+        function submitRef() {
+            // inserting actual ref on button click in the modal
+            document.getElementById("addref").style.display = "none";
+            var tmptext = document.getElementById("reftext").value;
+            tmptext = tmptext.replace(/[\n\r]/g, '<br>');
+            var tmpeditor = document.getElementById("translation").getElementsByClassName("rte-editbox")[0];
+            tmpeditor.focus();
+            selection_restore(tmpeditor, current_selection);
+
+            var tmplink = elementFromText('<a class="footnote" contenteditable="false" href="#' + footnotecounter + '-link" id="' + footnotecounter + '-ref" name="' + footnotecounter + '-ref" onmouseover="showRef(event)" onmouseout="hideRef(event)"></a>');
+
+            var sel, range;
+            if (window.getSelection && (sel = window.getSelection()).rangeCount) {
+                range = sel.getRangeAt(0);
+                range.collapse(true);
+                range.insertNode(tmplink);
+                // Move the caret immediately after the inserted span
+                range.setStartAfter(tmplink);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
             }
 
-            function saveRef(target) {
-                // modifying the existing ref after editing it in the modal (on button click)
-                document.getElementById("addref").style.display = "none";
-                var textblock = document.getElementById("reftext");
-                var tmptext = textblock.value;
-                tmptext = tmptext.replace(/[\n\r]/g, '<br>');
-                var spn = document.createElement('span');
-                spn.innerHTML = tmptext;
-                target.replaceChild(spn, target.getElementsByTagName("span")[0]);
-                textblock.value = '';
+            var tmpref = '<li id="' + footnotecounter + '-link" name="' + footnotecounter + '-link"><img class="deleteref" onclick="deleteRef(event)" src="{{url_for('atw.static', filename='img/delete_small.png')}}" title="Удалить сноску"><img class="editref" onclick="createRef(event, \'edit\')" src="{{url_for('atw.static', filename='img/edit_small.png')}}" title="Редактировать сноску"><span>' + tmptext + '</span><a class="backarrow" href="#' + footnotecounter + '-ref">↩</a></li>';
+            var footnote_parent = document.getElementById("translation_refs");
+            var list = footnote_parent.getElementsByTagName("ol")[0];
+            list.innerHTML = list.innerHTML + tmpref;
+            var newlist = document.createElement('ol');
+            var refs = document.getElementsByClassName("footnote");
+            for (let i = 1; i<=refs.length; i++){
+                refs[i-1].textContent = '[' + i + ']'; // reset numbering on ref link
+                tmplink = document.getElementById(refs[i-1].getAttribute("href").substring(1)); // re-add actual footnotes in new order
+                newlist.appendChild(tmplink);
             }
+            footnote_parent.removeChild(list);
+            footnote_parent.appendChild(newlist);
+            footnotecounter += 1;
+            document.getElementById("reftext").value = '';
+        }
 
-            function submitTranslation() {
-                // let's submit our translation! executes on button click
-                var engval = document.getElementsByName("engname")[0].value;
-                var ruval = document.getElementsByName("runame")[0].value;
-                if (engval && ruval) { // titles shouldn't be empty
-                    var copyref = document.getElementById("translation_refs").cloneNode(true);
-                    if (copyref.getElementsByTagName("li").length > 0) {
-                        for (let i = copyref.getElementsByTagName("img").length - 1; i>=0; i--) {
-                            copyref.getElementsByTagName("img")[i].remove();
-                        }
-                        document.getElementById("footnotes").value = copyref.innerHTML;
+        function saveRef(target) {
+            // modifying the existing ref after editing it in the modal (on button click)
+            document.getElementById("addref").style.display = "none";
+            var textblock = document.getElementById("reftext");
+            var tmptext = textblock.value;
+            tmptext = tmptext.replace(/[\n\r]/g, '<br>');
+            var spn = document.createElement('span');
+            spn.innerHTML = tmptext;
+            target.replaceChild(spn, target.getElementsByTagName("span")[0]);
+            textblock.value = '';
+        }
+
+        function submitTranslation() {
+            // let's submit our translation! executes on button click
+            var engval = document.getElementsByName("engname")[0].value;
+            var ruval = document.getElementsByName("runame")[0].value;
+            if (engval && ruval) { // titles shouldn't be empty
+                var copyref = document.getElementById("translation_refs").cloneNode(true);
+                if (copyref.getElementsByTagName("li").length > 0) {
+                    for (let i = copyref.getElementsByTagName("img").length - 1; i>=0; i--) {
+                        copyref.getElementsByTagName("img")[i].remove();
                     }
-                    // remove highlight from lines in case it glitches
-                    // seems like it doesn't work? potential todo
-                    for (let i of document.getElementsByClassName("rich-text-editor")) {
-                        for (let j of i.getElementsByTagName("p")) {
-                            j.setAttribute("style", "");
-                        }
-                    }
-                    document.getElementsByTagName("form")[0].submit();
-                } else {
-                    alert("Заполните поля заголовков!")
+                    document.getElementById("footnotes").value = copyref.innerHTML;
                 }
+                // remove highlight from lines in case it glitches
+                // seems like it doesn't work? potential todo
+                for (let i of document.getElementsByClassName("rich-text-editor")) {
+                    for (let j of i.getElementsByTagName("p")) {
+                        j.setAttribute("style", "");
+                    }
+                }
+                document.getElementsByTagName("form")[0].submit();
+            } else {
+                alert("Заполните поля заголовков!")
             }
+        }
 
-        </script>
+    </script>
+{% endblock %}
 
-        <div id="header">
-            <p>Header</p>
-        </div>
+{% block content %}
+    <div id="header">
+        <p>Header</p>
+    </div>
 
-        <div id="mainblock">
-            <form action="/save" method="post" target="/">
-                <input type="hidden" name="uid" value="{{content.uid}}">
+    <div id="mainblock">
+        <form action="/save" method="post" target="/">
+            <input type="hidden" name="uid" value="{{content.uid}}">
 
-                <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-                    <input class="tr_title" type="text" name="engname" placeholder="Заголовок оригинала" value="{{content.engname}}">
-                    <textarea class="rich-text-editor" name="original"></textarea>
-                    <input type="button" class="savebutton" onclick="submitTranslation()" value="Сохранить перевод">
-                </div>
-
-                <div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-                    <input class="tr_title" type="text" name="runame" placeholder="Заголовок перевода" value="{{content.runame}}">
-                    <textarea class="rich-text-editor" name="translation"></textarea>
-                    <div class="refs" id="translation_refs">
-                        {% if content.footnotes %}
-                            {{content.footnotes | safe}}
-                        {% else %}
-                        <ol></ol>
-                        {% endif %} 
-                        
-                    </div>
-                </div>
-              
-                <input id="footnotes" type="hidden" name="footnotes" value="">
-
-            </form>
-
-            <!-- The Modal -->
-            <div id="addref" class="modal">
-
-              <!-- Modal content -->
-                <div class="modal-content">
-                    <span class="close" onclick="closeModal()">&times;</span>
-                    <textarea id="reftext" placeholder="Текст сноски..."></textarea>
-                    <p id="refsubmit">Сохранить</p>
-                </div>
-
+            <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+                <input class="tr_title" type="text" name="engname" placeholder="Заголовок оригинала" value="{{content.engname}}">
+                <textarea class="rich-text-editor" name="original"></textarea>
+                <input type="button" class="savebutton" onclick="submitTranslation()" value="Сохранить перевод">
             </div>
 
-            <!-- Tooltip layer -->
-            <div class="tooltip" ontransitionend="hideRefFinally(event)"></div>
+            <div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+                <input class="tr_title" type="text" name="runame" placeholder="Заголовок перевода" value="{{content.runame}}">
+                <textarea class="rich-text-editor" name="translation"></textarea>
+                <div class="refs" id="translation_refs">
+                    {% if content.footnotes %}
+                        {{content.footnotes | safe}}
+                    {% else %}
+                    <ol></ol>
+                    {% endif %} 
+                    
+                </div>
+            </div>
+          
+            <input id="footnotes" type="hidden" name="footnotes" value="">
 
-            <!-- Hidden elements to insert stuff from jinja -->
-            <!-- Needed for translation editing: first we insert content here -->
-            <!-- Then we move it into contenteditables when they've finished loading -->
-            <!-- Otherwise we have to do cumbersome quote escaping etc -->
-            <div class="hiddenaux" id="tmp-trans">{{content.translation | safe}}</div>
-            <div class="hiddenaux" id="tmp-orig">{{content.original | safe}}</div>
+        </form>
+
+        <!-- The Modal -->
+        <div id="addref" class="modal">
+
+          <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <textarea id="reftext" placeholder="Текст сноски..."></textarea>
+                <p id="refsubmit">Сохранить</p>
+            </div>
 
         </div>
 
-    </body>
-</html>
+        <!-- Tooltip layer -->
+        <div class="tooltip" ontransitionend="hideRefFinally(event)"></div>
+
+        <!-- Hidden elements to insert stuff from jinja -->
+        <!-- Needed for translation editing: first we insert content here -->
+        <!-- Then we move it into contenteditables when they've finished loading -->
+        <!-- Otherwise we have to do cumbersome quote escaping etc -->
+        <div class="hiddenaux" id="tmp-trans">{{content.translation | safe}}</div>
+        <div class="hiddenaux" id="tmp-orig">{{content.original | safe}}</div>
+
+    </div>
+{% endblock %}

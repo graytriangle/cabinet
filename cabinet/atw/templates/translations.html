@@ -1,148 +1,153 @@
-<html>
-    <head>
-    <title>Translations</title>
-     <meta charset="UTF-8"> 
-        <style>
-        </style>
-        <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/translations.css')}}">
-        <script type="text/javascript" src={{url_for('atw.static', filename='js/translations.js')}}></script>
-    </head>
-    <body onload="show_tr(undefined, '{{linkname}}')">
-        <script>
-            function goto_tr(event) {
+{% extends "wrapper.html" %}
 
-                event.preventDefault();
-                show_tr(event.target);
-                window.history.pushState("", "", event.target.getAttribute("href"));
+{% block title %}
+    Almost the word
+{% endblock %}
 
-            }
+{% block meta %}
+    <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/translations.css')}}">
+    <script type="text/javascript" src={{url_for('atw.static', filename='js/translations.js')}}></script>
+{% endblock %}
 
-            function show_tr(target, linkname) {
+{% block script %}
+    <script>
 
-                var targettr;
+        window.onload = function() {show_tr(undefined, '{{linkname}}')};
 
-                if (!(target === undefined)) {
-                    targettr = target;
-                } else if (linkname == '') {
-                    return;
-                } else {
-                    for (let i of document.getElementsByClassName("navlink")) {
-                        if (i.getAttribute("href") == "/" + linkname) {
-                            targettr = i;
-                        }
+        function goto_tr(event) {
+
+            event.preventDefault();
+            show_tr(event.target);
+            window.history.pushState("", "", event.target.getAttribute("href"));
+
+        }
+
+        function show_tr(target, linkname) {
+
+            var targettr;
+
+            if (!(target === undefined)) {
+                targettr = target;
+            } else if (linkname == '') {
+                return;
+            } else {
+                for (let i of document.getElementsByClassName("navlink")) {
+                    if (i.getAttribute("href") == "/" + linkname) {
+                        targettr = i;
                     }
                 }
-
-                var prevtr = document.getElementsByClassName("chosen")[0];
-
-                var insert_tr = function(data){
-                    var postsparent = document.getElementById("mainblock");
-                    postsparent.innerHTML = data;
-                };
-
-                if (!(prevtr === undefined && typeof prevtr === "undefined")) {
-                    // если было что-то выбрано, мы выключаем ему выделение
-                    prevtr.classList.remove('chosen');
-                }
-                // включаем подсветку кликнутому
-                targettr.classList.add('chosen');
-
-                fetch('/get' + targettr.getAttribute("href")).then(response => response.text()).then(data => insert_tr(data))
-
             }
 
+            var prevtr = document.getElementsByClassName("chosen")[0];
 
-            // three fuctions below are copied from create_tr.html
+            var insert_tr = function(data){
+                var postsparent = document.getElementById("mainblock");
+                postsparent.innerHTML = data;
+            };
 
-            function showRef(event) {
-                // show the tooltip when hovering over the little reflink
-                var anchorx = event.target.getBoundingClientRect().left;
-                var anchory = event.target.getBoundingClientRect().top;
-                var anchorw = event.target.clientWidth;
-                var tooltip = document.getElementsByClassName("tooltip")[0];
-                var text = document.getElementById(event.target.getAttribute("href").substring(1)).getElementsByTagName("span")[0].innerHTML;
-                tooltip.innerHTML = text;
-                // tooltip.removeChild(tooltip.getElementsByTagName("a")[0]);
-                tooltip.style.display = 'block';
-                tooltip.style.top = anchory - tooltip.clientHeight - 9;
-                tooltip.style.left = anchorx - 30;
-                tooltip.style.opacity = 1;
+            if (!(prevtr === undefined && typeof prevtr === "undefined")) {
+                // если было что-то выбрано, мы выключаем ему выделение
+                prevtr.classList.remove('chosen');
             }
+            // включаем подсветку кликнутому
+            targettr.classList.add('chosen');
 
-            function hideRef(event) {
-                // hiding the tooltip, pt 1: gradual fade out
-                var tooltip = document.getElementsByClassName("tooltip")[0];
-                tooltip.style.opacity = 0;
+            fetch('/get' + targettr.getAttribute("href")).then(response => response.text()).then(data => insert_tr(data))
+
+        }
+
+
+        // three fuctions below are copied from create_tr.html
+
+        function showRef(event) {
+            // show the tooltip when hovering over the little reflink
+            var anchorx = event.target.getBoundingClientRect().left;
+            var anchory = event.target.getBoundingClientRect().top;
+            var anchorw = event.target.clientWidth;
+            var tooltip = document.getElementsByClassName("tooltip")[0];
+            var text = document.getElementById(event.target.getAttribute("href").substring(1)).getElementsByTagName("span")[0].innerHTML;
+            tooltip.innerHTML = text;
+            // tooltip.removeChild(tooltip.getElementsByTagName("a")[0]);
+            tooltip.style.display = 'block';
+            tooltip.style.top = anchory - tooltip.clientHeight - 9;
+            tooltip.style.left = anchorx - 30;
+            tooltip.style.opacity = 1;
+        }
+
+        function hideRef(event) {
+            // hiding the tooltip, pt 1: gradual fade out
+            var tooltip = document.getElementsByClassName("tooltip")[0];
+            tooltip.style.opacity = 0;
+        }
+
+        function hideRefFinally(event) {
+            // hiding the tooltip, pt 2: set display to none so that div doesn't interfere with other elements
+            if (event.target.style.opacity == 0) {
+                event.target.style.display = 'none';
             }
+        }
 
-            function hideRefFinally(event) {
-                // hiding the tooltip, pt 2: set display to none so that div doesn't interfere with other elements
-                if (event.target.style.opacity == 0) {
-                    event.target.style.display = 'none';
-                }
-            }
+        function deleteTranslation(link) {
+            // deleting an existing translation
+            var result = confirm("Подтвердите удаление перевода!");
+            if (result) {
+                var el = document.getElementById(link);
+                // temporarily deactivate edit/del buttons
+                el.getElementsByClassName("deletebutton")[0].removeAttribute("onclick");
+                el.getElementsByClassName("editbutton")[0].removeAttribute("href");
+                el.getElementsByClassName("deletebutton")[0].classList.toggle('grayed');
+                el.getElementsByClassName("editbutton")[0].classList.toggle('grayed');
 
-            function deleteTranslation(link) {
-                // deleting an existing translation
-                var result = confirm("Подтвердите удаление перевода!");
-                if (result) {
-                    var el = document.getElementById(link);
-                    // temporarily deactivate edit/del buttons
-                    el.getElementsByClassName("deletebutton")[0].removeAttribute("onclick");
-                    el.getElementsByClassName("editbutton")[0].removeAttribute("href");
-                    el.getElementsByClassName("deletebutton")[0].classList.toggle('grayed');
-                    el.getElementsByClassName("editbutton")[0].classList.toggle('grayed');
-
-                    fetch('/delete/' + link).then(response => {
-                        if (!response.ok) {
-                            // if something went wronf then we display an error and reactivate buttons
-                            response.json().then(data => alert(data.error + '\n' + data.details));
-                            el.getElementsByClassName("deletebutton")[0].setAttribute("onclick", "deleteTranslation('" + link + "')");
-                            el.getElementsByClassName("editbutton")[0].setAttribute("href", "/edit/" + link);
-                            el.getElementsByClassName("deletebutton")[0].classList.toggle('grayed');
-                            el.getElementsByClassName("editbutton")[0].classList.toggle('grayed');
-                        } else {
-                            el.parentNode.removeChild(el);
-                            // if we are on the page that was deleted then we go to the mainpage
-                            if (window.location.pathname == "/" + link) {
-                                window.location.href = "/";
-                            }
+                fetch('/delete/' + link).then(response => {
+                    if (!response.ok) {
+                        // if something went wronf then we display an error and reactivate buttons
+                        response.json().then(data => alert(data.error + '\n' + data.details));
+                        el.getElementsByClassName("deletebutton")[0].setAttribute("onclick", "deleteTranslation('" + link + "')");
+                        el.getElementsByClassName("editbutton")[0].setAttribute("href", "/edit/" + link);
+                        el.getElementsByClassName("deletebutton")[0].classList.toggle('grayed');
+                        el.getElementsByClassName("editbutton")[0].classList.toggle('grayed');
+                    } else {
+                        el.parentNode.removeChild(el);
+                        // if we are on the page that was deleted then we go to the mainpage
+                        if (window.location.pathname == "/" + link) {
+                            window.location.href = "/";
                         }
-                    });
+                    }
+                });
 
-                }
             }
+        }
 
-        </script>
+    </script>
+{% endblock %}
 
-        <div id="header">
-            <p>Header</p>
-        </div>
+{% block content %}
+    <div id="header">
+        <p>Header</p>
+    </div>
 
-        <div id="list">
+    <div id="list">
 
-            <ul>
-                {% if current_user.permissions and "translator" in current_user.permissions %}
-                    <li class="navlink-add"><a class="addlink" href="/add">Добавить перевод</a></li>
+        <ul>
+            {% if current_user.permissions and "translator" in current_user.permissions %}
+                <li class="navlink-add"><a class="addlink" href="/add">Добавить перевод</a></li>
+            {% endif %}
+            {% for record in list %}
+                {% if record.error %} 
+                    <li class="navlink-li">{{record.error}} {{record.details}}</li>
+                {% else %}
+                    <li class="navlink-li" id="{{record.link}}">
+                        <a class="navlink" href="/{{record.link}}" onclick="goto_tr(event)">{{record.engname}}</a>
+                        {% if current_user.permissions and "translator" in current_user.permissions %}
+                            <a href="/edit/{{record.link}}" class="editbutton"></a>
+                            <span class="deletebutton" onclick="deleteTranslation('{{record.link}}')"></span>
+                        {% endif %}
+                    </li>
                 {% endif %}
-                {% for record in list %}
-                    {% if record.error %} 
-                        <li class="navlink-li">{{record.error}} {{record.details}}</li>
-                    {% else %}
-                        <li class="navlink-li" id="{{record.link}}">
-                            <a class="navlink" href="/{{record.link}}" onclick="goto_tr(event)">{{record.engname}}</a>
-                            {% if current_user.permissions and "translator" in current_user.permissions %}
-                                <a href="/edit/{{record.link}}" class="editbutton"></a>
-                                <span class="deletebutton" onclick="deleteTranslation('{{record.link}}')"></span>
-                            {% endif %}
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
+            {% endfor %}
+        </ul>
+    </div>
 
-        <div id="mainblock">
-        </div>
-
-    </body>
-</html>
+    <div id="mainblock">
+    </div>
+{% endblock %}
