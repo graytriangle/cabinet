@@ -26,6 +26,26 @@
     font-size: 24px;
     /*background:#ffd0f0;*/
     font-family: sans-serif;
+    margin-bottom: 20px;
+}
+
+.meta {
+    font-size: 10pt;
+    margin-top: -10px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.meta > * {
+    display: inline;
+}
+
+.meta a {
+    color: #5050a0;
+    text-decoration: none;
+}
+
+.meta a:hover {
+    color: #303080;
 }
 
 #translation {
@@ -109,6 +129,12 @@ a.addlink:active {
     font-size: 13pt;
     font-family: "Times New Roman", Times, serif;
     padding-left: 5px;
+}
+
+.comment {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 10pt;
+    margin-top: 25px;
 }
 
 /* copy of styles from create_tr.css below */

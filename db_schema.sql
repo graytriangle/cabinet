@@ -388,6 +388,74 @@ CREATE TABLE public.users_permissions (
 ALTER TABLE public.users_permissions OWNER TO postgres;
 
 --
+-- Name: authors; Type: TABLE; Schema: translations; Owner: postgres
+--
+
+CREATE TABLE translations.authors (
+    uid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    author text NOT NULL,
+    link text NOT NULL
+);
+
+
+ALTER TABLE translations.authors OWNER TO postgres;
+
+--
+-- Name: COLUMN authors.uid; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.authors.uid IS 'UUID';
+
+
+--
+-- Name: COLUMN authors.author; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.authors.author IS 'Song author (plaintext string)';
+
+
+--
+-- Name: COLUMN authors.link; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.authors.link IS 'Plaintext string for URL';
+
+
+--
+-- Name: tags; Type: TABLE; Schema: translations; Owner: postgres
+--
+
+CREATE TABLE translations.tags (
+    uid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    tag text NOT NULL,
+    link text NOT NULL
+);
+
+
+ALTER TABLE translations.tags OWNER TO postgres;
+
+--
+-- Name: COLUMN tags.uid; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.tags.uid IS 'UUID';
+
+
+--
+-- Name: COLUMN tags.tag; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.tags.tag IS 'A tag for the song (plaintext string; many-to-many)';
+
+
+--
+-- Name: COLUMN tags.link; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.tags.link IS 'Plaintext string for URL';
+
+
+--
 -- Name: translations; Type: TABLE; Schema: translations; Owner: postgres
 --
 
@@ -401,7 +469,9 @@ CREATE TABLE translations.translations (
     footnotes text,
     deleted boolean DEFAULT false NOT NULL,
     datedel timestamp with time zone,
-    dateadd timestamp with time zone DEFAULT now()
+    dateadd timestamp with time zone DEFAULT now(),
+    author uuid,
+    comment text
 );
 
 
@@ -475,6 +545,54 @@ COMMENT ON COLUMN translations.translations.datedel IS 'Datetime of deletion';
 --
 
 COMMENT ON COLUMN translations.translations.dateadd IS 'Datetime of addition';
+
+
+--
+-- Name: COLUMN translations.author; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.translations.author IS 'Link to song/poem author';
+
+
+--
+-- Name: COLUMN translations.comment; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.translations.comment IS 'Plaintext with linebreaks; additional info about song/poem';
+
+
+--
+-- Name: translations_tags; Type: TABLE; Schema: translations; Owner: postgres
+--
+
+CREATE TABLE translations.translations_tags (
+    uid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    translation uuid NOT NULL,
+    tag uuid NOT NULL
+);
+
+
+ALTER TABLE translations.translations_tags OWNER TO postgres;
+
+--
+-- Name: COLUMN translations_tags.uid; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.translations_tags.uid IS 'UUID';
+
+
+--
+-- Name: COLUMN translations_tags.translation; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.translations_tags.translation IS 'Link to translation';
+
+
+--
+-- Name: COLUMN translations_tags.tag; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.translations_tags.tag IS 'Link to tag';
 
 
 --
@@ -582,11 +700,43 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: authors authors_pkey; Type: CONSTRAINT; Schema: translations; Owner: postgres
+--
+
+ALTER TABLE ONLY translations.authors
+    ADD CONSTRAINT authors_pkey PRIMARY KEY (uid);
+
+
+--
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: translations; Owner: postgres
+--
+
+ALTER TABLE ONLY translations.tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (uid);
+
+
+--
+-- Name: tags tags_tag_key; Type: CONSTRAINT; Schema: translations; Owner: postgres
+--
+
+ALTER TABLE ONLY translations.tags
+    ADD CONSTRAINT tags_tag_key UNIQUE (tag);
+
+
+--
 -- Name: translations translations_pkey; Type: CONSTRAINT; Schema: translations; Owner: postgres
 --
 
 ALTER TABLE ONLY translations.translations
     ADD CONSTRAINT translations_pkey PRIMARY KEY (uid);
+
+
+--
+-- Name: translations_tags translations_tags_pkey; Type: CONSTRAINT; Schema: translations; Owner: postgres
+--
+
+ALTER TABLE ONLY translations.translations_tags
+    ADD CONSTRAINT translations_tags_pkey PRIMARY KEY (uid);
 
 
 --
@@ -651,6 +801,30 @@ ALTER TABLE ONLY public.users_permissions
 
 ALTER TABLE ONLY public.users_permissions
     ADD CONSTRAINT users_permissions_userid_fkey FOREIGN KEY (userid) REFERENCES public.users(uid) ON DELETE CASCADE;
+
+
+--
+-- Name: translations translations_author_fkey; Type: FK CONSTRAINT; Schema: translations; Owner: postgres
+--
+
+ALTER TABLE ONLY translations.translations
+    ADD CONSTRAINT translations_author_fkey FOREIGN KEY (author) REFERENCES translations.authors(uid) ON DELETE CASCADE;
+
+
+--
+-- Name: translations_tags translations_tags_tag_fkey; Type: FK CONSTRAINT; Schema: translations; Owner: postgres
+--
+
+ALTER TABLE ONLY translations.translations_tags
+    ADD CONSTRAINT translations_tags_tag_fkey FOREIGN KEY (tag) REFERENCES translations.tags(uid) ON DELETE CASCADE;
+
+
+--
+-- Name: translations_tags translations_tags_translation_fkey; Type: FK CONSTRAINT; Schema: translations; Owner: postgres
+--
+
+ALTER TABLE ONLY translations.translations_tags
+    ADD CONSTRAINT translations_tags_translation_fkey FOREIGN KEY (translation) REFERENCES translations.translations(uid) ON DELETE CASCADE;
 
 
 --

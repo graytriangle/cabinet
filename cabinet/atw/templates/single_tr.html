@@ -1,21 +1,59 @@
-<div id="title">
-    <p>{{content.engname}} / {{content.runame}}</p>
-</div>
-
-<div class="maincontainer">
-	<div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-		{{content.original | safe}}
+{% if content.error %}
+	<div id="title">
+	    <p>{{content.error}}</p>
 	</div>
 
-	<div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
-		{{content.translation | safe}}
-	</div>
-</div>
+    <p>{{content.details}}</p>
+    <a href="/">Вернуться на главную страницу</a>
+{% else %}
+	<div id="title">
+	    <p>{{content.engname}} / {{content.runame}}</p>
 
-{% if content.footnotes %} 
-<div class="refs" id="translation_refs">
-    {{content.footnotes | safe}}
-</div>
+	    {% if content.author or content.tags %}
+	    	<div class="meta">
+
+		    {% if content.author %}
+		    	<a href="/author/{{content.authorlink}}">{{content.author}}</a>
+		    {% endif %} 
+
+		    {% if content.author and content.tags %}
+		    	<p>&nbsp;|&nbsp;</p>
+		    {% endif %} 
+
+		    {% if content.tags %}
+		    	{% for t in content.tags %}
+		    		<a href="/tag/{{t.link}}">{{t.tag}}</a>{% if not loop.last %},{% endif %}
+		    	{% endfor %}
+		    {% endif %} 
+
+			</div>
+		{% endif %} 
+
+	</div>
+
+	<div class="maincontainer">
+		<div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+			{{content.original | safe}}
+		</div>
+
+		<div class="maintext" id="translation" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
+			{{content.translation | safe}}
+		</div>
+	</div>
+
+	{% if content.comment %}
+	<div class="comment">
+		{% for cm in content.comment.split('\n') %}
+	    	<p>{{cm}}</p>
+	    {% endfor %}
+	</div>
+	{% endif %} 
+
+	{% if content.footnotes %} 
+	<div class="refs" id="translation_refs">
+	    {{content.footnotes | safe}}
+	</div>
+	{% endif %} 
+
+	<div class="tooltip" ontransitionend="hideRefFinally(event)"></div>
 {% endif %} 
-
-<div class="tooltip" ontransitionend="hideRefFinally(event)"></div>

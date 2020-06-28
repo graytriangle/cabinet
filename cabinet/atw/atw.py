@@ -33,10 +33,18 @@ def translations_editpage(link):
     # get translation by name
     cur = f.get_db().cursor()
     sql = """\
-            select tr.uid, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes 
+            select tr.uid, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
+            a.author, a.link as authorlink, json_agg(t) filter (where t.uid is not null) as tags  
             from translations.translations tr
+            left join translations.authors a
+            on tr.author = a.uid
+            left join translations.translations_tags tt
+            on tr.uid = tt.translation
+            left join translations.tags t
+            on t.uid = tt.tag
             where tr.deleted = false
-            and link = '%s' ;""" % (link)
+            and tr.link = '%s' 
+            GROUP BY tr.uid, a.uid;""" % (link)
     try:
         cur.execute(sql)
         result = f.dictfetchall(cur)
@@ -60,24 +68,60 @@ def save_translation():
     translation = request.form['translation']
     link = engname.lower().replace(' ', '-')
     footnotes = request.form['footnotes']
+    author = request.form['author']
+    authoruid = None
+    tags = request.form['tags']
+    comment = request.form['comment']
 
     if (uid == ""):
         uid = str(uuid.uuid4())
 
     cur = f.get_db().cursor()
     sql = """\
-            select link from translations.translations
+            select uid, link from translations.translations
             where link = '%s' ;""" % (link)
     try:
         cur.execute(sql)
+
+        # checking if a translation with identical name exists
         result = f.dictfetchall(cur)
-        if result:
-            # if we have a translation with identical name, just slap random uuid on the link to make it unique
+        if result and result[0]['uid'] != uid:
+            # if we have a different translation with identical name, just slap random uuid on the link to make it unique
             link = link + str(uuid.uuid4())
-        cur.execute("INSERT INTO translations.translations (uid, engname, runame, original, translation, link, footnotes) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT (uid) DO UPDATE SET engname=excluded.engname, runame=excluded.runame, "
-            "original=excluded.original, translation=excluded.translation, link=excluded.link, footnotes=excluded.footnotes;", 
-            (uid, engname, runame, original, translation, link, footnotes))
+
+        if author:
+            authorlink = author.lower().replace(' ', '-')
+            authoruid = str(uuid.uuid4())
+            # checking if author exists
+            cur.execute("SELECT uid from translations.authors "
+                "where author = %s ;", (author,))
+            result = f.dictfetchall(cur)
+            if result:
+                authoruid = result[0]['uid']
+            else:
+                cur.execute("INSERT INTO translations.authors (uid, author, link) "
+                    "VALUES (%s, %s, %s);", (authoruid, author, authorlink))
+
+        cur.execute("INSERT INTO translations.translations (uid, engname, runame, original, translation, link, footnotes, author, comment) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (uid) DO UPDATE SET engname=excluded.engname, runame=excluded.runame, "
+            "original=excluded.original, translation=excluded.translation, link=excluded.link, footnotes=excluded.footnotes, "
+            "author=excluded.author, comment=excluded.comment;", 
+            (uid, engname, runame, original, translation, link, footnotes, authoruid, comment))
+
+        if tags:
+            tagarray = tags.split(',')
+            tagarray = [i.strip() for i in tagarray]
+            tagarray = [i for i in tagarray if i] # removing empty strings
+            cur.execute("DELETE FROM translations.translations_tags WHERE translation = %s;", (uid,))
+            for tag in tagarray:
+                taglink = tag.lower().replace(' ', '-')
+                # taguid = str(uuid.uuid4())
+                cur.execute("INSERT INTO translations.tags (tag, link) VALUES (%s, %s) ON CONFLICT DO NOTHING;", (tag, taglink))
+                cur.execute("SELECT uid FROM translations.tags WHERE tag = %s;", (tag,))
+                taguid = cur.fetchone()[0]
+                cur.execute("INSERT INTO translations.translations_tags (translation, tag) "
+                        "VALUES (%s, %s);", (uid, taguid))
+        
         f.get_db().commit()
     finally:
         cur.close()
@@ -107,9 +151,17 @@ def get_translation(link):
     # get translation by name
     cur = f.get_db().cursor()
     sql = """\
-            select tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes 
+            select tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
+            a.author, a.link as authorlink, json_agg(t) filter (where t.uid is not null) as tags
             from translations.translations tr
-            where link = '%s' ;""" % (link)
+            left join translations.authors a
+            on tr.author = a.uid
+            left join translations.translations_tags tt
+            on tr.uid = tt.translation
+            left join translations.tags t
+            on t.uid = tt.tag
+            where tr.link = '%s' 
+            GROUP BY tr.uid, a.uid;""" % (link)
     try:
         cur.execute(sql)
         result = f.dictfetchall(cur)

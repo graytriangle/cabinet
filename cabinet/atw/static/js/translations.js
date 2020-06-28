@@ -20,6 +20,12 @@ function index(el) {
     return i;
 } 
 
+function autosize(event, heightlimit) {
+    // vertical auto resizing for textarea
+    event.target.style.height = ""; /* Reset the height*/
+    event.target.style.height = Math.min(event.target.scrollHeight, heightlimit) + 2 + "px";
+};
+
 // copy of functions from master.html, merge? todo
 function elementFromText(text){
     var wrapper= document.createElement('div');

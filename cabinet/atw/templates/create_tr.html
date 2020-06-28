@@ -214,6 +214,19 @@
             <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
                 <input class="tr_title" type="text" name="engname" placeholder="Заголовок оригинала" value="{{content.engname}}">
                 <textarea class="rich-text-editor" name="original"></textarea>
+                <input class="tr_meta" type="text" name="author" placeholder="Автор текста" value="
+                {%- if content.author -%}
+                    {{content.author}}
+                {%- endif -%}
+                ">
+                <input class="tr_meta" type="text" name="tags" placeholder="Тэги (через запятую)" value="{% if content.tags %}{% for t in content.tags -%}
+                    {{t.tag}}{% if not loop.last %}, {% endif %}
+                {%- endfor %}{% endif %}">
+                <textarea class="tr_meta" name="comment" placeholder="Дополнительная информация" oninput="autosize(event, 200)">
+                {%- if content.comment -%}
+                    {{content.comment}}
+                {%- endif -%}
+                </textarea>
                 <input type="button" class="savebutton" onclick="submitTranslation()" value="Сохранить перевод">
             </div>
 

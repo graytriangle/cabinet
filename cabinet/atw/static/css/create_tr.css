@@ -22,6 +22,14 @@
 	border-width: 1px;
 }
 
+.tr_meta {
+	width: 100%;
+	margin-top: 5px;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	font-size: 10pt;
+	resize: vertical;
+}
+
 #translation {
     float: right;
     width: 47%;
