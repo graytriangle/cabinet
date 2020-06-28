@@ -1,3 +1,7 @@
+#appname { 
+    font-size: 24pt;
+}
+
 #main {
     /* basic styling */
     display: flex;

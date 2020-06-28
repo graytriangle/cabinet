@@ -1,0 +1,62 @@
+/* styles shared by all pages of the ATW app*/
+
+/* app name in the header */
+#appname { 
+    color: rgb(157, 76, 76);
+    font-size: 24pt;
+}
+
+/* on-hover style of the app name */
+#appname:hover {
+    color: rgb(187, 46, 46);
+}
+
+/* a small blue superscript link referencing a footnote */
+.footnote {
+    vertical-align: super;
+    font-size: 0.5em;
+    margin-left: 2px;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* main body of a pop-up tooltip*/
+.tooltip {
+	display: none;
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	max-width: 300px;
+	min-width: 60px;
+	background-color: #FFFFAF;
+	border-radius: 6px;
+	padding: 7px;
+	border-color: rgb(227, 227, 227);
+	border-width: 1px;
+	border-style: outset;
+	transform-style: preserve-3d;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+/* a little "tail" below the body of a tooltip */
+.tooltip::after {
+	content: "";
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	transform: rotate(-45deg);
+	transform-origin: 100% 100%;
+	bottom: 0;
+	left: 30px;
+	background-color: #FFFFAF;
+	border-style: solid;
+	border-color: rgb(227, 227, 227);
+	border-width: 0px 0px 1px 1px;
+	border-style: outset;
+}
+
+/* a "go-back" arrow after a footnote */
+.backarrow {
+	margin-left: 5px;
+} 

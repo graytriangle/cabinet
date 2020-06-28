@@ -10,7 +10,7 @@ from flask_login import login_required, current_user
 from cabinet import auth
 
 atw = Blueprint('atw', __name__, template_folder='templates', static_folder='static', 
-	static_url_path='/atw/static', subdomain="almosttheword")
+	static_url_path='/atw/static', subdomain="almostthewords")
 
 ##################
 # VIEW FUNCTIONS #

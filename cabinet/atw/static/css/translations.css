@@ -1,22 +1,22 @@
-#header {
-    width: 100%;
-    text-align: center;
-    font-size: 36px;
-    /*background:#f0d0ff;*/
-}
-
 #list {
     float: left;
     margin-left: 50px;
     width: 400px;
-    height: 100%;
+    margin-top: 36px;
+    padding-bottom: 36px;
     /*background:#fff0d0;*/
+}
+
+#list ul {
+    margin-top: 0px;
 }
 
 #mainblock {
     margin-left: 450px;
     padding-left: 50px;
     padding-right: 50px;
+    margin-top: 36px;
+    padding-bottom: 36px;
     /*background: #fafaf0;*/
 }
 
@@ -137,18 +137,6 @@ a.addlink:active {
     margin-top: 25px;
 }
 
-/* copy of styles from create_tr.css below */
-/* some of them should be moved into a separate shared file... maybe */
-
-.footnote {
-    vertical-align: super;
-    font-size: 0.5em;
-    margin-left: 2px;
-    color: blue;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
 .refs {
     clear: right;
     border-top: 1px;
@@ -166,46 +154,9 @@ a.addlink:active {
     margin-bottom: 7px;
 }
 
-.tooltip {
-    display: none;
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    max-width: 300px;
-    min-width: 60px;
-    background-color: #FFFFAF;
-    border-radius: 6px;
-    padding: 7px;
-    border-color: rgb(227, 227, 227);
-    border-width: 1px;
-    border-style: outset;
-    transform-style: preserve-3d;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-/* a little "tail" below the body of a tooltip */
-.tooltip::after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    transform: rotate(-45deg);
-    transform-origin: 100% 100%;
-    bottom: 0;
-    left: 30px;
-    background-color: #FFFFAF;
-    border-style: solid;
-    border-color: rgb(227, 227, 227);
-    border-width: 0px 0px 1px 1px;
-    border-style: outset;
-}
-
-.backarrow {
-    margin-left: 5px;
-}
-
 .editbutton {
     background-image: url('../img/edit.png');
+    flex-shrink: 0;
     width: 15px;
     height: 15px;
     margin-top: 6px;
@@ -223,6 +174,7 @@ a.addlink:active {
 
 .deletebutton {
     background-image: url('../img/delete.png');
+    flex-shrink: 0;
     width: 15px;
     height: 15px;
     margin-top: 6px;

@@ -6,7 +6,12 @@
 
 {% block meta %}
     <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/translations.css')}}">
+    <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/common.css')}}">
     <script type="text/javascript" src={{url_for('atw.static', filename='js/translations.js')}}></script>
+{% endblock %}
+
+{% block appname %}
+    <a id="appname" href="/">almost the words</a>
 {% endblock %}
 
 {% block script %}
@@ -122,10 +127,6 @@
 {% endblock %}
 
 {% block content %}
-    <div id="header">
-        <p>Header</p>
-    </div>
-
     <div id="list">
 
         <ul>

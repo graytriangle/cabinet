@@ -20,10 +20,11 @@ function index(el) {
     return i;
 } 
 
-function autosize(event, heightlimit) {
+function autosize(element, heightlimit) {
     // vertical auto resizing for textarea
-    event.target.style.height = ""; /* Reset the height*/
-    event.target.style.height = Math.min(event.target.scrollHeight, heightlimit) + 2 + "px";
+    console.log("ping");
+    element.style.height = ""; /* Reset the height*/
+    element.style.height = Math.min(element.scrollHeight, heightlimit) + 2 + "px";
 };
 
 // copy of functions from master.html, merge? todo

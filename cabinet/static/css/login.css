@@ -1,6 +1,7 @@
 .logincontainer {
-    position: relative;
-    top: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     text-align: center;
     font-size: 10pt;
@@ -11,8 +12,6 @@
     border-radius: 20px;
     border: 2px solid #a6caf0;
     padding: 20px; 
-    margin-left: auto;
-    margin-right: auto;
     margin-top: 30px;
     background-color: #f7fbff;
 }
@@ -62,16 +61,14 @@ form {
     line-height: 20px;
 }
 
-.linkdiv a {
+.backlink {
     display: block;
     font-weight: bold;
     color: #606080;
     text-decoration: none;
+    margin-top: 5px;
 }
 
-.linkdiv {
-    width: 18%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 5px;
+.backlink:hover {
+    color: #3070b0;
 }

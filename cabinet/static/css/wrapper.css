@@ -13,26 +13,42 @@
 	font-size: 10pt;
 	font-weight: bold;
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	height: 40px;
 } 
 
 .logindiv a {
-	align-self: center;
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     color: #606080;
     text-decoration: none;
 }
 
+.logindiv a:hover {
+	color: #3070b0;
+	text-decoration: none;
+}
+
 .logindiv p {
-	align-self: center;
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
 
-.homelink {
+#homelink {
+	flex: 1;
 	font-size: 14pt;
+	display: flex;
+	align-items: center;
 }
 
-.filler {
-	flex: auto;
+#applink {
+	flex: 1;
+	justify-content: center;
+	align-items: center;
+	display: flex;
 }
 
+#loginlink {
+	display: flex;
+	flex: 1;
+	justify-content: flex-end;
+	align-items: center;
+}

@@ -6,13 +6,21 @@
 
 {% block meta %}
     <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/create_tr.css')}}">
+    <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/common.css')}}">
     <script type="text/javascript" src={{url_for('atw.static', filename='js/translations.js')}}></script>
     <script type="text/javascript" src={{url_for('atw.static', filename='richtext/rich-text-editor.js')}}></script>
     <link rel="stylesheet" type="text/css" href={{url_for('atw.static', filename='richtext/rich-text-editor.css')}}>
 {% endblock %}
 
+{% block appname %}
+    <a id="appname" href="/">almost the words</a>
+{% endblock %}
+
 {% block script %}
     <script>
+
+        //expanding the comment input field as necessary
+        window.onload = function() {autosize(document.getElementById("comment"), 200)};
 
         richtext.richTextStart();
 
@@ -203,10 +211,6 @@
 {% endblock %}
 
 {% block content %}
-    <div id="header">
-        <p>Header</p>
-    </div>
-
     <div id="mainblock">
         <form action="/save" method="post" target="/">
             <input type="hidden" name="uid" value="{{content.uid}}">
@@ -222,7 +226,7 @@
                 <input class="tr_meta" type="text" name="tags" placeholder="Тэги (через запятую)" value="{% if content.tags %}{% for t in content.tags -%}
                     {{t.tag}}{% if not loop.last %}, {% endif %}
                 {%- endfor %}{% endif %}">
-                <textarea class="tr_meta" name="comment" placeholder="Дополнительная информация" oninput="autosize(event, 200)">
+                <textarea class="tr_meta" id="comment" name="comment" placeholder="Дополнительная информация" oninput="autosize(event.target, 200)">
                 {%- if content.comment -%}
                     {{content.comment}}
                 {%- endif -%}

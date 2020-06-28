@@ -8,22 +8,28 @@
 	<body>
 		{% block script %}{% endblock %}
 		<div class="logindiv">
-			<a class="homelink" href="https://{{config.SERVER_NAME}}">void media</a>
-			<p class="filler"></p>
-			{% block links %}
-				<!-- replaced in some places like login/signup where we want to override the logic -->
-				{% if not current_user.is_authenticated %}
-					{% if config.REG_OPEN %}
-						<a href="https://{{config.SERVER_NAME}}/login">Вход</a><p>&nbsp;/&nbsp;</p><a href="https://{{config.SERVER_NAME}}/signup">регистрация</a>
+			<div id="homelink">
+				<a href="https://{{config.SERVER_NAME}}">void media</a>
+			</div>
+			<div id="applink">
+				{% block appname %}{% endblock %}
+			</div>
+			<div id="loginlink">
+				{% block links %}
+					<!-- replaced in some places like login/signup where we want to override the logic -->
+					{% if not current_user.is_authenticated %}
+						{% if config.REG_OPEN %}
+							<a href="https://{{config.SERVER_NAME}}/login">Вход</a><p>&nbsp;/&nbsp;</p><a href="https://{{config.SERVER_NAME}}/signup">регистрация</a>
+						{% else %}
+							<a href="https://{{config.SERVER_NAME}}/login">Вход</a>
+						{% endif %}
 					{% else %}
-						<a href="https://{{config.SERVER_NAME}}/login">Вход</a>
+						<p>{{ current_user.login }} |&nbsp;</p>
+						<a href="https://{{config.SERVER_NAME}}/logout">Выход</a>
 					{% endif %}
-				{% else %}
-					<p>{{ current_user.login }} |&nbsp;</p>
-					<a href="https://{{config.SERVER_NAME}}/logout">Выход</a>
-				{% endif %}
 
-			{% endblock %}
+				{% endblock %}
+			</div>
 		</div>
 		{% block content %}{% endblock %}
 	</body>

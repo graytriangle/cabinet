@@ -1,19 +1,18 @@
 .logincontainer {
-    position: relative;
-    top: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .logincontainer a {
     text-decoration: none;
+    margin-top: 30px;
 }
 
 .domain {
     width: 450px;
     border-radius: 20px;
     padding: 20px; 
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 30px;
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     text-align: center;
 }
@@ -28,7 +27,7 @@
     background-color: #f2f2f2;
 }
 
-#almosttheword {
+#almostthewords {
     border: 2px solid rgb(170, 148, 162);
     background-color: #fff8fb;
 }
@@ -37,7 +36,6 @@
     font-size: 36pt;
     margin-top: 10px;
     margin-bottom: 24px;
-    text-decoration: none;
     font-weight: bold;
     line-height: 20px;
 }
@@ -52,10 +50,20 @@
     color: rgb(96, 96, 128);
 }
 
+/* applied to all children on hover over parent */
+#cabinet:hover > * {
+    color: #3070b0;
+}
+
 .rimtitle {
     color: rgb(96, 96, 128);
 }
 
 .atwtitle {
     color: rgb(157, 76, 76);
+}
+
+/* applied to all children on hover over parent */
+#almostthewords:hover > * {
+    color: rgb(187, 46, 46);
 }
