@@ -17,28 +17,45 @@
 {% block script %}
     <script>
 
-        window.onload = function() {show_tr(undefined, '{{linkname}}')};
+        window.onload = function() {showTranslation(undefined, '{{linkname}}')};
+
+        function showCategory(target, type) {
+
+            var prevtab = document.getElementsByClassName("tab-active")[0];
+            var prevlist = document.getElementsByClassName("ul-active")[0];
+
+            if (!(prevtab === undefined && typeof prevtab === "undefined")) {
+                // если было что-то выбрано, мы выключаем ему выделение
+                prevtab.classList.remove('tab-active');
+            }
+
+            if (!(prevlist === undefined && typeof prevlist === "undefined")) {
+                // если было что-то выбрано, мы выключаем ему выделение
+                prevlist.classList.remove('ul-active');
+            }
+            // включаем подсветку кликнутому
+            target.classList.add('tab-active');
+            document.getElementById(type).classList.add('ul-active');
+        }
 
         function goto_tr(event) {
 
             event.preventDefault();
-            show_tr(event.target);
+            showTranslation(event.target);
             window.history.pushState("", "", event.target.getAttribute("href"));
 
         }
 
-        function show_tr(target, linkname) {
+        function showTranslation(target, linkname) {
 
-            var targettr;
-
-            if (!(target === undefined)) {
-                targettr = target;
-            } else if (linkname == '') {
-                return;
-            } else {
-                for (let i of document.getElementsByClassName("navlink")) {
-                    if (i.getAttribute("href") == "/" + linkname) {
-                        targettr = i;
+            if (target === undefined) { // if we enter the link manually
+                if (linkname == '') { 
+                    return;
+                } else {
+                    for (let i of document.getElementsByClassName("navlink")) {
+                        if (i.getAttribute("href") == "/" + linkname) {
+                            target = i;
+                        }
                     }
                 }
             }
@@ -55,9 +72,9 @@
                 prevtr.classList.remove('chosen');
             }
             // включаем подсветку кликнутому
-            targettr.classList.add('chosen');
+            target.classList.add('chosen');
 
-            fetch('/get' + targettr.getAttribute("href")).then(response => response.text()).then(data => insert_tr(data))
+            fetch('/get' + target.getAttribute("href")).then(response => response.text()).then(data => insert_tr(data))
 
         }
 
@@ -129,10 +146,18 @@
 {% block content %}
     <div id="list">
 
-        <ul>
-            {% if current_user.permissions and "translator" in current_user.permissions %}
-                <li class="navlink-add"><a class="addlink" href="/add">Добавить перевод</a></li>
-            {% endif %}
+        {% if current_user.permissions and "translator" in current_user.permissions %}
+            <a class="addlink" href="/add">Добавить перевод</a>
+        {% endif %}
+
+        <div class="filter"></div>
+
+        <div class="tab tab-active" onclick="showCategory(event.target, 'translations')">Переводы</div>
+        <div class="tab" onclick="showCategory(event.target, 'authors')">Авторы</div>
+        <div class="tab" onclick="showCategory(event.target, 'tags')">Тэги</div>
+        <hr class="tabline">
+
+        <ul class="ul-active" id="translations">
             {% for record in list %}
                 {% if record.error %} 
                     <li class="navlink-li">{{record.error}} {{record.details}}</li>
@@ -143,6 +168,30 @@
                             <a href="/edit/{{record.link}}" class="editbutton"></a>
                             <span class="deletebutton" onclick="deleteTranslation('{{record.link}}')"></span>
                         {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+        <ul id="authors">
+            {% for record in authors %}
+                {% if record.error %} 
+                    <li class="navlink-li">{{record.error}} {{record.details}}</li>
+                {% else %}
+                    <li class="navlink-li" id="{{record.link}}">
+                        <a class="navlink" href="/author/{{record.link}}" onclick="goto_tr(event)">{{record.author}}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+        <ul id="tags">
+            {% for record in tags %}
+                {% if record.error %} 
+                    <li class="navlink-li">{{record.error}} {{record.details}}</li>
+                {% else %}
+                    <li class="navlink-li" id="{{record.link}}">
+                        <a class="navlink" href="/tag/{{record.link}}" onclick="goto_tr(event)">{{record.tag}}</a>
                     </li>
                 {% endif %}
             {% endfor %}

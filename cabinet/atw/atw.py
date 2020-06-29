@@ -18,7 +18,7 @@ atw = Blueprint('atw', __name__, template_folder='templates', static_folder='sta
 
 @atw.route('/', methods=['GET'])
 def translations_mainpage():
-    return render_template('translations.html', list=get_translations_list(), linkname='')
+    return render_template('translations.html', list=get_translations_list(), authors=get_authors(), tags=get_tags(), linkname='')
 
 @atw.route('/add', methods=['GET'])
 @login_required
@@ -144,7 +144,7 @@ def delete_translation(link):
 
 @atw.route('/<string:link>', methods=['GET'])
 def translations_page(link):
-    return render_template('translations.html', list=get_translations_list(), linkname=link)
+    return render_template('translations.html', list=get_translations_list(), authors=get_authors(), tags=get_tags(), linkname=link)
 
 @atw.route('/get/<string:link>', methods=['GET'])
 def get_translation(link):
@@ -186,6 +186,50 @@ def get_translations_list():
         result = f.dictfetchall(cur)
         if not result:
             result = [{'error': 'Переводов не найдено!', 'details': ''}]
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        result = [{'error': f.QUERY_ERR, 'details': str(e)}]
+    finally:
+        cur.close()
+    return result
+
+def get_authors():
+    cur = f.get_db().cursor()
+    sql = """\
+            select distinct a.uid, a.author, a.link
+            from translations.authors a
+            inner join translations.translations tr
+            on a.uid = tr.author
+            where tr.deleted = false
+            order by a.author;"""
+    try:
+        cur.execute(sql)
+        result = f.dictfetchall(cur)
+        if not result:
+            result = [{'error': 'Авторов не найдено!', 'details': ''}]
+    except psycopg2.Error as e: 
+        f.get_db().rollback()
+        result = [{'error': f.QUERY_ERR, 'details': str(e)}]
+    finally:
+        cur.close()
+    return result
+
+def get_tags():
+    cur = f.get_db().cursor()
+    sql = """\
+            select distinct t.uid, t.tag, t.link
+            from translations.tags t
+            inner join translations.translations_tags tt
+            on t.uid = tt.tag
+            inner join translations.translations tr
+            on tt.translation = tr.uid
+            where tr.deleted = false
+            order by t.tag;"""
+    try:
+        cur.execute(sql)
+        result = f.dictfetchall(cur)
+        if not result:
+            result = [{'error': 'Тэгов не найдено!', 'details': ''}]
     except psycopg2.Error as e: 
         f.get_db().rollback()
         result = [{'error': f.QUERY_ERR, 'details': str(e)}]
