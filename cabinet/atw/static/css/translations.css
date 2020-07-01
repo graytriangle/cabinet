@@ -117,7 +117,7 @@ a.addlink:active {
     color: red;
 }
 
-.chosen {
+.chosen, .chosen-meta {
     background: #e0e0e0;
     color: black;
 }
@@ -245,4 +245,17 @@ a.addlink:active {
     width: 300px;
     margin-left: 0px;
     margin-right: 0px;
+}
+
+.filter {
+    height: 30px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 12pt;
+    display: flex;
+    width: 300px;
+    align-items: center;
+}
+
+.filtertext {
+    margin-top: 20px;
 }

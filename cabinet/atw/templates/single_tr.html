@@ -13,7 +13,7 @@
 	    	<div class="meta">
 
 		    {% if content.author %}
-		    	<a href="/author/{{content.authorlink}}">{{content.author}}</a>
+		    	<a href="/author/{{content.authorlink}}" onclick="addFilter(event)">{{content.author}}</a>
 		    {% endif %} 
 
 		    {% if content.author and content.tags %}
@@ -22,7 +22,7 @@
 
 		    {% if content.tags %}
 		    	{% for t in content.tags %}
-		    		<a href="/tag/{{t.link}}">{{t.tag}}</a>{% if not loop.last %},{% endif %}
+		    		<a href="/tag/{{t.link}}" onclick="addFilter(event)">{{t.tag}}</a>{% if not loop.last %},{% endif %}
 		    	{% endfor %}
 		    {% endif %} 
 

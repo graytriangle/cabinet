@@ -60,6 +60,8 @@
                 document.getElementsByName("translation")[0].value = tmptrans.innerHTML;
                 document.getElementById("original").getElementsByClassName("rte-editbox")[0].innerHTML = tmporig.innerHTML;
                 document.getElementsByName("original")[0].value = tmporig.innerHTML;
+                tmptrans.innerHTML = "";
+                tmporig.innerHTML = "";
 
                 // add edit/del buttons to every footnote
                 var copyref = document.getElementById("translation_refs");
@@ -81,7 +83,7 @@
             if (mode == 'add') {
                 // remember the caret position in the editor window
                 var editor = event.target.closest('.rich-text-editor').getElementsByClassName('rte-editbox')[0];
-                current_selection = selection_save(editor);
+                current_selection = selectionSave(editor);
                 // show modal window for adding new ref
                 document.getElementById("addref").style.display = "block";
                 // set necessary saving function
@@ -91,34 +93,6 @@
                 document.getElementById("addref").style.display = "block";
                 document.getElementById("refsubmit").onclick = function(){saveRef(event.target.parentNode)};
                 document.getElementById("reftext").value = event.target.parentNode.getElementsByTagName("span")[0].innerHTML.replace(/<br>/g, '\n');
-            }
-        }
-
-        function showRef(event) {
-            // show the tooltip when hovering over the little reflink
-            var anchorx = event.target.getBoundingClientRect().left;
-            var anchory = event.target.getBoundingClientRect().top;
-            var anchorw = event.target.clientWidth;
-            var tooltip = document.getElementsByClassName("tooltip")[0];
-            var text = document.getElementById(event.target.getAttribute("href").substring(1)).getElementsByTagName("span")[0].innerHTML;
-            tooltip.innerHTML = text;
-            // tooltip.removeChild(tooltip.getElementsByTagName("a")[0]);
-            tooltip.style.display = 'block';
-            tooltip.style.top = anchory - tooltip.clientHeight - 9;
-            tooltip.style.left = anchorx - 30;
-            tooltip.style.opacity = 1;
-        }
-
-        function hideRef(event) {
-            // hiding the tooltip, pt 1: gradual fade out
-            var tooltip = document.getElementsByClassName("tooltip")[0];
-            tooltip.style.opacity = 0;
-        }
-
-        function hideRefFinally(event) {
-            // hiding the tooltip, pt 2: set display to none so that div doesn't interfere with other elements
-            if (event.target.style.opacity == 0) {
-                event.target.style.display = 'none';
             }
         }
 
@@ -137,7 +111,7 @@
             tmptext = tmptext.replace(/[\n\r]/g, '<br>');
             var tmpeditor = document.getElementById("translation").getElementsByClassName("rte-editbox")[0];
             tmpeditor.focus();
-            selection_restore(tmpeditor, current_selection);
+            selectionRestore(tmpeditor, current_selection);
 
             var tmplink = elementFromText('<a class="footnote" contenteditable="false" href="#' + footnotecounter + '-link" id="' + footnotecounter + '-ref" name="' + footnotecounter + '-ref" onmouseover="showRef(event)" onmouseout="hideRef(event)"></a>');
 
@@ -214,6 +188,7 @@
     <div id="mainblock">
         <form action="/save" method="post" target="/">
             <input type="hidden" name="uid" value="{{content.uid}}">
+            <input type="hidden" name="link" value="{{content.link}}">
 
             <div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
                 <input class="tr_title" type="text" name="engname" placeholder="Заголовок оригинала" value="{{content.engname}}">

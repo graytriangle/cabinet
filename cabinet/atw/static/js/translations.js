@@ -27,7 +27,37 @@ function autosize(element, heightlimit) {
     element.style.height = Math.min(element.scrollHeight, heightlimit) + 2 + "px";
 };
 
+// functions for showing/hiding tooltip
+function showRef(event) {
+    // show the tooltip when hovering over the little reflink
+    var anchorx = event.target.getBoundingClientRect().left;
+    var anchory = event.target.getBoundingClientRect().top;
+    var anchorw = event.target.clientWidth;
+    var tooltip = document.getElementsByClassName("tooltip")[0];
+    var text = document.getElementById(event.target.getAttribute("href").substring(1)).getElementsByTagName("span")[0].innerHTML;
+    tooltip.innerHTML = text;
+    // tooltip.removeChild(tooltip.getElementsByTagName("a")[0]);
+    tooltip.style.display = 'block';
+    tooltip.style.top = anchory - tooltip.clientHeight - 9;
+    tooltip.style.left = anchorx - 30;
+    tooltip.style.opacity = 1;
+}
+
+function hideRef(event) {
+    // hiding the tooltip, pt 1: gradual fade out
+    var tooltip = document.getElementsByClassName("tooltip")[0];
+    tooltip.style.opacity = 0;
+}
+
+function hideRefFinally(event) {
+    // hiding the tooltip, pt 2: set display to none so that div doesn't interfere with other elements
+    if (event.target.style.opacity == 0) {
+        event.target.style.display = 'none';
+    }
+}
+
 // copy of functions from master.html, merge? todo
+// that stuff is global and so should be on site-wide level instead of app level
 function elementFromText(text){
     var wrapper= document.createElement('div');
     wrapper.innerHTML = text;
@@ -199,7 +229,7 @@ function getNodeAndOffsetAt(start, offset) {
   }
 };
 
-function selection_save(containerEl) {
+function selectionSave(containerEl) {
   // Get range
   var selection = window.getSelection();
   if (selection.rangeCount > 0) {
@@ -213,7 +243,7 @@ function selection_save(containerEl) {
     return null;
 };
 
-function selection_restore(containerEl, savedSel) {
+function selectionRestore(containerEl, savedSel) {
   if (!savedSel)
     return;
 

@@ -20,6 +20,11 @@ atw = Blueprint('atw', __name__, template_folder='templates', static_folder='sta
 def translations_mainpage():
     return render_template('translations.html', list=get_translations_list(), authors=get_authors(), tags=get_tags(), linkname='')
 
+@atw.route('/author/<string:author>', methods=['GET'])
+@atw.route('/tag/<string:tag>', methods=['GET'])
+def translations_filtered_mainpage(author=None, tag=None):
+    return render_template('translations.html', list=get_translations_list(author, tag), authors=get_authors(), tags=get_tags(), linkname='')
+
 @atw.route('/add', methods=['GET'])
 @login_required
 @auth.requires_permission('translator')
@@ -33,7 +38,7 @@ def translations_editpage(link):
     # get translation by name
     cur = f.get_db().cursor()
     sql = """\
-            select tr.uid, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
+            select tr.uid, tr.link, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
             a.author, a.link as authorlink, json_agg(t) filter (where t.uid is not null) as tags  
             from translations.translations tr
             left join translations.authors a
@@ -66,7 +71,7 @@ def save_translation():
     runame = request.form['runame']
     original = request.form['original']
     translation = request.form['translation']
-    link = engname.lower().replace(' ', '-')
+    link = request.form['link']
     footnotes = request.form['footnotes']
     author = request.form['author']
     authoruid = None
@@ -76,16 +81,19 @@ def save_translation():
     if (uid == ""):
         uid = str(uuid.uuid4())
 
+    if (link == ""):
+        link = engname.lower().replace(' ', '-')
+
     cur = f.get_db().cursor()
     sql = """\
-            select uid, link from translations.translations
+            select uid from translations.translations
             where link = '%s' ;""" % (link)
     try:
         cur.execute(sql)
 
         # checking if a translation with identical name exists
-        result = f.dictfetchall(cur)
-        if result and result[0]['uid'] != uid:
+        result = cur.fetchone()
+        if result and result[0] != uid:
             # if we have a different translation with identical name, just slap random uuid on the link to make it unique
             link = link + str(uuid.uuid4())
 
@@ -95,10 +103,17 @@ def save_translation():
             # checking if author exists
             cur.execute("SELECT uid from translations.authors "
                 "where author = %s ;", (author,))
-            result = f.dictfetchall(cur)
-            if result:
-                authoruid = result[0]['uid']
+            result = cur.fetchone()
+            if result: # if he does we use UID from db
+                authoruid = result[0]
             else:
+                # if he doesn't we check if link exists
+                # (possible when two authors differ by capitalization or spaces)
+                cur.execute("SELECT uid from translations.authors "
+                "where link = %s ;", (authorlink,))
+                if cur.fetchone():
+                    # if we have a different author with identical link, just slap random uuid on the link to make it unique
+                    authorlink = authorlink + str(uuid.uuid4())
                 cur.execute("INSERT INTO translations.authors (uid, author, link) "
                     "VALUES (%s, %s, %s);", (authoruid, author, authorlink))
 
@@ -115,10 +130,23 @@ def save_translation():
             cur.execute("DELETE FROM translations.translations_tags WHERE translation = %s;", (uid,))
             for tag in tagarray:
                 taglink = tag.lower().replace(' ', '-')
-                # taguid = str(uuid.uuid4())
-                cur.execute("INSERT INTO translations.tags (tag, link) VALUES (%s, %s) ON CONFLICT DO NOTHING;", (tag, taglink))
-                cur.execute("SELECT uid FROM translations.tags WHERE tag = %s;", (tag,))
-                taguid = cur.fetchone()[0]
+                taguid = str(uuid.uuid4())
+                # checking if tag exists
+                cur.execute("SELECT uid from translations.tags "
+                    "where tag = %s ;", (tag,))
+                result = cur.fetchone()
+                if result: # if it does we use UID from db
+                    taguid = result[0]
+                else:
+                    # if it doesn't we check if link exists
+                    # (possible when two tags differ by capitalization or spaces)
+                    cur.execute("SELECT uid from translations.tags "
+                    "where link = %s ;", (taglink,))
+                    if cur.fetchone():
+                        # if we have a different tag with identical link, just slap random uuid on the link to make it unique
+                        taglink = taglink + str(uuid.uuid4())
+                    cur.execute("INSERT INTO translations.tags (uid, tag, link) "
+                        "VALUES (%s, %s, %s);", (taguid, tag, taglink))
                 cur.execute("INSERT INTO translations.translations_tags (translation, tag) "
                         "VALUES (%s, %s);", (uid, taguid))
         
@@ -146,12 +174,12 @@ def delete_translation(link):
 def translations_page(link):
     return render_template('translations.html', list=get_translations_list(), authors=get_authors(), tags=get_tags(), linkname=link)
 
-@atw.route('/get/<string:link>', methods=['GET'])
+@atw.route('/get/song/<string:link>', methods=['GET'])
 def get_translation(link):
     # get translation by name
     cur = f.get_db().cursor()
     sql = """\
-            select tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
+            select tr.engname, tr.link, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
             a.author, a.link as authorlink, json_agg(t) filter (where t.uid is not null) as tags
             from translations.translations tr
             left join translations.authors a
@@ -174,13 +202,42 @@ def get_translation(link):
         cur.close()
     return render_template('single_tr.html', content=result[0])
 
-def get_translations_list():
+@atw.route('/get/author/<string:author>', methods=['GET'])
+@atw.route('/get/tag/<string:tag>', methods=['GET'])
+@atw.route('/get/all', methods=['GET'])
+def get_translations_list(author=None, tag=None):
     cur = f.get_db().cursor()
+    where = ''
+    filter = None
+    filtername = None
+    if author:
+        filter = 'author'
+        where = "and a.link = '%s'" % author.replace("'", "''")
+        cur.execute("SELECT author from translations.authors "
+                "where link = %s ;", (author,))
+        result = f.dictfetchall(cur)
+        if result:
+            filtername = result[0]['author']
+    elif tag: # it's either author or tag, not both
+        filter = 'tag'
+        where = "and t.link = '%s'" % tag.replace("'", "''")
+        cur.execute("SELECT tag from translations.tags "
+                "where link = %s ;", (tag,))
+        result = f.dictfetchall(cur)
+        if result:
+            filtername = result[0]['tag']
     sql = """\
-            select tr.uid, tr.engname, tr.runame, tr.link
+            select distinct tr.uid, tr.engname, tr.runame, tr.link
             from translations.translations tr
+            left join translations.authors a
+            on tr.author = a.uid
+            left join translations.translations_tags tt
+            on tr.uid = tt.translation
+            left join translations.tags t
+            on t.uid = tt.tag
             where tr.deleted = false
-            order by tr.engname;"""
+            %s
+            order by tr.engname;""" % (where,)
     try:
         cur.execute(sql)
         result = f.dictfetchall(cur)
@@ -191,7 +248,8 @@ def get_translations_list():
         result = [{'error': f.QUERY_ERR, 'details': str(e)}]
     finally:
         cur.close()
-    return result
+    # flask 1.1 feature: any dict gets converted into json response on endpoint function call
+    return {'filter': filter, 'filtername': filtername, 'response': result}
 
 def get_authors():
     cur = f.get_db().cursor()

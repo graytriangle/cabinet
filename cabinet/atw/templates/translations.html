@@ -38,7 +38,85 @@
             document.getElementById(type).classList.add('ul-active');
         }
 
-        function goto_tr(event) {
+        function addFilter(event) {
+            event.preventDefault();
+            var target = event.target;
+
+            // if we click on link in song meta
+            if (!(target.classList.contains("navlink"))) { 
+                for (let i of document.getElementsByClassName("navlink")) {
+                    if (i.getAttribute("href") == event.target.getAttribute("href")) {
+                        target = i;
+                    }
+                }
+            }
+
+            var prevtr = document.getElementsByClassName("chosen-meta")[0];
+            if (!(prevtr === undefined && typeof prevtr === "undefined")) {
+                // если было что-то выбрано, мы выключаем ему выделение
+                prevtr.classList.remove('chosen-meta');
+            }
+            // включаем подсветку кликнутому
+            target.classList.add('chosen-meta');
+
+            fetch('/get' + target.getAttribute("href")).then(response => response.text()).then(data => rebuildList(data))
+
+            showCategory(document.getElementById("maintab"), 'translations')
+            var postsparent = document.getElementById("mainblock");
+            postsparent.innerHTML = "";
+            window.history.pushState("", "", event.target.getAttribute("href"));
+
+        }
+
+        function resetFilter() {
+            var prevtr = document.getElementsByClassName("chosen-meta")[0];
+            if (!(prevtr === undefined && typeof prevtr === "undefined")) {
+                // если было что-то выбрано, мы выключаем ему выделение
+                prevtr.classList.remove('chosen-meta');
+            }
+
+            fetch('/get/all').then(response => response.text()).then(data => rebuildList(data))
+
+            showCategory(document.getElementById("maintab"), 'translations')
+            var postsparent = document.getElementById("mainblock");
+            postsparent.innerHTML = "";
+            window.history.pushState("", "", "/");
+        }
+
+        function rebuildList(data){
+            // executes on fetch
+            // builds new song list from the fetched json
+            data = JSON.parse(data);
+
+            // filter setup
+            if (data.filter != null) {
+                var type = (data.filter == 'author' ? 'автор' : 'тэг');
+                var inner = "<p class=\"filtertext\">Выбран " + type + ": <b>" + data.filtername + "</b></p><span class=\"deletebutton\" onclick=\"resetFilter()\"></span>";
+            } else {
+                var inner = "";
+            }
+            document.getElementsByClassName("filter")[0].innerHTML = inner;
+
+            // list setup
+            var postsparent = document.getElementById("translations");
+            postsparent.innerHTML = '';
+            for (let record of data.response) {
+                if (record.hasOwnProperty('error')) {
+                    postsparent.appendChild(elementFromText("<li class=\"navlink-li\">" + record.error + " " + record.details + "</li>"))
+                } else {
+                    var child = "<li class=\"navlink-li\" id=\"" + record.link + "\">" +
+                        "<a class=\"navlink\" href=\"/" + record.link + "\" onclick=\"gotoTranslation(event)\">" + record.engname + "</a>" +
+                        {% if current_user.permissions and "translator" in current_user.permissions %}
+                            "<a href=\"/edit/" + record.link + "\" class=\"editbutton\"></a>" +
+                            "<span class=\"deletebutton\" onclick=\"deleteTranslation('" + record.link + "')\"></span>" +
+                        {% endif %}
+                    "</li>";
+                    postsparent.appendChild(elementFromText(child))
+                }
+            }
+        };
+
+        function gotoTranslation(event) {
 
             event.preventDefault();
             showTranslation(event.target);
@@ -62,7 +140,7 @@
 
             var prevtr = document.getElementsByClassName("chosen")[0];
 
-            var insert_tr = function(data){
+            var insertData = function(data){
                 var postsparent = document.getElementById("mainblock");
                 postsparent.innerHTML = data;
             };
@@ -74,39 +152,8 @@
             // включаем подсветку кликнутому
             target.classList.add('chosen');
 
-            fetch('/get' + target.getAttribute("href")).then(response => response.text()).then(data => insert_tr(data))
+            fetch('/get/song' + target.getAttribute("href")).then(response => response.text()).then(data => insertData(data))
 
-        }
-
-
-        // three fuctions below are copied from create_tr.html
-
-        function showRef(event) {
-            // show the tooltip when hovering over the little reflink
-            var anchorx = event.target.getBoundingClientRect().left;
-            var anchory = event.target.getBoundingClientRect().top;
-            var anchorw = event.target.clientWidth;
-            var tooltip = document.getElementsByClassName("tooltip")[0];
-            var text = document.getElementById(event.target.getAttribute("href").substring(1)).getElementsByTagName("span")[0].innerHTML;
-            tooltip.innerHTML = text;
-            // tooltip.removeChild(tooltip.getElementsByTagName("a")[0]);
-            tooltip.style.display = 'block';
-            tooltip.style.top = anchory - tooltip.clientHeight - 9;
-            tooltip.style.left = anchorx - 30;
-            tooltip.style.opacity = 1;
-        }
-
-        function hideRef(event) {
-            // hiding the tooltip, pt 1: gradual fade out
-            var tooltip = document.getElementsByClassName("tooltip")[0];
-            tooltip.style.opacity = 0;
-        }
-
-        function hideRefFinally(event) {
-            // hiding the tooltip, pt 2: set display to none so that div doesn't interfere with other elements
-            if (event.target.style.opacity == 0) {
-                event.target.style.display = 'none';
-            }
         }
 
         function deleteTranslation(link) {
@@ -150,20 +197,27 @@
             <a class="addlink" href="/add">Добавить перевод</a>
         {% endif %}
 
-        <div class="filter"></div>
+        {% if list.filter %}
+            <div class="filter"><p class="filtertext">Выбран {% if list.filter == 'author' %}автор{% else %}тэг{% endif %}: <b>{{list.filtername}}</b></p><span class="deletebutton" onclick="resetFilter()"></span></div>
+        {% else %}
+            <div class="filter"></div>
+        {% endif %}
 
-        <div class="tab tab-active" onclick="showCategory(event.target, 'translations')">Переводы</div>
+        <div class="tab tab-active" id="maintab" onclick="showCategory(event.target, 'translations')">Переводы</div>
         <div class="tab" onclick="showCategory(event.target, 'authors')">Авторы</div>
         <div class="tab" onclick="showCategory(event.target, 'tags')">Тэги</div>
         <hr class="tabline">
 
         <ul class="ul-active" id="translations">
-            {% for record in list %}
+            <!-- list['response'] is used because get_translations_list() method has double purpose -->
+            <!-- it returns both json and python data array so I had to wrap data in a dict to enable jsonification -->
+            <!-- see atw.py for details -->
+            {% for record in list.response %}
                 {% if record.error %} 
                     <li class="navlink-li">{{record.error}} {{record.details}}</li>
                 {% else %}
                     <li class="navlink-li" id="{{record.link}}">
-                        <a class="navlink" href="/{{record.link}}" onclick="goto_tr(event)">{{record.engname}}</a>
+                        <a class="navlink" href="/{{record.link}}" onclick="gotoTranslation(event)">{{record.engname}}</a>
                         {% if current_user.permissions and "translator" in current_user.permissions %}
                             <a href="/edit/{{record.link}}" class="editbutton"></a>
                             <span class="deletebutton" onclick="deleteTranslation('{{record.link}}')"></span>
@@ -179,7 +233,7 @@
                     <li class="navlink-li">{{record.error}} {{record.details}}</li>
                 {% else %}
                     <li class="navlink-li" id="{{record.link}}">
-                        <a class="navlink" href="/author/{{record.link}}" onclick="goto_tr(event)">{{record.author}}</a>
+                        <a class="navlink {% if list.filter and list.filter == 'author' and record.author == list.filtername %}chosen-meta{% endif %}" href="/author/{{record.link}}" onclick="addFilter(event)">{{record.author}}</a>
                     </li>
                 {% endif %}
             {% endfor %}
@@ -191,7 +245,7 @@
                     <li class="navlink-li">{{record.error}} {{record.details}}</li>
                 {% else %}
                     <li class="navlink-li" id="{{record.link}}">
-                        <a class="navlink" href="/tag/{{record.link}}" onclick="goto_tr(event)">{{record.tag}}</a>
+                        <a class="navlink {% if list.filter and list.filter == 'tag' and record.tag == list.filtername %}chosen-meta{% endif %}" href="/tag/{{record.link}}" onclick="addFilter(event)">{{record.tag}}</a>
                     </li>
                 {% endif %}
             {% endfor %}
