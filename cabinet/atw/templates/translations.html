@@ -18,6 +18,23 @@
     <script>
 
         window.onload = function() {showTranslation(undefined, '{{linkname}}')};
+        window.onscroll = function() {toggleSticky()};
+
+        // if sticky behaviour for video is enabled
+        var sticky = true;
+
+        function disableSticky() {
+            sticky = false;
+            document.getElementById("video").classList.remove("sticky");
+            document.getElementById("videobutton").classList.add("enable");
+            document.getElementById("videobutton").setAttribute("onclick", "enableSticky()");
+        }
+
+        function enableSticky() {
+            sticky = true;
+            document.getElementById("videobutton").classList.remove("enable");
+            document.getElementById("videobutton").setAttribute("onclick", "disableSticky()");
+        }
 
         function showCategory(target, type) {
 
@@ -121,7 +138,7 @@
             event.preventDefault();
             showTranslation(event.target);
             window.history.pushState("", "", event.target.getAttribute("href"));
-
+            sticky = true;
         }
 
         function showTranslation(target, linkname) {
@@ -186,6 +203,19 @@
 
             }
         }
+
+        function toggleSticky() {
+            if (sticky) {
+                var video = document.getElementById("video");
+                // initial position of video
+                // we need to know it even after the video has been moved
+                if (document.getElementById("videoanchor").getBoundingClientRect().top < 0) {
+                    video.classList.add("sticky");
+                } else {
+                    video.classList.remove("sticky");
+                }
+            }
+        } 
 
     </script>
 {% endblock %}

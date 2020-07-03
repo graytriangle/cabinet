@@ -259,3 +259,48 @@ a.addlink:active {
 .filtertext {
     margin-top: 20px;
 }
+
+#video {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.5s ease-in-out;
+    position: sticky;
+}
+
+.sticky {
+    /* -508: 450px sidebar + 50px left mainblock padding + 8px left browser margin; */
+    /* 566 px: sidebar + both mainblock paddings + both browser margins; */
+    /* 560px: video width; 17px: scrollbar width; 20px: margin for the sake of it; */
+    /* 315px: video height; */
+    transform: translate(calc(-508px - (100vw - 566px - 560px - 17px)/2 + 20px), calc((100vh - 315px - 20px)));
+    top: 0px;
+}
+
+#videobutton {
+    height: 32px;
+    width: 32px;
+    background-color: #eee;
+    border-radius: 50%;
+    margin-left: 560px;
+    margin-top: -16px;
+    border: #ccc solid 2px;
+    display: none;
+    cursor: pointer;
+    z-index: 1;
+    background-image: url('../img/video_disable.png');
+    background-repeat: no-repeat;
+    background-position: 9px 9px;
+    background-size: 15px;
+    position: absolute;
+}
+
+#videobutton.enable {
+    background-image: url('../img/video_enable.png');
+    display: block;
+}
+
+/* showing "close" button only when the video is in sticky mode */
+.sticky > #videobutton {
+    display: block;
+}

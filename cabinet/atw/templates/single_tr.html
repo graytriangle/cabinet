@@ -31,6 +31,12 @@
 
 	</div>
 
+	<div id="videoanchor"></div>
+	<div id="video">
+		<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+		<div id="videobutton" onclick="disableSticky()"></div>
+	</div>
+
 	<div class="maincontainer">
 		<div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">
 			{{content.original | safe}}
