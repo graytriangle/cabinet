@@ -23,9 +23,22 @@
         // if sticky behaviour for video is enabled
         var sticky = true;
 
+        function closeVideo() {
+            var video = document.getElementById("video");
+            video.setAttribute("ontransitionend", "disableSticky()");
+            video.style.opacity = 0;
+        }
+
         function disableSticky() {
             sticky = false;
-            document.getElementById("video").classList.remove("sticky");
+            var video = document.getElementById("video");
+            video.style.transition = "opacity 0.5s ease-in-out";
+            video.style.opacity = 1;
+            video.ontransitionend = function(event) {
+                video.style.transition = "all 0.5s ease-in-out";
+                video.removeAttribute("ontransitionend");
+            }
+            video.classList.remove("sticky");
             document.getElementById("videobutton").classList.add("enable");
             document.getElementById("videobutton").setAttribute("onclick", "enableSticky()");
         }
@@ -33,7 +46,7 @@
         function enableSticky() {
             sticky = true;
             document.getElementById("videobutton").classList.remove("enable");
-            document.getElementById("videobutton").setAttribute("onclick", "disableSticky()");
+            document.getElementById("videobutton").setAttribute("onclick", "closeVideo()");
         }
 
         function showCategory(target, type) {

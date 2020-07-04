@@ -471,7 +471,8 @@ CREATE TABLE translations.translations (
     datedel timestamp with time zone,
     dateadd timestamp with time zone DEFAULT now(),
     author uuid,
-    comment text
+    comment text,
+    video text
 );
 
 
@@ -559,6 +560,13 @@ COMMENT ON COLUMN translations.translations.author IS 'Link to song/poem author'
 --
 
 COMMENT ON COLUMN translations.translations.comment IS 'Plaintext with linebreaks; additional info about song/poem';
+
+
+--
+-- Name: COLUMN translations.video; Type: COMMENT; Schema: translations; Owner: postgres
+--
+
+COMMENT ON COLUMN translations.translations.video IS 'Plaintext string representing Youtube video code';
 
 
 --

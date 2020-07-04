@@ -38,7 +38,7 @@ def translations_editpage(link):
     # get translation by name
     cur = f.get_db().cursor()
     sql = """\
-            select tr.uid, tr.link, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
+            select tr.uid, tr.link, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment, tr.video, 
             a.author, a.link as authorlink, json_agg(t) filter (where t.uid is not null) as tags  
             from translations.translations tr
             left join translations.authors a
@@ -77,6 +77,7 @@ def save_translation():
     authoruid = None
     tags = request.form['tags']
     comment = request.form['comment']
+    video = request.form['video']
 
     if (uid == ""):
         uid = str(uuid.uuid4())
@@ -117,11 +118,11 @@ def save_translation():
                 cur.execute("INSERT INTO translations.authors (uid, author, link) "
                     "VALUES (%s, %s, %s);", (authoruid, author, authorlink))
 
-        cur.execute("INSERT INTO translations.translations (uid, engname, runame, original, translation, link, footnotes, author, comment) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (uid) DO UPDATE SET engname=excluded.engname, runame=excluded.runame, "
+        cur.execute("INSERT INTO translations.translations (uid, engname, runame, original, translation, link, footnotes, author, comment, video) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (uid) DO UPDATE SET engname=excluded.engname, runame=excluded.runame, "
             "original=excluded.original, translation=excluded.translation, link=excluded.link, footnotes=excluded.footnotes, "
-            "author=excluded.author, comment=excluded.comment;", 
-            (uid, engname, runame, original, translation, link, footnotes, authoruid, comment))
+            "author=excluded.author, comment=excluded.comment, video=excluded.video;", 
+            (uid, engname, runame, original, translation, link, footnotes, authoruid, comment, video))
 
         if tags:
             tagarray = tags.split(',')
@@ -179,7 +180,7 @@ def get_translation(link):
     # get translation by name
     cur = f.get_db().cursor()
     sql = """\
-            select tr.engname, tr.link, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
+            select tr.engname, tr.link, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment, tr.video, 
             a.author, a.link as authorlink, json_agg(t) filter (where t.uid is not null) as tags
             from translations.translations tr
             left join translations.authors a

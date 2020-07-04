@@ -31,11 +31,43 @@
 
 	</div>
 
-	<div id="videoanchor"></div>
-	<div id="video">
-		<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-		<div id="videobutton" onclick="disableSticky()"></div>
-	</div>
+	{% if content.video %}
+		{% set video = content.video %}
+		{% set timestamp = "" %}
+
+		{% if "t=" in video %}
+			{% set timestamp = video[video.index('t=') + 2:] %}
+			{% if '&' in timestamp %}
+            	{% set timestamp = timestamp[:timestamp.index('&')] %}
+            {% endif %}
+        {% endif %} 
+
+		{% if "youtube.com" in video %}
+            {% set video = video[video.index('youtube.com') + 11:] %}
+            {% set video = video[video.index('v=') + 2:] %}
+            {% if '&' in video %}
+            	{% set video = video[:video.index('&')] %}
+            {% endif %} 
+        {% elif "youtu.be" in video %}
+        	{% set video = video[video.index('youtu.be') + 9:] %}
+        	{% if '&' in video %}
+            	{% set video = video[:video.index('&')] %}
+            {% endif %} 
+            {% if '?' in video %}
+            	{% set video = video[:video.index('?')] %}
+            {% endif %} 
+        {% else %} 
+        	{% set video = "" %}
+        {% endif %}
+
+        {% if video %}
+			<div id="videoanchor"></div>
+			<div id="video">
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/{{video}}{% if timestamp %}?start={{timestamp}}{% endif %}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				<div id="videobutton" onclick="closeVideo()"></div>
+			</div>
+		{% endif %}
+	{% endif %}
 
 	<div class="maincontainer">
 		<div class="maintext" id="original" onmouseover="highlight(event, '#FFFFAF')" onmouseout="highlight(event, null)">

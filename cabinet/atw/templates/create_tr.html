@@ -201,6 +201,11 @@
                 <input class="tr_meta" type="text" name="tags" placeholder="Тэги (через запятую)" value="{% if content.tags %}{% for t in content.tags -%}
                     {{t.tag}}{% if not loop.last %}, {% endif %}
                 {%- endfor %}{% endif %}">
+                <input class="tr_meta" type="text" name="video" placeholder="Ссылка на youtube.com или youtu.be (в т.ч. с таймстампом)" value="
+                {%- if content.video -%}
+                    {{content.video}}
+                {%- endif -%}
+                ">
                 <textarea class="tr_meta" id="comment" name="comment" placeholder="Дополнительная информация" oninput="autosize(event.target, 200)">
                 {%- if content.comment -%}
                     {{content.comment}}
