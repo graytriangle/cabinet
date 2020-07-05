@@ -67,13 +67,13 @@ def translations_editpage(link):
 @auth.requires_permission('translator')
 def save_translation():
     uid = request.form['uid']
-    engname = request.form['engname']
-    runame = request.form['runame']
+    engname = request.form['engname'].strip()
+    runame = request.form['runame'].strip()
     original = request.form['original']
     translation = request.form['translation']
     link = request.form['link']
     footnotes = request.form['footnotes']
-    author = request.form['author']
+    author = request.form['author'].strip()
     authoruid = None
     tags = request.form['tags']
     comment = request.form['comment']
@@ -83,7 +83,9 @@ def save_translation():
         uid = str(uuid.uuid4())
 
     if (link == ""):
-        link = engname.lower().replace(' ', '-')
+        link = f.sanitize_url(engname, 64)
+        if not link: # in case there's nothing left after sanitizing
+            link = str(uuid.uuid4())
 
     cur = f.get_db().cursor()
     sql = """\
@@ -99,7 +101,9 @@ def save_translation():
             link = link + str(uuid.uuid4())
 
         if author:
-            authorlink = author.lower().replace(' ', '-')
+            authorlink = f.sanitize_url(author, 64)
+            if not authorlink: # in case there's nothing left after sanitizing
+                authorlink = str(uuid.uuid4())
             authoruid = str(uuid.uuid4())
             # checking if author exists
             cur.execute("SELECT uid from translations.authors "
@@ -130,7 +134,9 @@ def save_translation():
             tagarray = [i for i in tagarray if i] # removing empty strings
             cur.execute("DELETE FROM translations.translations_tags WHERE translation = %s;", (uid,))
             for tag in tagarray:
-                taglink = tag.lower().replace(' ', '-')
+                taglink = f.sanitize_url(tag, 64)
+                if not taglink: # in case there's nothing left after sanitizing
+                    taglink = str(uuid.uuid4())
                 taguid = str(uuid.uuid4())
                 # checking if tag exists
                 cur.execute("SELECT uid from translations.tags "

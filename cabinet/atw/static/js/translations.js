@@ -72,6 +72,10 @@ function getFirstChild(el){
     return firstChild;
 }
 
+function escapeHTML(html) {
+    return document.createElement('div').appendChild(document.createTextNode(html)).parentNode.innerHTML;
+}
+
 // Functions for saving/restoring the selection in contenteditable
 // Apparently it's ridiculously complicated task
 // Courtesy of https://stackoverflow.com/a/38752483

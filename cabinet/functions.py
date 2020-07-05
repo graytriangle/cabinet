@@ -2,6 +2,7 @@
 
 from flask import g, current_app
 import psycopg2
+import re
 
 QUERY_ERR = u'Ошибка при выполнении запроса к БД!'
 NO_NOTE = u'Запись не существует!'
@@ -46,3 +47,11 @@ def get_nested(pool, target = []):
             children = get_nested(pool, children)
         item['children'] = children
     return target
+
+def sanitize_url(url, length):
+    "Replaces url-unsafe characters in a string"
+    "Leaves only digits, English and Russian letters and dashes"
+    "Truncates it to desired length"
+    url = url.lower().replace(' ', '-')
+    url = re.sub('[^ЁёА-яa-zA-Z0-9\-]', '', url)
+    return url[:length]

@@ -28,7 +28,8 @@ var richtext = {
 			oPre.className = "rte-sourcetext";
 			oPre.id = "rte-source-" + oDoc.id;
 			oPre.onblur = oDoc.onblur;
-			oPre.contentEditable = true;
+			oPre.contentEditable = true; // TODO: shouldn't even be contenteditable, but rather textarea instead
+			// replace "/n"s after switchback or something
 			oPre.appendChild(oContent);
 			oDoc.appendChild(oPre);
 		} else {
@@ -70,35 +71,43 @@ var richtext = {
 		}
 		oEditBox.onkeydown = 
 			function(event) {
-				if (event.keyCode === 13) {
-					// on enter wrap new paragraph in "p"
-					document.execCommand('formatBlock', false, 'p');
-				}
-				if ((event.keyCode === 8 || event.keyCode === 46) && (oEditBox.innerHTML === "" || oEditBox.innerHTML === "<br>")) {
-					// add empty "p" on backspace or delete when the field is empty
-					oEditBox.innerHTML = "<p><br></p>";
-				}
-				if((event.keyCode === 8 || event.keyCode === 46) && oEditBox.innerHTML=="<p><br></p>"){  // 8 is backspace
-					// interrupt on backspace or delete when the field is "just right" empty
-					event.preventDefault();
-				}
-				if (window.getSelection && (event.keyCode === 8 || event.keyCode === 46)){ // 8 is backspace, 46 is delete
-					// unification of newlines and carriage returns for Chrome/FF
-					let selection = window.getSelection().toString().replace(/\r+|\n+$/gm, ""); 
-					let editorText = oEditBox.innerText.replace(/\n+/g, "\n").replace(/\n+$/g, "");
-
-					// when you try to ctrl+a and delete everything, add empty paragraph and put the cursor inside
-					if (editorText == selection) {
-						event.preventDefault();
-						oEditBox.innerHTML="<p><br></p>";
-						var range = document.createRange();
-						var sel = window.getSelection();
-						range.setStart(oEditBox.childNodes[0], 0);
-						range.collapse(true);
-						sel.removeAllRanges();
-						sel.addRange(range);
+				if (oEditBox.contentEditable == "true") { // we don't want this custom behavior in "HTML edit" mode
+					if (event.keyCode === 13) {
+						if (event.shiftKey) {
+							// on shift-enter block any action
+							event.preventDefault();
+						} else {
+							// on enter wrap new paragraph in "p"
+							document.execCommand('formatBlock', false, 'p');
+						}
+						
 					}
-					
+					if ((event.keyCode === 8 || event.keyCode === 46) && (oEditBox.innerHTML === "" || oEditBox.innerHTML === "<br>")) {
+						// add empty "p" on backspace or delete when the field is empty
+						oEditBox.innerHTML = "<p><br></p>";
+					}
+					if((event.keyCode === 8 || event.keyCode === 46) && oEditBox.innerHTML=="<p><br></p>"){  // 8 is backspace
+						// interrupt on backspace or delete when the field is "just right" empty
+						event.preventDefault();
+					}
+					if (window.getSelection && (event.keyCode === 8 || event.keyCode === 46)){ // 8 is backspace, 46 is delete
+						// unification of newlines and carriage returns for Chrome/FF
+						let selection = window.getSelection().toString().replace(/\r+|\n+$/gm, ""); 
+						let editorText = oEditBox.innerText.replace(/\n+/g, "\n").replace(/\n+$/g, "");
+
+						// when you try to ctrl+a and delete everything, add empty paragraph and put the cursor inside
+						if (editorText == selection) {
+							event.preventDefault();
+							oEditBox.innerHTML="<p><br></p>";
+							var range = document.createRange();
+							var sel = window.getSelection();
+							range.setStart(oEditBox.childNodes[0], 0);
+							range.collapse(true);
+							sel.removeAllRanges();
+							sel.addRange(range);
+						}
+						
+					}
 				}
 			};
 		oEditBox.onkeyup = 

@@ -124,8 +124,7 @@ a.addlink:active {
 
 .maintext p {
     margin-top: 8px;
-    margin-bottom: 8px;
-    height: 22px;
+    margin-bottom: 10px;
     font-size: 13pt;
     font-family: "Times New Roman", Times, serif;
     padding-left: 5px;
@@ -247,7 +246,7 @@ a.addlink:active {
 }
 
 .filter {
-    height: 30px;
+    min-height: 30px;
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 12pt;
     display: flex;
@@ -256,7 +255,8 @@ a.addlink:active {
 }
 
 .filtertext {
-    margin-top: 20px;
+    margin-top: 6px;
+    margin-bottom: 0px;
 }
 
 #video {
@@ -265,6 +265,10 @@ a.addlink:active {
     margin-bottom: 20px;
     transition: all 0.5s ease-in-out;
     position: sticky;
+}
+
+#video > * {
+    flex-shrink: 0;
 }
 
 .sticky {
@@ -281,7 +285,8 @@ a.addlink:active {
     width: 32px;
     background-color: #eee;
     border-radius: 50%;
-    margin-left: 560px;
+    /*margin-left: 560px;*/
+    left: calc((100vw - 566px - 560px - 17px)/2 + 560px - 16px);
     margin-top: -16px;
     border: #ccc solid 2px;
     display: none;

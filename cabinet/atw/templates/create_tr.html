@@ -1,7 +1,7 @@
 {% extends "wrapper.html" %}
 
 {% block title %}
-    Almost the word
+    Almost the words
 {% endblock %}
 
 {% block meta %}
@@ -107,7 +107,7 @@
         function submitRef() {
             // inserting actual ref on button click in the modal
             document.getElementById("addref").style.display = "none";
-            var tmptext = document.getElementById("reftext").value;
+            var tmptext = escapeHTML(document.getElementById("reftext").value);
             tmptext = tmptext.replace(/[\n\r]/g, '<br>');
             var tmpeditor = document.getElementById("translation").getElementsByClassName("rte-editbox")[0];
             tmpeditor.focus();
@@ -148,7 +148,7 @@
             // modifying the existing ref after editing it in the modal (on button click)
             document.getElementById("addref").style.display = "none";
             var textblock = document.getElementById("reftext");
-            var tmptext = textblock.value;
+            var tmptext = escapeHTML(textblock.value);
             tmptext = tmptext.replace(/[\n\r]/g, '<br>');
             var spn = document.createElement('span');
             spn.innerHTML = tmptext;
@@ -158,8 +158,8 @@
 
         function submitTranslation() {
             // let's submit our translation! executes on button click
-            var engval = document.getElementsByName("engname")[0].value;
-            var ruval = document.getElementsByName("runame")[0].value;
+            var engval = document.getElementsByName("engname")[0].value.trim();
+            var ruval = document.getElementsByName("runame")[0].value.trim();
             if (engval && ruval) { // titles shouldn't be empty
                 var copyref = document.getElementById("translation_refs").cloneNode(true);
                 if (copyref.getElementsByTagName("li").length > 0) {

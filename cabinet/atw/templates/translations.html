@@ -1,7 +1,7 @@
 {% extends "wrapper.html" %}
 
 {% block title %}
-    Almost the word
+    Almost the words
 {% endblock %}
 
 {% block meta %}
@@ -29,15 +29,18 @@
             video.style.opacity = 0;
         }
 
+        function endTransition() {
+            var video = document.getElementById("video");
+            video.style.transition = "all 0.5s ease-in-out";
+            video.removeAttribute("ontransitionend");
+        }
+
         function disableSticky() {
             sticky = false;
             var video = document.getElementById("video");
             video.style.transition = "opacity 0.5s ease-in-out";
             video.style.opacity = 1;
-            video.ontransitionend = function(event) {
-                video.style.transition = "all 0.5s ease-in-out";
-                video.removeAttribute("ontransitionend");
-            }
+            video.setAttribute("ontransitionend", "endTransition()");
             video.classList.remove("sticky");
             document.getElementById("videobutton").classList.add("enable");
             document.getElementById("videobutton").setAttribute("onclick", "enableSticky()");
