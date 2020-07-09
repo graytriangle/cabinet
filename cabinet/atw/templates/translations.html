@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block meta %}
+    <link rel="icon" href="{{url_for('atw.static', filename='favicon.png')}}"/>
     <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/translations.css')}}">
     <link rel='stylesheet' type='text/css' href= "{{url_for('atw.static', filename='css/common.css')}}">
     <script type="text/javascript" src={{url_for('atw.static', filename='js/translations.js')}}></script>
