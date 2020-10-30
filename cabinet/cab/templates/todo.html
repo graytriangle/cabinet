@@ -1,5 +1,5 @@
 <script>
-function intent_toggle(event) {
+function intentToggle(event) {
     // minimizes/restores intention subgroup
     var children = event.target.parentNode.getElementsByClassName("goal_childgroup")[0];
     event.target.classList.toggle('hiddengoal');
@@ -10,7 +10,7 @@ function intent_toggle(event) {
     }
 }
 
-function intent_settings(event, show) {
+function intentSettings(event, show) {
     // shows/hides buttons near every intention
     if (event.target.classList.contains('todo_task')) {
         var el = event.target;
@@ -28,16 +28,18 @@ function intent_settings(event, show) {
     }
 }
 
-function intent_check(uid) {
-    // AJAX marking the intention as "done"
+async function intentCheck(uid) {
+    // async/await marking the intention as "done"
     var el = document.getElementById(uid);
     var istatus = "true"; // if current intention is active
     if (el.getElementsByClassName("goalname")[0].classList.contains('goalname_done')) {
         istatus = "false";
     }
 
-    var intcheck_cb_ok = function(response){
-        // callback to execute on successful note loading
+    let response = await fetch('/intent/check?uid=' + uid + '&status=' + istatus);
+    if (!response.ok) {
+        alert("Ошибка сервера при смене статуса намерения: " + response.status);
+    } else {
         el.getElementsByClassName("goalname")[0].classList.toggle('goalname_done');
 
         if (istatus == "false") {
@@ -54,39 +56,21 @@ function intent_check(uid) {
             var adddiv = el.getElementsByClassName("addgoal")[0];
             adddiv.parentNode.removeChild(adddiv);
         }
-    };
-
-    var intcheck_cb_error = function(status){
-        // callback to execute on unsuccessful intention checking
-        if (status !== null) {
-            alert("Ошибка сервера при смене статуса намерения: " + status);
-        }
-    };
-
-    var address = '/intent/check?uid=' + uid + '&status=' + istatus;
-    ajax('GET', address, intcheck_cb_ok, intcheck_cb_error);
+    }
 }
 
-function intent_delete(uid) {
-    // AJAX deleting the intention
+async function intentDelete(uid) {
+    // async/await deleting the intention
+    // TODO: not used currently, test/rewrite later
     var result = confirm("Подтвердите удаление намерения. Все дочерние намерения также будут удалены!");
     if (result) {
-
-        var intdel_cb_ok = function(response) {
-            // callback to execute on successful note loading
+        let response = await fetch('/intent/delete?uid=' + uid);
+        if (!response.ok) {
+            alert("Ошибка сервера при удалении намерения: " + response.status);
+        } else {
             var el = document.getElementById(uid);
             el.parentNode.removeChild(el);
-        };
-
-        var intdel_cb_error = function(status) {
-            // callback to execute on unsuccessful intention deletion
-            if (status !== null) {
-                alert("Ошибка сервера при удалении намерения: " + status);
-            }
-        };
-
-        var address = '/intent/delete?uid=' + uid;
-        ajax('GET', address, intdel_cb_ok, intdel_cb_error);
+        }
     }
 }
 
@@ -104,12 +88,12 @@ function intent_delete(uid) {
         <div class="todo_task {% if loop.depth == 1 %} toptask {% else %} childtask {% endif %}" id="{{ record.uid }}">
             <div 
                 class="todoicon goalgroup {% if not active %} graygoal {% endif %} " 
-                {% if active %} onclick="intent_toggle(event)" {% endif %}>
+                {% if active %} onclick="intentToggle(event)" {% endif %}>
             </div>
-            <div class="goalname {% if record.finished %} goalname_done {% endif %}" onmouseover="intent_settings(event, true)" onmouseout="intent_settings(event, false)">
+            <div class="goalname {% if record.finished %} goalname_done {% endif %}" onmouseover="intentSettings(event, true)" onmouseout="intentSettings(event, false)">
                 {{record.name -}}
                 <div class="settinggroup">
-                    <div class="todoicon goalsetting checkgoal" onclick="intent_check('{{ record.uid }}')"></div>
+                    <div class="todoicon goalsetting checkgoal" onclick="intentCheck('{{ record.uid }}')"></div>
                     {% if not record.finished %}
                         <div class="todoicon goalsetting addgoal"></div>
                         <div class="todoicon goalsetting editgoal"></div>

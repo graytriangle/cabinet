@@ -166,9 +166,14 @@ var richtext = {
 		document.dispatchEvent(event);
 	},
 
-	toolsReady: function() {
-		richtext.oTools = JSON.parse(this.responseText);
-		richtext.replaceFields(2);
+	fetchTools: async function() {
+		let response = await fetch('/atw/static/richtext/rich-text-tools.json');
+        if (!response.ok) {
+            alert("Ошибка сервера при загрузке визуального редактора: " + response.status);
+        } else {
+			richtext.oTools = JSON.parse(await response.text());
+			richtext.replaceFields(2);
+        }
 	},
 
 	documentReady: function() { 
@@ -213,9 +218,7 @@ var richtext = {
 	},
 
 	richTextStart: function() {
-		this.oToolsReq.onload = this.toolsReady;
-		this.oToolsReq.open("GET", "/atw/static/richtext/rich-text-tools.json", true);
-		this.oToolsReq.send(null);
+		this.fetchTools();
 		window.addEventListener ? addEventListener("load", this.documentReady, false) : window.attachEvent ? attachEvent("onload", this.documentReady) : window.onload = this.documentReady;
 	},
 

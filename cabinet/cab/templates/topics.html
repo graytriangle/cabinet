@@ -1,5 +1,5 @@
 <script>
-function topic_settings(event, show) {
+function topicSettings(event, show) {
     // shows/hides buttons near every intention
     if (event.target.classList.contains('rc_empty')) {
         el = event.target;
@@ -15,30 +15,20 @@ function topic_settings(event, show) {
     }
 }
 
-function delete_topic(uid) {
-    // AJAX deleting the intention
+async function deleteTopic(uid) {
+    // async/await deleting the intention
     var result = confirm("Подтвердите удаление темы");
     if (result) {
-        httpRequest = new XMLHttpRequest();
-
-        if (!httpRequest) {
-            alert('Не удалось создать объект XMLHttpRequest для AJAX-запроса к серверу');
-            return false;
+        let response = await fetch('/topics/delete?uid=' + uid);
+        if (!response.ok) {
+            alert("Ошибка сервера при удалении записи: " + response.status);
+        } else {
+            var el = document.getElementById(uid);
+            el.parentNode.removeChild(el);
         }
-        httpRequest.onreadystatechange = function() {
-            if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                if (httpRequest.status === 200) {
-                    var el = document.getElementById(uid);
-                    el.parentNode.removeChild(el);
-                } else {
-                    alert("Ошибка сервера при удалении записи: " + httpRequest.status);
-                }
-            }
-        };
-        httpRequest.open('GET', '/topics/delete?uid=' + uid);
-        httpRequest.send();
     }
 }
+
 </script>
 
 {% for record in topics %}
@@ -47,10 +37,10 @@ function delete_topic(uid) {
         <div class="rc_error">{{record.error}}</div>
     {% else %}
         <div id="{{record.uid}}" class="rc_topic {% if record.count == 0 %} rc_empty {% endif %}" 
-        {% if record.count != 0 %} onclick="display_topic(event)"{% endif %}
-        {% if record.count == 0 %} onmouseover="topic_settings(event, true)" onmouseout="topic_settings(event, false)" {% endif %}
+        {% if record.count != 0 %} onclick="displayTopic(event)"{% endif %}
+        {% if record.count == 0 %} onmouseover="topicSettings(event, true)" onmouseout="topicSettings(event, false)" {% endif %}
         >{{record.name}}
-        {% if record.count == 0 %} <div class="topicicon_delete hidden" onclick="delete_topic('{{record.uid}}')"></div>{% endif %}
+        {% if record.count == 0 %} <div class="topicicon_delete hidden" onclick="deleteTopic('{{record.uid}}')"></div>{% endif %}
         </div>
 
     {% endif %}
