@@ -256,43 +256,46 @@
                 current_topic = '';
             }
 
-            var success_counter = 0;
-            var error_counter = 0;
             var topicresponse;
             var notesresponse;
 
-            // распараллелить и привинтить исключения
+            const response = fetch('/notes?type=' + typename);
+            const response2 = fetch('/topics?type=' + typename);
 
-            let response = await fetch('/notes?type=' + typename);
-            if (!response.ok) { 
-                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
-                error_counter += 1;
-                if (status !== null) {
-                    alert("Ошибка сервера при обновлении списка записей: " + status);
+            // вместо алертов выводить ошибку иным образом
+            // в целом жс-ошибки - это юзкейс для обрыва связи с сервером либо если инфа не парсится
+            // если с сервером есть связь, то пусть он возвращает нужную инфу в завёрнутом виде и мы её выведем
+
+            try {
+                let result = await response;
+                if (!result.ok) { 
+                    // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+                    throw new Error("Ошибка сервера при обновлении списка записей: " + status);
+                } else {
+                    notesresponse = await result.text();
                 }
-            } else {
-                success_counter += 1;
-                notesresponse = await response.text();
-            }
 
-            let response2 = await fetch('/topics?type=' + typename);
-            if (!response2.ok) { 
-                // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
-                error_counter += 1;
-                if (status !== null) {
-                    alert("Ошибка сервера при обновлении списка тем: " + status);
+                result = await response2;
+                if (!result.ok) { 
+                    // по факту эта функция никогда не используется, т.к. сервер всегда обрабатывает исключения корректно
+                    throw new Error("Ошибка сервера при обновлении списка тем: " + status);
+                } else {
+                    topicresponse = await result.text();
                 }
-            } else {
-                success_counter += 1;
-                topicresponse = await response2.text();
-            }
-
-            if (error_counter > 0) {
+            } catch(e) {
+                alert(e);
                 // если ранее был выбран раздел, включаем ему кружок обратно
                 if (!(prevtype === undefined && typeof prevtype === "undefined")) {
                     prevtype.classList.add('section_selected');
                 }
-            } else if (success_counter === 2) {
+                if (prevtype != clickedtype) {
+                    // выключаем кружок кликнутому, если только оно уже не было выбрано
+                    clickedtype.classList.remove('section_suspended');
+                }
+                suspendSwitches(false);
+            }
+
+            if (topicresponse && notesresponse) {
                 // если ранее был выбран раздел, сносим его иконке "активный" стиль
                 if (!(prevtype === undefined && typeof prevtype === "undefined")) {
                     prevtype.getElementsByClassName("section_icon")[0].classList.remove('section_icon_active');
@@ -324,7 +327,6 @@
                     clickedtype.classList.remove('section_suspended');
                 }
             }
-
         }
 
         async function displayTopic(event) {
