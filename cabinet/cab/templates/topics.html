@@ -2,12 +2,12 @@
 function topicSettings(event, show) {
     // shows/hides buttons near every intention
     if (event.target.classList.contains('rc_empty')) {
-        el = event.target;
+        var el = event.target;
     } else {
-        el = event.target.parentNode;
+        var el = event.target.parentNode;
     }
     /* hide/show icons that are immediate children of a target div */
-    icon = el.getElementsByClassName("topicicon_delete")[0];
+    var icon = el.getElementsByClassName("topicicon_delete")[0];
     if (show) {
         icon.classList.remove("hidden");
     } else {
