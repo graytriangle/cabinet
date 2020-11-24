@@ -14,7 +14,7 @@ def get_db():
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = psycopg2.connect(
-            "host=%s dbname=%s user=%s password=%s"
+            "host='%s' dbname='%s' user='%s' password='%s'"
             % (
                 current_app.config["DBHOST"],
                 current_app.config["DBNAME"],
@@ -40,15 +40,23 @@ def decodesql(record):
     )
 
 
-def get_nested(pool, target=[]):
-    """Build a new list of dicts (target) of arbitrary depth
-    from another flat list of dicts (result of dictfetchall()).
+def get_nested(pool, target=None):
+    """Transform a flat list of dicts into a nested one.
+
+    Take a result of dictfetchall and rebuild it into a list of nested dicts
+    recursively.
+
+    Keyword arguments:
+    pool -- the initial flat list
+    target -- a list of top-level dicts to attach children to
+
     """
-    "Fields 'parent' and 'uid' are required"
-    if not target:
+    if not target: # on first call
+        target = []
         for i in pool:
             if not i["parent"]:
                 target.append(i)
+                
     for item in target:
         children = []
         for old in pool:
