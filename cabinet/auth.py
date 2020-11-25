@@ -9,7 +9,8 @@ import uuid
 from werkzeug.exceptions import Forbidden
 
 users = {}
-
+# temporary solution!
+# TODO: move it to db
 
 class CabinetUser(UserMixin):
     def __init__(self):
@@ -68,14 +69,25 @@ class CabinetUser(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    if user_id in users:
+    """Reload user object by stored ID.
+    
+    A flask-login callback necessary for it to function.
+    Returns a CabinetUser object or None if nothing was found.
+
+    Keyword arguments:
+    user_id : string -- an unique identifier of the user
+    """
+    if (user_id in users):
         return users[user_id]
     else:
         return CabinetUser.get_by_field("uid", user_id)
 
-
 @login_manager.unauthorized_handler
 def unauth_handler():
+    """Return a corresponding response to the unauthorized user.
+
+    A flask-login callback for the login_manager.unauthorized()
+    """
     if current_user.is_authenticated:
         raise Forbidden
     else:

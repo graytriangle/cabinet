@@ -21,8 +21,8 @@ intentions = Blueprint(
 @intentions.before_request
 @login_required
 @a.requires_permission("admin")
-# protecting all endpoints
 def before_request():
+    """Request admin permission to access any endpoint from this blueprint."""
     pass
 
 

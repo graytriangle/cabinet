@@ -26,6 +26,7 @@ atw = Blueprint(
 
 @atw.route("/", methods=["GET"])
 def translations_mainpage():
+    """Render main page."""
     return render_template(
         "translations.html",
         list=get_translations_list(),
@@ -38,6 +39,12 @@ def translations_mainpage():
 @atw.route("/author/<string:author>", methods=["GET"])
 @atw.route("/tag/<string:tag>", methods=["GET"])
 def translations_filtered_mainpage(author=None, tag=None):
+    """Render main page with sidebar filtered by author or tag.
+
+    Keyword arguments:
+    author : string -- an unique identifier of the author (default None)
+    tag : string -- an unique identifier of the tag (default None)
+    """
     return render_template(
         "translations.html",
         list=get_translations_list(author, tag),
@@ -51,6 +58,7 @@ def translations_filtered_mainpage(author=None, tag=None):
 @login_required
 @auth.requires_permission("translator")
 def translations_addpage():
+    """Render empty translation editor page."""
     return render_template("create_tr.html", content=None)
 
 
@@ -58,7 +66,11 @@ def translations_addpage():
 @login_required
 @auth.requires_permission("translator")
 def translations_editpage(link):
-    # get translation by name
+    """Render translation editor page with a chosen song preloaded.
+
+    Keyword arguments:
+    link : string -- an unique identifier of the translation
+    """
     cur = f.get_db().cursor()
     sql = """\
             select tr.uid, tr.link, tr.engname, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment,
@@ -92,6 +104,7 @@ def translations_editpage(link):
 @login_required
 @auth.requires_permission("translator")
 def save_translation():
+    """Save the contents of an editor as a new or modified translation."""
     uid = request.form["uid"]
     engname = request.form["engname"].strip()
     runame = request.form["runame"].strip()
@@ -231,6 +244,11 @@ def save_translation():
 @login_required
 @auth.requires_permission("translator")
 def delete_translation(link):
+    """Delete an existing translation.
+
+    Keyword arguments:
+    link : string -- an unique identifier of the translation
+    """
     cur = f.get_db().cursor()
     try:
         cur.execute(
@@ -248,6 +266,11 @@ def delete_translation(link):
 
 @atw.route("/<string:link>", methods=["GET"])
 def translations_page(link):
+    """Render main page with a chosen translation preloaded.
+
+    Keyword arguments:
+    link : string -- an unique identifier of the translation
+    """
     return render_template(
         "translations.html",
         list=get_translations_list(),
@@ -259,11 +282,21 @@ def translations_page(link):
 
 @atw.route("/get/song/<string:link>", methods=["GET"])
 def get_translation(link):
-    # get translation by name
+    """Return HTML of a chosen translation from database.
+
+    Used to load translations seamlessly, avoiding page reloads.
+    Not to be called directly from browser.
+
+    Keyword arguments:
+    link : string -- an unique identifier of the translation
+    """
+    # TODO: restrict access to this endpoint for external requests.
     cur = f.get_db().cursor()
     sql = """\
-            select tr.engname, tr.link, tr.runame, tr.original, tr.translation, tr.footnotes, tr.comment, tr.video, 
-            a.author, a.link as authorlink, json_agg(t) filter (where t.uid is not null) as tags
+            select tr.engname, tr.link, tr.runame, tr.original, 
+            tr.translation, tr.footnotes, tr.comment, tr.video, 
+            a.author, a.link as authorlink, 
+            json_agg(t) filter (where t.uid is not null) as tags
             from translations.translations tr
             left join translations.authors a
             on tr.author = a.uid
@@ -292,6 +325,14 @@ def get_translation(link):
 @atw.route("/get/tag/<string:tag>", methods=["GET"])
 @atw.route("/get/all", methods=["GET"])
 def get_translations_list(author=None, tag=None):
+    """Return JSON with a list of translations for the sidebar.
+
+    Can be filtered by author or tag.
+
+    Keyword arguments:
+    author : string -- an unique identifier of the author (default None)
+    tag : string -- an unique identifier of the tag (default None)
+    """
     cur = f.get_db().cursor()
     where = ""
     filter = None
@@ -341,6 +382,10 @@ def get_translations_list(author=None, tag=None):
 
 
 def get_authors():
+    """Return a list of all authors.
+
+    Every author is presented as a dict with keys: uid, author, link.
+    """
     cur = f.get_db().cursor()
     sql = """\
             select distinct a.uid, a.author, a.link
@@ -363,6 +408,10 @@ def get_authors():
 
 
 def get_tags():
+    """Return a list of all tags.
+
+    Every tag is presented as a dict with keys: uid, tag, link.
+    """
     cur = f.get_db().cursor()
     sql = """\
             select distinct t.uid, t.tag, t.link

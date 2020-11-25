@@ -25,13 +25,14 @@ main = Blueprint(
 @main.before_request
 @login_required
 @a.requires_permission("admin")
-# protecting all endpoints
 def before_request():
+    """Request admin permission to access any endpoint from this blueprint."""
     pass
 
 
 @main.route("/")
 def main_page():
+    """Render main page."""
     return render_template(
         "master.html",
         notes=n.get_notes(),
@@ -43,6 +44,7 @@ def main_page():
 
 @main.route("/", methods=["POST"])
 def my_form_post():
+    """Add a new note or modify an existing one."""
     postuid = request.form["uid"]
     importance = request.form["importance"]
     maintext = request.form["maintext"]
@@ -90,6 +92,7 @@ def my_form_post():
 
 @main.route("/delete", methods=["GET"])
 def delete():
+    """Add a new note or modify an existing one."""
     uid = (request.args.get("uid", ""),)
     cur = f.get_db().cursor()
     try:

@@ -30,6 +30,7 @@ app.register_blueprint(atw.atw, url_prefix="/")
 
 @app.context_processor
 def inject_now():
+    """Make current time available to all templates as "now" var."""
     return {"now": datetime.now()}
 
 
@@ -43,6 +44,13 @@ def inject_now():
 
 @app.errorhandler(Exception)
 def handle_error(e):
+    """Handle all errors uniformly by returning a custom page.
+
+    Uses errorhandler decorator to intercept any exception.
+
+    Keyword arguments:
+    e : Exception -- any exception
+    """
     code = 500
     if isinstance(e, HTTPException):
         code = e.code
@@ -51,6 +59,11 @@ def handle_error(e):
 
 @app.route("/error/<int:code>")
 def error_page(code):
+    """Render an error page with the link leading back to origin.
+
+    Keyword arguments:
+    code : int -- HTTP error code
+    """
     # check if code is valid in case someone entered the url manually
     try:
         errornames[str(code)]
@@ -71,16 +84,18 @@ def error_page(code):
         code,
     )
 
-
-# lobby page
 @app.route("/")
 def lobby_page():
+    """Render a meta page with links to all projects and apps."""
     return render_template("lobby.html")
 
 
 @app.route("/signup", methods=["GET"])
 def signup_page():
-    # redirect if logged in or forbidden to register
+    """Render a signup page if allowed or redirect to main page.
+
+    Redirects authorized users or everyone if registration is closed.
+    """
     if current_user.is_authenticated or (not app.config["REG_OPEN"]):
         return redirect("/")
     else:
@@ -92,7 +107,10 @@ def signup_page():
 
 @app.route("/signup", methods=["POST"])
 def signup():
-    # redirect if logged in or forbidden to register
+    """Send data to register a new user.
+
+    Redirects authorized users or everyone if registration is closed.
+    """
     if current_user.is_authenticated or (not app.config["REG_OPEN"]):
         return redirect("/")
     else:
@@ -111,7 +129,7 @@ def signup():
 
 @app.route("/login", methods=["GET"])
 def login_page():
-    # redirect if logged in
+    """Render a login page or redirect to main if already logged in."""
     if current_user.is_authenticated:
         return redirect("/")
     else:
@@ -123,7 +141,7 @@ def login_page():
 
 @app.route("/login", methods=["POST"])
 def login():
-    # redirect if logged in
+    """Send credentials to login."""
     if current_user.is_authenticated:
         return redirect("/")
     else:
@@ -143,15 +161,22 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
+    """Logout current user with flask-login method."""
     logout_user()
     return redirect(request.referrer)
 
 
 # auxiliary functions
 
-
 @app.teardown_appcontext
 def close_connection(exception):
+    """Close an existing db connection.
+
+    Is called automatically by Flask when the application context ends.
+
+    Keyword arguments:
+    exception : Exception -- any exception that occurs during a request.
+    """
     db = getattr(g, "_database", None)
     if db is not None:
         db.close()

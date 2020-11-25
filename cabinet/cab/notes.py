@@ -23,8 +23,8 @@ notes = Blueprint(
 @notes.before_request
 @login_required
 @a.requires_permission("admin")
-# protecting all endpoints
 def before_request():
+    """Request admin permission to access any endpoint from this blueprint."""
     pass
 
 
@@ -37,8 +37,11 @@ def before_request():
     "/note/<string:post_id>"
 )  # TODO: switch to uuids; it fails for some reason
 def show_post(post_id):
-    # show the post with the given id, the id is an uuid
-    # you can also return single post with ajax, see below
+    """Render main page with a single post loaded.
+
+    Keyword arguments:
+    post_id : string -- uuid of the post
+    """
     result = get_notes("", " where n.uid = '%s' " % post_id)
     return render_template(
         "master.html",
